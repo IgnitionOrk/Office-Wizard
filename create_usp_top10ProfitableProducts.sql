@@ -1,0 +1,4 @@
+CREATE PROCEDURE usp_Top10ProfitableProducts
+AS
+
+GO

@@ -21,8 +21,6 @@ DROP TABLE CustomerOrder
 DROP TABLE Quote
 DROP TABLE Assignment
 
-
-
 --Tables without foreign keys:
 DROP TABLE Supplier
 DROP TABLE ProductCategory
@@ -39,8 +37,8 @@ CREATE TABLE Supplier
 	sName									VARCHAR(100)					NOT NULL,
 	address								VARCHAR(100)					NOT NULL,
 	phoneNo								VARCHAR(12)						NOT NULL,
-	faxNo									VARCHAR(12),
-	contactPerson					VARCHAR(50)						NOT NULL,
+	faxNo									VARCHAR(12)						DEFAULT NULL,
+	contactPerson					VARCHAR(50)						DEFAULT NULL,
 	PRIMARY KEY(supplierID)
 );
 GO
@@ -251,12 +249,11 @@ CREATE TABLE Assignment
 	positionID						VARCHAR(10)							NOT NULL,
 	startDate							DATE										CHECK(startDate >= GETDATE()),
 	finishDate						DATE										DEFAULT NULL,
-	PRIMARY KEY(assignmentID),
+	PRIMARY KEY(assignmentID, employeeID, positionID),
 	FOREIGN KEY(employeeID) REFERENCES Employee(employeeID),
 	FOREIGN KEY(positionID) REFERENCES Position(positionID)
 );
 GO
-
 
 -- added from feedback
 CREATE TABLE Allowance 
@@ -309,4 +306,11 @@ CREATE TABLE Payslip
 );
 GO
 
- 
+INSERT INTO Supplier VALUES('S111111111', 'World of Pens', '121 Industrial Rd', '123456789012', '1234-1234-12', 'Mary Jane');
+INSERT INTO Supplier VALUES('S222222222', 'Chair R Us', '11 Matthew Avenue',  '210987654321',  '12-4321-4321', 'Bob Walts');
+INSERT INTO Supplier VALUES('S333333333', 'Paper Industries', '123/34 Cresent Head', '1234567192', '000-0000-00', 'Gary Mancolo');
+INSERT INTO Supplier VALUES('S444444444', 'Furniture galore', '123/34 Cresent Head',  '1111111111', NULL , 'Ryan Sallvitore');
+INSERT INTO Supplier VALUES('S555555555', 'Your Stock', '11 Matthew Avenue',  '0407022211', NULL , 'Sasha');
+
+ SELECT * 
+ FROM Supplier

@@ -182,7 +182,7 @@ CREATE TABLE Customer
 	cName									VARCHAR(100)					NOT NULL,
 	address								VARCHAR(100)					NOT NULL,
 	phoneNo								VARCHAR(12)						NOT NULL,
-	faxNo									VARCHAR(12)						NOT NULL,
+	faxNo									VARCHAR(12)						DEFAULT NULL,
 	email									VARCHAR(100),
 	contactPerson   					VARCHAR(100)					DEFAULT NULL,		--Only provide if the customer is a company
 	gender									CHAR(1)								CHECK(gender IN('M', 'F', 'O')),
@@ -312,5 +312,38 @@ INSERT INTO Supplier VALUES('S333333333', 'Paper Industries', '124/34 Cresent He
 INSERT INTO Supplier VALUES('S444444444', 'Furniture galore', '123/34 Cresent Head',  '1111111111', NULL , 'Ryan Sallvitore');
 INSERT INTO Supplier VALUES('S555555555', 'Your Stock', '11 Matthew Avenue',  '0407022211', NULL , 'Sasha');
 
- SELECT * 
- FROM Supplier
+INSERT INTO ProductCategory VALUES('PC12345671', 'Furniture');
+INSERT INTO ProductCategory VALUES('PC12345673', 'Storage');
+INSERT INTO ProductCategory VALUES('PC12345674', 'Stationary');
+INSERT INTO ProductCategory VALUES('PC12345675', 'Electronic');
+INSERT INTO ProductCategory VALUES('PC12345676', 'Book');
+
+INSERT INTO Customer VALUES('C1234','Jamie Chake','11 Matthew Circuit, Mardi','0442221111',NULL,'jamie@hotmail.com', NULL,'M');
+INSERT INTO Customer VALUES('C1235','Amy fay','111 Sydney Rd','0412345678',NULL,'amy@gmail.com',NULL,'F');
+INSERT INTO Customer VALUES('C1236','Ryan Brax','32a Teralba Rd','0243533805',NULL,'brax93@hotmail.com',NULL,'M');
+INSERT INTO Customer VALUES('C1237','Consumer World','112/11 Westfield Avenue','0244885222','0246461121','westfield@hotmail.com','Gary foster','O');
+INSERT INTO Customer VALUES('C1238','Daniel Dots','22 Richard Avenue','0422022333',NULL,'dotsPots@gmail.com',NULL,'M');
+INSERT INTO Customer VALUES('C1239','Rachael Ally','122/12 Bagle Street','0455566622',NULL,'rachael@hotmail.com',NULL,'F');
+INSERT INTO Customer VALUES('C1220','Everything Furniture','112/11 Westfield Avenue','0244556888','0255665552','everythingFurn@customer.service.com.au','Jenny Alistair','O');
+INSERT INTO Customer VALUES('C1200','Ben Foster','22 Cresent Head','0466558555',NULL,'ben@gmail.com',NULL,'M');
+INSERT INTO Customer VALUES('C1221','Terry Foster','22 Cresent Head','0422552558',NULL,'foster@gmail.com',NULL,'M');
+INSERT INTO Customer VALUES('C1000','Stationary Central','223/2w Industry Complex Avenue','0422252255','0255555555','sc@hotmail.com','Kristy Dire','O');
+
+
+/*
+CREATE TABLE Employee
+(
+	employeeID							VARCHAR(10),
+	eName								VARCHAR(100),
+	gender									CHAR(1)								CHECK(gender IN('M', 'F', 'O')),
+	phoneNo								VARCHAR(12)						NOT NULL,
+	homeAddress						VARCHAR(100)					NOT NULL,
+	homePhone						VARCHAR(12),
+	dob										DATE									CHECK(dob BETWEEN  '1900-01-01' AND GETDATE()),
+	PRIMARY KEY(employeeID)
+);
+GO
+*/
+INSERT INTO Employee VALUES();
+
+SELECT * FROM Customer

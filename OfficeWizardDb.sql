@@ -6,6 +6,7 @@
 --Date Modified 4/4/2017
 
 --Foreign key tables:
+DROP TABLE QuoteProduct
 DROP TABLE SupplierProduct
 DROP TABLE CustOrdProduct
 DROP TABLE Payslip
@@ -118,6 +119,18 @@ CREATE TABLE Quote
 	PRIMARY KEY(quoteID),
 	FOREIGN KEY(supplierID) REFERENCES Supplier(supplierID),
 	FOREIGN KEY(employeeID) REFERENCES Employee(employeeID)	
+);
+GO
+
+CREATE TABLE QuoteProduct
+(
+	productID							VARCHAR(10),
+	quoteID								VARCHAR(10),
+	qty										INT										CHECK(qty > 0),
+	unitPrice								FLOAT,
+	FOREIGN KEY(productID) REFERENCES Product(productID),
+	FOREIGN KEY(quoteID) REFERENCES Quote(quoteID),
+	PRIMARY KEY(productID, quoteID)
 );
 GO
 

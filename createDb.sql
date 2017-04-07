@@ -236,7 +236,7 @@ GO
 CREATE TABLE Position
 (
 	positionID						VARCHAR(10),
-	positionName					VARCHAR(10)							NOT NULL,
+	positionName					VARCHAR(50)							NOT NULL,
 	hourlyRate						FLOAT										CHECK(hourlyRate > 0.00),
 	PRIMARY KEY(positionID)
 );
@@ -334,4 +334,18 @@ INSERT INTO Employee VALUES('E12346', 'Gary Thuu', 'M', '0455873332', '99/22 Ang
 INSERT INTO Employee VALUES('E12347', 'Fiona May', 'F', '0411111111', '23 Coral Rd', NULL, '1954-01-15');
 INSERT INTO Employee VALUES('E12348', 'Sandra Alli', 'F', '0488998852', '221 Cobbs Hill', '45555525', '1964-11-12');
 INSERT INTO Employee VALUES('E12349', 'Tim Flay', 'O', '0477885222', '56 Good Street', '0244552211', '1980-08-12');
+
+INSERT INTO Position VALUES('P22343', 'Salesperson', 20.00);
+INSERT INTO Position VALUES('P22311', 'Manager', 23.00);
+INSERT INTO Position VALUES('P22222', 'Store Manager', 30.00);
+INSERT INTO Position VALUES('P33223', 'Stock hand', 19.00);
+INSERT INTO Position VALUES('P33211', 'Human Resources', 19.00);
+INSERT INTO Position VALUES('P90999', 'Accountant', 21.00);
+
+INSERT INTO TaxBracket VALUES('T111111', 10000.00, 20000.00, 0.10, '2017');
+INSERT INTO TaxBracket VALUES('T222222', 20000.01, 30000.00, 0.15, '2017');
+INSERT INTO TaxBracket VALUES('T556555', 30000.01, 40000.00, 0.17, '2009');
+INSERT INTO TaxBracket VALUES('T443343', 40000.01, 50000.00, 0.20, '2017');
+INSERT INTO TaxBracket VALUES('T898889', 50000.01, 60000.00, 0.21, '2017');
+INSERT INTO TaxBracket VALUES('T444544', 60000.01, 70000.00, 0.22, '2006');
 

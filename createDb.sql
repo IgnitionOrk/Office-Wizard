@@ -268,9 +268,9 @@ GO
 CREATE TABLE AllowanceType
 (
 	allowanceTypeID			VARCHAR(10),
-	allowType						VARCHAR(50)							CHECK(allowType IN('Sales bonus')),		--Check again once assignment 1 feedback is given
+	allowType						VARCHAR(50),	
 	aDescription					VARCHAR(100),       
-	frequency						VARCHAR(10)							CHECK(frequency IN('yearly', 'monthly', 'quarterly', 'daily')),
+	frequency						VARCHAR(10)							CHECK(frequency IN('yearly', 'monthly', 'quarterly', 'weekly','daily')),
 	PRIMARY KEY(allowanceTypeID)
 );
 GO
@@ -348,4 +348,13 @@ INSERT INTO TaxBracket VALUES('T556555', 30000.01, 40000.00, 0.17, '2009');
 INSERT INTO TaxBracket VALUES('T443343', 40000.01, 50000.00, 0.20, '2017');
 INSERT INTO TaxBracket VALUES('T898889', 50000.01, 60000.00, 0.21, '2017');
 INSERT INTO TaxBracket VALUES('T444544', 60000.01, 70000.00, 0.22, '2006');
+
+INSERT INTO AllowanceType VALUES('AT7778878', 'Sales bonus', 'End of year sales bonus', 'yearly');
+INSERT INTO AllowanceType VALUES('AT7779966', 'Long service leave', '', 'quarterly');
+INSERT INTO AllowanceType VALUES('AT3778783', 'Uniform allowance', 'Uniform cost', 'monthly');
+INSERT INTO AllowanceType VALUES('AT7787987', 'Annual Leave', 'Leave', 'weekly'); 
+INSERT INTO AllowanceType VALUES('AT0970970', 'Redundancy','Payment for being made redundant', 'weekly');
+INSERT INTO AllowanceType VALUES('AT4087488', 'Disability', 'For person with a medical condition', 'daily');
+INSERT INTO AllowanceType VALUES('AT6568565', 'Shift Allowance', 'People whom work undesirable hours', 'daily');
+INSERT INTO AllowanceType VALUES('AT5865656', 'First aid allowance', 'Have medical skills', 'quarterly');
 

@@ -6,6 +6,8 @@
 --Date Modified 4/4/2017
 
 --Foreign key tables:
+DROP TABLE SupplierProduct
+DROP TABLE CustOrdProduct
 DROP TABLE Payslip
 DROP TABLE SupplierOrderProduct
 DROP TABLE ProductItem
@@ -19,6 +21,7 @@ DROP TABLE Quote
 DROP TABLE Assignment
 
 
+
 --Tables without foreign keys:
 DROP TABLE Supplier
 DROP TABLE ProductCategory
@@ -29,8 +32,9 @@ DROP TABLE AllowanceType
 DROP TABLE Allowance
 DROP TABLE TaxBracket
 
-CREATE TABLE Supplier(
-	supplierID							INT,
+CREATE TABLE Supplier
+(
+	supplierID							VARCHAR(10),
 	sName									VARCHAR(100)					NOT NULL,
 	address								VARCHAR(100)					NOT NULL,
 	phoneNo								VARCHAR(12)						NOT NULL,
@@ -40,14 +44,16 @@ CREATE TABLE Supplier(
 );
 GO
 
-CREATE TABLE ProductCategory(
+CREATE TABLE ProductCategory
+(
 	categoryID							VARCHAR(10),
 	categoryName					VARCHAR(25)						NOT NULL,
 	PRIMARY KEY(categoryID) 
 );
 GO
 
-CREATE TABLE Product(
+CREATE TABLE Product
+(
 	productID							VARCHAR(10),
 	pName								VARCHAR(50)						NOT NULL,
 	manufacturer						VARCHAR(20),
@@ -64,7 +70,17 @@ CREATE TABLE Product(
 );
 GO
 
-CREATE TABLE Employee(
+CREATE TABLE SupplierProduct
+(
+	supplierID							VARCHAR(10),
+	productID							VARCHAR(10),
+	FOREIGN KEY(supplierID) REFERENCES Supplier(supplierID),
+	FOREIGN KEY(productID) REFERENCES Product(productID)
+);
+GO
+
+CREATE TABLE Employee
+(
 	employeeID							VARCHAR(10),
 	eName								VARCHAR(100),
 	gender									CHAR(1)								CHECK(gender IN('M', 'F', 'O')),
@@ -76,7 +92,8 @@ CREATE TABLE Employee(
 );
 GO
 
-CREATE TABLE CustomerOrder(
+CREATE TABLE CustomerOrder
+(
 	custOrdID							VARCHAR(10),
 	employeeID							VARCHAR(10)						DEFAULT NULL,
 	_date									DATE									NOT NULL,								--Date is already defined as a data type. 
@@ -90,12 +107,13 @@ CREATE TABLE CustomerOrder(
 );
 GO
 
-CREATE TABLE Quote(
+CREATE TABLE Quote
+(
 	quoteID								VARCHAR(10),
 	qDate						    		DATE									NOT NULL,
 	validPeriod							DATE,
 	qDescription						VARCHAR(255)					DEFAULT NULL,
-	supplierID							INT										NOT NULL, 
+	supplierID							VARCHAR(10)						NOT NULL, 
 	employeeID							VARCHAR(10)						NOT NULL,
 	PRIMARY KEY(quoteID),
 	FOREIGN KEY(supplierID) REFERENCES Supplier(supplierID),
@@ -103,10 +121,11 @@ CREATE TABLE Quote(
 );
 GO
 
-CREATE TABLE SupplierOrder(
+CREATE TABLE SupplierOrder
+(
 	suppOrdID				    		VARCHAR(10),
 	suppOrdDate						DATE									NOT NULL, --Date in which the order was made
-	supplierID							INT										NOT NULL,
+	supplierID							VARCHAR(10)						NOT NULL,
 	suppOrdDescription			VARCHAR(255)					DEFAULT NULL,
 	quoteID								VARCHAR(10)						NOT NULL,
 	totalAmount						FLOAT									CHECK(totalAmount > 0),
@@ -118,7 +137,8 @@ CREATE TABLE SupplierOrder(
 );
 GO
 
-CREATE TABLE ProductItem(
+CREATE TABLE ProductItem
+(
 	itemNo								VARCHAR(10),
 	productID							VARCHAR(10)						NOT NULL,
 	suppOrdID							VARCHAR(10)						NOT NULL,
@@ -133,16 +153,20 @@ CREATE TABLE ProductItem(
 );
 GO
 
-CREATE TABLE SupplierOrderProduct(
+CREATE TABLE SupplierOrderProduct
+(
 	suppOrdID							VARCHAR(10)						NOT NULL,
 	productID							VARCHAR(10)						NOT NULL,
+	unitPurchasePrice				FLOAT,
 	qty										INT,
 	FOREIGN KEY(suppOrdID) REFERENCES SupplierOrder(suppOrdID),
 	FOREIGN KEY(productID) REFERENCES Product(productID)
 );
 GO
 
-CREATE TABLE Customer(
+
+CREATE TABLE Customer
+(
 	customerID							VARCHAR(10),
 	cName									VARCHAR(100)					NOT NULL,
 	address								VARCHAR(100)					NOT NULL,
@@ -155,7 +179,20 @@ CREATE TABLE Customer(
 );
 GO
 
-CREATE TABLE Delivery(
+CREATE TABLE CustOrdProduct
+(
+	custOrdID							VARCHAR(10),
+	productID							VARCHAR(10),
+	qty										INT										CHECK(qty > 0),
+	unitPurchasePrice				FLOAT,
+	subtotal								FLOAT,
+	FOREIGN KEY(custOrdID) REFERENCES CustomerOrder(custOrdID),
+	FOREIGN KEY(productID) REFERENCES Product(productID)
+);
+GO
+
+CREATE TABLE Delivery
+(
 	custOrdID							VARCHAR(10),
 	delAddress							VARCHAR(100)					NOT NULL,
 	delCharge							FLOAT									CHECK(delCharge >= 0.00),
@@ -164,14 +201,16 @@ CREATE TABLE Delivery(
 );
 GO
 
-CREATE TABLE Pickup(
+CREATE TABLE Pickup
+(
 	custOrdID	    					VARCHAR(10),
 	pickupDateTime	    			DATETIME							NOT NULL,
 	FOREIGN KEY(custOrdID) REFERENCES CustomerOrder(custOrdID)
 );
 GO
 
-CREATE TABLE Payment(
+CREATE TABLE Payment
+(
 	paymentRefNo		    		VARCHAR(10),
 	paymentDate			    		DATE									NOT NULL,
 	custOrdID							VARCHAR(10)						NOT NULL,
@@ -183,7 +222,8 @@ CREATE TABLE Payment(
 );
 GO
 
-CREATE TABLE Position(
+CREATE TABLE Position
+(
 	positionID						VARCHAR(10),
 	positionName					VARCHAR(10)							NOT NULL,
 	hourlyRate						FLOAT										CHECK(hourlyRate > 0.00),
@@ -191,7 +231,8 @@ CREATE TABLE Position(
 );
 GO
 
-CREATE TABLE Assignment(
+CREATE TABLE Assignment
+(
 	assignmentID					VARCHAR(10),
 	employeeID						VARCHAR(10)							NOT NULL,
 	positionID						VARCHAR(10)							NOT NULL,
@@ -205,7 +246,8 @@ GO
 
 
 -- added from feedback
-CREATE TABLE Allowance (
+CREATE TABLE Allowance 
+(
 	allowanceID					VARCHAR(10),
 	amount							FLOAT,
 	description						VARCHAR(100),
@@ -213,7 +255,8 @@ CREATE TABLE Allowance (
 );
 GO
 
-CREATE TABLE AllowanceType(
+CREATE TABLE AllowanceType
+(
 	allowanceTypeID			VARCHAR(10),
 	allowType						VARCHAR(50)							CHECK(allowType IN('Sales bonus')),		--Check again once assignment 1 feedback is given
 	aDescription					VARCHAR(100),       
@@ -222,7 +265,8 @@ CREATE TABLE AllowanceType(
 );
 GO
 
-CREATE TABLE TaxBracket(
+CREATE TABLE TaxBracket
+(
 	taxBracketID					VARCHAR(10),
 	startAmount					FLOAT										CHECK(startAmount > 0),
 	endAmount						FLOAT,
@@ -232,7 +276,8 @@ CREATE TABLE TaxBracket(
 );
 GO
 
-CREATE TABLE Payslip(
+CREATE TABLE Payslip
+(
 	payslipID							VARCHAR(10),
 	employeeID						VARCHAR(10)						NOT NULL,
 	startDate							DATE,

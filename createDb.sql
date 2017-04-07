@@ -329,21 +329,9 @@ INSERT INTO Customer VALUES('C1200','Ben Foster','22 Cresent Head','0466558555',
 INSERT INTO Customer VALUES('C1221','Terry Foster','22 Cresent Head','0422552558',NULL,'foster@gmail.com',NULL,'M');
 INSERT INTO Customer VALUES('C1000','Stationary Central','223/2w Industry Complex Avenue','0422252255','0255555555','sc@hotmail.com','Kristy Dire','O');
 
+INSERT INTO Employee VALUES('E12345', 'Mohammad Isla', 'M', '0455566898', '34 Ballet Street', NULL, '1990-01-01');
+INSERT INTO Employee VALUES('E12346', 'Gary Thuu', 'M', '0455873332', '99/22 Angel Bay', NULL, '1984-05-02');
+INSERT INTO Employee VALUES('E12347', 'Fiona May', 'F', '0411111111', '23 Coral Rd', NULL, '1954-01-15');
+INSERT INTO Employee VALUES('E12348', 'Sandra Alli', 'F', '0488998852', '221 Cobbs Hill', '45555525', '1964-11-12');
+INSERT INTO Employee VALUES('E12349', 'Tim Flay', 'O', '0477885222', '56 Good Street', '0244552211', '1980-08-12');
 
-/*
-CREATE TABLE Employee
-(
-	employeeID							VARCHAR(10),
-	eName								VARCHAR(100),
-	gender									CHAR(1)								CHECK(gender IN('M', 'F', 'O')),
-	phoneNo								VARCHAR(12)						NOT NULL,
-	homeAddress						VARCHAR(100)					NOT NULL,
-	homePhone						VARCHAR(12),
-	dob										DATE									CHECK(dob BETWEEN  '1900-01-01' AND GETDATE()),
-	PRIMARY KEY(employeeID)
-);
-GO
-*/
-INSERT INTO Employee VALUES();
-
-SELECT * FROM Customer

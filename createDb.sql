@@ -1,10 +1,9 @@
 --Created by: 
 	--  Ryan Cunneen  :(c3179234)
 	--  Micay Conway  :(c3232648)
-	--  Jamie Sy	 	  :(c3207040)
+	--  Jamie Sy	 	      :(c3207040)
 --Date Created 4/4/2017
---Date Modified 4/4/2017
-
+--Date Modified 7/4/2017
 --Foreign key tables:
 DROP TABLE QuoteProduct
 DROP TABLE SupplierProduct

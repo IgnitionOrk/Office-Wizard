@@ -2,8 +2,8 @@
 	--  Ryan Cunneen  :(c3179234)
 	--  Micay Conway  :(c3232648)
 	--  Jamie Sy	 	      :(c3207040)
---Date Created 4/4/2017
---Date Modified 7/4/2017
+--Date Created  4-Apr-2017
+--Date Modified 11-Apr-2017
 --Foreign key tables:
 DROP TABLE EmployeeAllowanceType
 DROP TABLE Allowance

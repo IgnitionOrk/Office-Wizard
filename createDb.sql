@@ -59,7 +59,7 @@ CREATE TABLE Product
 	categoryID							VARCHAR(10)						NOT NULL,
 	pDescription						VARCHAR(255),
 	qtyDescription					VARCHAR(100),
-	unitPrice								FLOAT									CHECK(unitPrice < 0.00), -- Office Wizard could be giving them away for free. 
+	unitPrice								FLOAT									CHECK(NOT unitPrice < 0.00), -- Office Wizard could be giving them away for free. 
 	pStatus								VARCHAR(10)						CHECK(pStatus IN('Available', 'Out of stock')),
 	availQty								INT										CHECK(availQty >= 0)		DEFAULT 0,
 	reorderLevel						INT										CHECK(reorderLevel > 0),
@@ -384,3 +384,23 @@ INSERT INTO AllowanceType VALUES('AT4087488', 'Disability', 'For person with a m
 INSERT INTO AllowanceType VALUES('AT6568565', 'Shift Allowance', 'People whom work undesirable hours', 'daily');
 INSERT INTO AllowanceType VALUES('AT5865656', 'First aid allowance', 'Have medical skills', 'quarterly');
 INSERT INTO AllowanceType VALUES('AT9869869', 'Maternity leave', '3 months leave', 'When needed');
+
+/*
+productID							VARCHAR(10),
+	pName								VARCHAR(50)						NOT NULL,
+	manufacturer						VARCHAR(20),
+	categoryID							VARCHAR(10)						NOT NULL,
+	pDescription						VARCHAR(255),
+	qtyDescription					VARCHAR(100),
+	unitPrice								FLOAT									CHECK(unitPrice < 0.00), -- Office Wizard could be giving them away for free. 
+	pStatus								VARCHAR(10)						CHECK(pStatus IN('Available', 'Out of stock')),
+	availQty								INT										CHECK(availQty >= 0)		DEFAULT 0,
+	reorderLevel						INT										CHECK(reorderLevel > 0),
+	maxDiscount						FLOAT									CHECK(maxDiscount >= 0.00),
+	PRIMARY KEY(productID),
+	FOREIGN KEY(categoryID) REFERENCES ProductCategory(categoryID) ON DELETE CASCADE
+*/
+
+INSERT INTO Product VALUES('P1234', 'Silly pen','Australian Pen','PC12345674','Colour pens','Half dozen of pens',1.95,'Available',23,5, 0.50);
+INSERT INTO Product VALUES('P1235', 'Silly pen','Australian Pen','PC12345674','Colour pens','Half dozen of pens',1.95,'Available',23,5, 0.50);
+INSERT INTO Product VALUES('P1236', 'Silly pen','Australian Pen','PC12345674','Colour pens','Half dozen of pens',1.95,'Available',23,5, 0.50);

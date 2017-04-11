@@ -33,37 +33,37 @@ DROP TABLE TaxBracket
 
 CREATE TABLE Supplier
 (
-	supplierID							VARCHAR(10),
-	sName									VARCHAR(100)					NOT NULL,
-	address								VARCHAR(100)					NOT NULL,
-	phoneNo								VARCHAR(12)						NOT NULL,
-	faxNo									VARCHAR(12)						DEFAULT NULL,
-	contactPerson					VARCHAR(50)						DEFAULT NULL,
+	supplierID	VARCHAR(10),
+	sName VARCHAR(100) NOT NULL,
+	address VARCHAR(100) NOT NULL,
+	phoneNo	VARCHAR(12)	NOT NULL,
+	faxNo VARCHAR(12) DEFAULT NULL,
+	contactPerson VARCHAR(50) DEFAULT NULL,
 	PRIMARY KEY(supplierID)
 );
 GO
 
 CREATE TABLE ProductCategory
 (
-	categoryID							VARCHAR(10),
-	categoryName					VARCHAR(25)						NOT NULL,
+	categoryID VARCHAR(10),
+	categoryName VARCHAR(25) NOT NULL,
 	PRIMARY KEY(categoryID) 
 );
 GO
 
 CREATE TABLE Product
 (
-	productID							VARCHAR(10),
-	pName								VARCHAR(50)						NOT NULL,
-	manufacturer						VARCHAR(20),
-	categoryID							VARCHAR(10)						NOT NULL,
-	pDescription						VARCHAR(255),
-	qtyDescription					VARCHAR(100),
-	unitPrice								FLOAT									CHECK(NOT unitPrice < 0.00), -- Office Wizard could be giving them away for free. 
-	pStatus								VARCHAR(10)						CHECK(pStatus IN('Available', 'Out of stock')),
-	availQty								INT										CHECK(availQty >= 0)		DEFAULT 0,
-	reorderLevel						INT										CHECK(reorderLevel > 0),
-	maxDiscount						FLOAT									CHECK(maxDiscount >= 0.00),
+	productID VARCHAR(10),
+	pName VARCHAR(50) NOT NULL,
+	manufacturer VARCHAR(100),
+	categoryID VARCHAR(10) NOT NULL,
+	pDescription VARCHAR(255),
+	qtyDescription VARCHAR(100),
+	unitPrice FLOAT	NOT NULL CHECK(NOT unitPrice < 0.00), -- Office Wizard could be giving them away for free. 
+	pStatus VARCHAR(20)	NOT NULL CHECK(pStatus IN('Available', 'Out of stock')),
+	availQty INT NOT NULL CHECK(availQty >= 0) DEFAULT 0,
+	reorderLevel INT NOT NULL CHECK(reorderLevel > 0),
+	maxDiscount FLOAT CHECK(maxDiscount >= 0.00),
 	PRIMARY KEY(productID),
 	FOREIGN KEY(categoryID) REFERENCES ProductCategory(categoryID) ON DELETE CASCADE
 );
@@ -71,8 +71,8 @@ GO
 
 CREATE TABLE SupplierProduct
 (
-	supplierID							VARCHAR(10)						NOT NULL,
-	productID							VARCHAR(10)						NOT NULL,
+	supplierID VARCHAR(10) NOT NULL,
+	productID VARCHAR(10) NOT NULL,
 	FOREIGN KEY(supplierID) REFERENCES Supplier(supplierID) ON DELETE CASCADE,
 	FOREIGN KEY(productID) REFERENCES Product(productID) ON DELETE CASCADE
 );
@@ -80,13 +80,13 @@ GO
 
 CREATE TABLE Employee
 (
-	employeeID							VARCHAR(10),
-	eName								VARCHAR(100)					NOT NULL,
-	gender									CHAR(1)								CHECK(gender IN('M', 'F', 'O')),
-	phoneNo								VARCHAR(12)						NOT NULL,
-	homeAddress						VARCHAR(100)					NOT NULL,
-	homePhone						VARCHAR(12),
-	DOB										DATE									CHECK(DOB BETWEEN  '1900-01-01' AND GETDATE()),
+	employeeID VARCHAR(10),
+	eName VARCHAR(100) NOT NULL,
+	gender	 CHAR(1)	CHECK(gender IN('M', 'F', 'O')),
+	phoneNo VARCHAR(12)	NOT NULL,
+	homeAddress	VARCHAR(100) NOT NULL,
+	homePhone VARCHAR(12),
+	DOB DATE CHECK(DOB BETWEEN  '1900-01-01' AND GETDATE()),
 	PRIMARY KEY(employeeID)
 );
 GO
@@ -94,12 +94,12 @@ GO
 
 CREATE TABLE Quote
 (
-	quoteID								VARCHAR(10),
-	qDate						    		DATE									NOT NULL,
-	validPeriod							DATE,
-	qDescription						VARCHAR(255)					DEFAULT NULL,
-	supplierID							VARCHAR(10)						NOT NULL, 
-	employeeID							VARCHAR(10)						NOT NULL,
+	quoteID VARCHAR(10),
+	qDate DATE NOT NULL,
+	validPeriod DATE,
+	qDescription VARCHAR(255) DEFAULT NULL,
+	supplierID VARCHAR(10) NOT NULL, 
+	employeeID	 VARCHAR(10) NOT NULL,
 	PRIMARY KEY(quoteID),
 	FOREIGN KEY(supplierID) REFERENCES Supplier(supplierID) ON DELETE NO ACTION,
 	FOREIGN KEY(employeeID) REFERENCES Employee(employeeID) ON DELETE NO ACTION	
@@ -108,10 +108,10 @@ GO
 
 CREATE TABLE QuoteProduct
 (
-	productID							VARCHAR(10),
-	quoteID								VARCHAR(10),
-	qty										INT										CHECK(qty > 0),
-	unitPrice								FLOAT,
+	productID VARCHAR(10),
+	quoteID VARCHAR(10),
+	qty INT CHECK(qty > 0),
+	unitPrice FLOAT,
 	FOREIGN KEY(productID) REFERENCES Product(productID),
 	FOREIGN KEY(quoteID) REFERENCES Quote(quoteID),
 	PRIMARY KEY(productID, quoteID)
@@ -120,13 +120,13 @@ GO
 
 CREATE TABLE SupplierOrder
 (
-	suppOrdID				    		VARCHAR(10),
-	suppOrdDate						DATE									NOT NULL, 
-	suppOrdDescription			VARCHAR(255)					DEFAULT NULL,
-	quoteID								VARCHAR(10)						NOT NULL,
-	totalAmount						FLOAT									CHECK(totalAmount >= 0),
-	suppOrdStatus					VARCHAR(10)						CHECK(suppOrdStatus  IN ('Processing','Delivered','Cancelled','Awaiting Payment','Completed')),
-	suppOrdRcvDate				DATE									NOT NULL,
+	suppOrdID VARCHAR(10),
+	suppOrdDate DATE NOT NULL, 
+	suppOrdDescription VARCHAR(255) DEFAULT NULL,
+	quoteID VARCHAR(10) NOT NULL,
+	totalAmount FLOAT CHECK(totalAmount >= 0),
+	suppOrdStatus VARCHAR(10) CHECK(suppOrdStatus  IN ('Processing','Delivered','Cancelled','Awaiting Payment','Completed')),
+	suppOrdRcvDate DATE NOT NULL,
 	PRIMARY KEY(suppOrdID),
 	FOREIGN KEY(quoteID) REFERENCES Quote(quoteID) ON DELETE NO ACTION
 );
@@ -135,10 +135,10 @@ GO
 
 CREATE TABLE SupplierOrderProduct
 (
-	suppOrdID							VARCHAR(10)						NOT NULL,
-	productID							VARCHAR(10)						NOT NULL,
-	unitPurchasePrice				FLOAT,
-	qty										INT,
+	suppOrdID VARCHAR(10) NOT NULL,
+	productID VARCHAR(10) NOT NULL,
+	unitPurchasePrice FLOAT,
+	qty INT,
 	FOREIGN KEY(suppOrdID) REFERENCES SupplierOrder(suppOrdID) ON DELETE CASCADE,
 	FOREIGN KEY(productID) REFERENCES Product(productID) ON DELETE NO ACTION,
 	PRIMARY KEY(suppOrdID, productID)
@@ -148,29 +148,29 @@ GO
 
 CREATE TABLE Customer
 (
-	customerID							VARCHAR(10),
-	cName									VARCHAR(100)					NOT NULL,
-	address								VARCHAR(100),
-	phoneNo								VARCHAR(12),
-	faxNo									VARCHAR(12)						DEFAULT NULL,
-	email									VARCHAR(100),
-	contactPerson   					VARCHAR(100)					DEFAULT NULL,		--Only provide if the customer is a company
-	gender									CHAR(1)								CHECK(gender IN('M', 'F', 'O')),
+	customerID	VARCHAR(10),
+	cName	 VARCHAR(100) NOT NULL,
+	address VARCHAR(100),
+	phoneNo VARCHAR(12),
+	faxNo VARCHAR(12) DEFAULT NULL,
+	email VARCHAR(100),
+	contactPerson VARCHAR(100) DEFAULT NULL,		--Only provide if the customer is a company
+	gender	 CHAR(1)	CHECK(gender IN('M', 'F', 'O')),
 	PRIMARY KEY(customerID)
 );
 GO
 
 CREATE TABLE CustomerOrder
 (
-	custOrdID							VARCHAR(10),
-	employeeID							VARCHAR(10)						DEFAULT NULL,						--Null because order may have been online. 
-	customerID							VARCHAR(10),
-	orderDate							DATE									NOT NULL,					
-	discountGiven						FLOAT									DEFAULT NULL, 
-	amountDue							FLOAT,
-	amountPaid						FLOAT, 
-	custOrdStatus						VARCHAR(10)						CHECK(custOrdStatus IN ('Processing','Delivered','Cancelled','Awaiting Payment','Completed')),
-	modeOfSale						VARCHAR(10)						CHECK(modeOfSale IN ('Online','In Store','Phone')),
+	custOrdID VARCHAR(10),
+	employeeID	 VARCHAR(10) DEFAULT NULL,						--Null because order may have been online. 
+	customerID VARCHAR(10),
+	orderDate DATE	NOT NULL,					
+	discountGiven FLOAT DEFAULT NULL, 
+	amountDue	 FLOAT,
+	amountPaid FLOAT, 
+	custOrdStatus VARCHAR(10) CHECK(custOrdStatus IN ('Processing','Delivered','Cancelled','Awaiting Payment','Completed')),
+	modeOfSale VARCHAR(10) CHECK(modeOfSale IN ('Online','In Store','Phone')),
 	PRIMARY KEY(custOrdID),
 	FOREIGN KEY(employeeID) REFERENCES Employee(employeeID) ON DELETE NO ACTION,
 	FOREIGN KEY(customerID) REFERENCES Customer(customerID) ON DELETE NO ACTION
@@ -179,13 +179,13 @@ GO
 
 CREATE TABLE ProductItem
 (
-	itemNo								VARCHAR(10),
-	productID							VARCHAR(10)						NOT NULL,
-	suppOrdID							VARCHAR(10)						NOT NULL,
-	costPrice								FLOAT									CHECK(costPrice > 0), 
-	sellingPrice							FLOAT									CHECK(sellingPrice > 0),
-	custOrdID							VARCHAR(10)						NOT NULL,
-	status									VARCHAR(10)						CHECK(status IN('in-stock', 'sold', 'lost')),
+	itemNo VARCHAR(10),
+	productID VARCHAR(10) NOT NULL,
+	suppOrdID VARCHAR(10) NOT NULL,
+	costPrice FLOAT CHECK(costPrice > 0), 
+	sellingPrice FLOAT CHECK(sellingPrice > 0),
+	custOrdID VARCHAR(10) NOT NULL,
+	status VARCHAR(10) CHECK(status IN('in-stock', 'sold', 'lost')),
 	PRIMARY KEY(itemNo),
 	FOREIGN KEY(productID) REFERENCES Product(productID) ON DELETE CASCADE,
 	FOREIGN KEY(suppOrdID) REFERENCES SupplierOrder(suppOrdID) ON DELETE CASCADE,
@@ -195,11 +195,11 @@ GO
 
 CREATE TABLE CustOrdProduct
 (
-	custOrdID							VARCHAR(10),
-	productID							VARCHAR(10),
-	qty										INT										CHECK(qty > 0),
-	unitPurchasePrice				FLOAT,
-	subtotal								FLOAT,
+	custOrdID VARCHAR(10),
+	productID VARCHAR(10),
+	qty INT CHECK(qty > 0),
+	unitPurchasePrice FLOAT,
+	subtotal FLOAT,
 	FOREIGN KEY(custOrdID) REFERENCES CustomerOrder(custOrdID),
 	FOREIGN KEY(productID) REFERENCES Product(productID),
 	PRIMARY KEY(custOrdID, productID)
@@ -208,28 +208,28 @@ GO
 
 CREATE TABLE Delivery
 (
-	custOrdID							VARCHAR(10)						NOT NULL,
-	delAddress							VARCHAR(100)					NOT NULL,
-	delCharge							FLOAT									CHECK(delCharge >= 0.00),
-	delDateTime						DATETIME							NOT NULL,
+	custOrdID VARCHAR(10) NOT NULL,
+	delAddress VARCHAR(100) NOT NULL,
+	delCharge FLOAT CHECK(delCharge >= 0.00),
+	delDateTime DATETIME	 NOT NULL,
 	FOREIGN KEY(custOrdID) REFERENCES CustomerOrder(custOrdID) ON DELETE CASCADE
 );
 GO
 
 CREATE TABLE Pickup
 (
-	custOrdID	    					VARCHAR(10)						NOT NULL,
-	pickupDateTime	    			DATETIME							NOT NULL,
+	custOrdID VARCHAR(10) NOT NULL,
+	pickupDateTime DATETIME NOT NULL,
 	FOREIGN KEY(custOrdID) REFERENCES CustomerOrder(custOrdID) ON DELETE CASCADE
 );
 GO
 
 CREATE TABLE Payment
 (
-	paymentRefNo		    		VARCHAR(10),
-	paymentDate			    		DATE									NOT NULL,
-	custOrdID							VARCHAR(10)	,
-	suppOrdID							VARCHAR(10)	,
+	paymentRefNo VARCHAR(10),
+	paymentDate DATE NOT NULL,
+	custOrdID VARCHAR(10),
+	suppOrdID VARCHAR(10)	,
 	PRIMARY KEY(paymentRefNo),
 	FOREIGN KEY(custOrdID) REFERENCES CustomerOrder(custOrdID) ON DELETE NO ACTION,
 	FOREIGN KEY(suppOrdID) REFERENCES SupplierOrder(suppOrdID) ON DELETE NO ACTION
@@ -239,20 +239,20 @@ GO
 
 CREATE TABLE Position
 (
-	positionID						VARCHAR(10),
-	positionName					VARCHAR(50)							NOT NULL,
-	hourlyRate						FLOAT										CHECK(hourlyRate >= 0.00),
+	positionID VARCHAR(10),
+	positionName VARCHAR(50) NOT NULL,
+	hourlyRate FLOAT CHECK(hourlyRate >= 0.00),
 	PRIMARY KEY(positionID)
 );
 GO
 
 CREATE TABLE Assignment
 (
-	assignmentID					VARCHAR(10),
-	employeeID						VARCHAR(10),
-	positionID						VARCHAR(10),
-	startDate							DATE										NOT NULL,
-	finishDate						DATE										DEFAULT NULL,
+	assignmentID VARCHAR(10),
+	employeeID VARCHAR(10),
+	positionID VARCHAR(10),
+	startDate	 DATE NOT NULL,
+	finishDate DATE DEFAULT NULL,
 	PRIMARY KEY(assignmentID, employeeID, positionID),
 	FOREIGN KEY(employeeID) REFERENCES Employee(employeeID) ON DELETE NO ACTION,
 	FOREIGN KEY(positionID) REFERENCES Position(positionID) ON DELETE NO ACTION
@@ -262,10 +262,10 @@ GO
 
 CREATE TABLE AllowanceType
 (
-	allowanceTypeID			VARCHAR(10),	
-	allowType						VARCHAR(50),	
-	aTDescription					VARCHAR(100),       
-	frequency						VARCHAR(20)							CHECK(frequency IN('Yearly', 'Monthly', 'Quarterly', 'Weekly','Daily', 'When needed')),
+	allowanceTypeID VARCHAR(10),	
+	allowType VARCHAR(50),	
+	aTDescription VARCHAR(100),       
+	frequency VARCHAR(20) CHECK(frequency IN('Yearly', 'Monthly', 'Quarterly', 'Weekly','Daily', 'When needed')),
 	PRIMARY KEY(allowanceTypeID)
 );
 GO
@@ -273,27 +273,27 @@ GO
 
 CREATE TABLE TaxBracket
 (
-	taxBracketID					VARCHAR(10),
-	startAmount					FLOAT										CHECK(startAmount >= 0),
-	endAmount						FLOAT										CHECK(endAmount > 0),
-	taxRate							FLOAT,
-	effectiveYear					CHAR(4),
+	taxBracketID VARCHAR(10),
+	startAmount FLOAT CHECK(startAmount >= 0),
+	endAmount FLOAT CHECK(endAmount > 0),
+	taxRate FLOAT,
+	effectiveYear CHAR(4),
 	PRIMARY KEY(taxBracketID)
 );
 GO
 
 CREATE TABLE Payslip
 (
-	payslipID							VARCHAR(10),
-	employeeID						VARCHAR(10)						NOT NULL,
-	taxBracketID					VARCHAR(10)						NOT NULL,
-	startDate							DATE									NOT NULL,
-	endDate							DATE									NOT NULL,
-	workedHours			    	FLOAT									CHECK(workedHours >= 0),
-	hourlyRate						FLOAT									CHECK(hourlyRate >= 0.00),
-	basePay							FLOAT,
-	taxableIncome				FLOAT,
-	netPay								FLOAT,
+	payslipID VARCHAR(10),
+	employeeID VARCHAR(10) NOT NULL,
+	taxBracketID VARCHAR(10) NOT NULL,
+	startDate DATE NOT NULL,
+	endDate DATE NOT NULL,
+	workedHours FLOAT CHECK(workedHours >= 0),
+	hourlyRate FLOAT CHECK(hourlyRate >= 0.00),
+	basePay FLOAT,
+	taxableIncome FLOAT,
+	netPay FLOAT,
 	PRIMARY KEY(payslipID),
 	FOREIGN KEY(employeeID) REFERENCES Employee(employeeID) ON DELETE NO ACTION,
 	FOREIGN KEY(taxBracketID) REFERENCES TaxBracket(taxBracketID) ON DELETE NO ACTION
@@ -302,11 +302,11 @@ GO
 
 CREATE TABLE Allowance 
 (
-	allowanceID					VARCHAR(10),
-	payslipID							VARCHAR(10)					NOT NULL,
-	allowanceTypeID			VARCHAR(10)					NOT NULL,
-	amount							FLOAT,
-	allowDescription				VARCHAR(100),
+	allowanceID VARCHAR(10),
+	payslipID VARCHAR(10) NOT NULL,
+	allowanceTypeID VARCHAR(10) NOT NULL,
+	amount FLOAT,
+	allowDescription VARCHAR(100),
 	FOREIGN KEY(payslipID) REFERENCES Payslip(payslipID) ON DELETE CASCADE,
 	FOREIGN KEY(allowanceTypeID) REFERENCES AllowanceType(allowanceTypeID) ON DELETE NO ACTION,
 	PRIMARY KEY(allowanceID)
@@ -315,12 +315,21 @@ GO
 
 CREATE TABLE EmployeeAllowanceType
 (
-	employeeID						VARCHAR(10)					NOT NULL,
-	allowanceTypeID			VARCHAR(10)					NOT NULL,
+	employeeID VARCHAR(10) NOT NULL,
+	allowanceTypeID VARCHAR(10) NOT NULL,
 	FOREIGN KEY(employeeID) REFERENCES Employee(employeeID) ON DELETE CASCADE ,
 	FOREIGN KEY(allowanceTypeID) REFERENCES  AllowanceType(allowanceTypeID) ON DELETE CASCADE
 );
 GO
+
+
+-- DATA
+--Created by: 
+	--  Ryan Cunneen  :(c3179234)
+	--  Micay Conway  :(c3232648)
+	--  Jamie Sy	 	      :(c3207040)
+--Date Created  4-Apr-2017
+--Date Modified 11-Apr-2017
 
 INSERT INTO Supplier VALUES('S111111111', 'World of Pens', '121 Industrial Rd', '123456789012', '1234-1234-12', 'Mary Jane');
 INSERT INTO Supplier VALUES('S222222222', 'Chair R Us', '11 Matthew Avenue',  '210987654321',  '12-4321-4321', 'Bob Walts');
@@ -385,22 +394,28 @@ INSERT INTO AllowanceType VALUES('AT6568565', 'Shift Allowance', 'People whom wo
 INSERT INTO AllowanceType VALUES('AT5865656', 'First aid allowance', 'Have medical skills', 'quarterly');
 INSERT INTO AllowanceType VALUES('AT9869869', 'Maternity leave', '3 months leave', 'When needed');
 
-/*
-productID							VARCHAR(10),
-	pName								VARCHAR(50)						NOT NULL,
-	manufacturer						VARCHAR(20),
-	categoryID							VARCHAR(10)						NOT NULL,
-	pDescription						VARCHAR(255),
-	qtyDescription					VARCHAR(100),
-	unitPrice								FLOAT									CHECK(unitPrice < 0.00), -- Office Wizard could be giving them away for free. 
-	pStatus								VARCHAR(10)						CHECK(pStatus IN('Available', 'Out of stock')),
-	availQty								INT										CHECK(availQty >= 0)		DEFAULT 0,
-	reorderLevel						INT										CHECK(reorderLevel > 0),
-	maxDiscount						FLOAT									CHECK(maxDiscount >= 0.00),
-	PRIMARY KEY(productID),
-	FOREIGN KEY(categoryID) REFERENCES ProductCategory(categoryID) ON DELETE CASCADE
-*/
-
-INSERT INTO Product VALUES('P1234', 'Silly pen','Australian Pen','PC12345674','Colour pens','Half dozen of pens',1.95,'Available',23,5, 0.50);
-INSERT INTO Product VALUES('P1235', 'Silly pen','Australian Pen','PC12345674','Colour pens','Half dozen of pens',1.95,'Available',23,5, 0.50);
-INSERT INTO Product VALUES('P1236', 'Silly pen','Australian Pen','PC12345674','Colour pens','Half dozen of pens',1.95,'Available',23,5, 0.50);
+-- Category: Stationary
+INSERT INTO Product VALUES('P1234', 'Silly pens','All things stationary','PC12345674','Colour pens','Half dozen of pens',1.95,'Available',23,5, 0.50);
+INSERT INTO Product VALUES('P1223', 'Ruler', 'All things stationary','PC12345674','Measurement tool','Single ruler',0.50,'Out of stock',0,10, 0.15);
+INSERT INTO Product VALUES('P1254', 'Sticky Sticky Glue stick','All things stationary','PC12345674','Binding product','3 pack of glue stick', 1.00,'Available',20,10, 0.10);
+INSERT INTO Product VALUES('P2112', 'Writing Pens','All things stationary','PC12345674','Everyday pens','Half dozen of pens',1.95,'Available',14,5, 0.10);
+-- Category: Storage
+INSERT INTO Product VALUES('P9084', 'Your safe, all safe','Storage mania','PC12345673','Protective storage','Single safe',100.00,'Available',5,2, 0.10);
+INSERT INTO Product VALUES('P4378', 'Book shelf','Storage mania','PC12345673',NULL,'Half dozen of pens',50.00,'Available',5, 4, 0.20);
+INSERT INTO Product VALUES('P3911', 'Office desk','Storage mania','PC12345673', NULL,'Single desk',50.00,'Out of stock',0 ,5, 0.20);
+INSERT INTO Product VALUES('P1232', 'File Cabinet', 'Storage mania','PC12345673','Storage for important documents','Single cabinet',30.50,'Available',15,5, 0.05);
+-- Category: Electronic
+INSERT INTO Product VALUES('P0000', 'Stereo Magic','Electronic Experts','PC12345675','Sound system','Single sound system',215.95,'Available',10, 5, 0.20);
+INSERT INTO Product VALUES('P5645', 'Gaming Monitor','Electronic Experts','PC12345675','Computer monitor','Single monitor',315.35,'Out of stock',0,5, 0.15);
+INSERT INTO Product VALUES('P8988', 'Power board','Electronic Experts','PC12345675',NULL,'Single power board',21.15,'Available',6,5, 0.10);
+INSERT INTO Product VALUES('P9999', 'Amazing Sound','Electronic Experts','PC12345675','Sound system','Single sound system',230.95,'Available',7,3, 0.27);
+-- Category: Book
+INSERT INTO Product VALUES('P4565', 'Kids programming','All things Education','PC12345676','Programming textbook','Single textbook',27.95,'Available',23,5, 0.50);
+INSERT INTO Product VALUES('P7895', 'Programming for dummies','All things Education','PC12345676','Programming textbook','Single textbook',21.50,'Available',10,8, 0.50);
+INSERT INTO Product VALUES('P9885', 'Artbook','Art central','PC12345676','Picture book of art','Single book',15.95,'Out of stock',20,10, 0.05);
+INSERT INTO Product VALUES('P0022', 'Mathematics','All things Education','PC12345676','Mathematics textbook','Single textbook',18.75,'Available',25,3, 0.75);
+-- Category: Furniture
+INSERT INTO Product VALUES('P1211', 'Office Desk','Furniture experts','PC12345671','Office Desk','Single desk',80.00,'Available',6,3, 0.50);
+INSERT INTO Product VALUES('P1235', 'Solid chair','Furniture experts','PC12345671','Desk chair','Single chair',30.00,'Available',10, 2, 0.10);
+INSERT INTO Product VALUES('P3265', 'Kids chair','Furniture experts','PC12345671','Child office chair','Single chair',35.75,'Out of stock',0,10, 0.23);
+INSERT INTO Product VALUES('P4566', 'Kids desk','Furniture experts','PC12345671','Child office desk','Single desk',47.95,'Available',2,5, 0.10);

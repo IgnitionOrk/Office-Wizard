@@ -327,6 +327,11 @@ INSERT INTO Supplier VALUES('S222222222', 'Chair R Us', '11 Matthew Avenue',  '2
 INSERT INTO Supplier VALUES('S333333333', 'Paper Industries', '124/34 Cresent Head', '1234567192', '000-0000-00', 'Gary Mancolo');
 INSERT INTO Supplier VALUES('S444444444', 'Furniture galore', '123/34 Cresent Head',  '1111111111', NULL , 'Ryan Sallvitore');
 INSERT INTO Supplier VALUES('S555555555', 'Your Stock', '11 Matthew Avenue',  '0407022211', NULL , 'Sasha');
+INSERT INTO Supplier VALUES('S666666666', 'Family fun', '332/22 Bay Rd', '02445568886', NULL, 'Barry');
+INSERT INTO Supplier VALUES('S777777777', 'Stationary Centre', '23a Peak Hills', '0243588552', '12-4455-3322', 'Mary Sue');
+INSERT INTO Supplier VALUES('S888888888', 'Electronic Planet', '1 First Avenue', '0455568886', '12-6662-1144', 'Jamie Gallagher');
+INSERT INTO Supplier VALUES('S999999999', 'Machines', '889 Lovett Cresent', '6155225556', NULL, 'Henry');
+INSERT INTO Supplier VALUES('S000000000', 'Everything Furniture', '1/22 Anzac Close', '6155998765', NULL, 'Arthur Curry');
 
 INSERT INTO ProductCategory VALUES('PC12345671', 'Furniture');
 INSERT INTO ProductCategory VALUES('PC12345673', 'Storage');
@@ -350,6 +355,11 @@ INSERT INTO Employee VALUES('E12346', 'Gary Thuu', 'M', '0455873332', '99/22 Ang
 INSERT INTO Employee VALUES('E12347', 'Fiona May', 'F', '0411111111', '23 Coral Rd', NULL, '1954-01-15');
 INSERT INTO Employee VALUES('E12348', 'Sandra Alli', 'F', '0488998852', '221 Cobbs Hill', '45555525', '1964-11-12');
 INSERT INTO Employee VALUES('E12349', 'Tim Flay', 'O', '0477885222', '56 Good Street', '0244552211', '1980-08-12');
+INSERT INTO Employee VALUES('E68889', 'Jamie Bold', 'F','0456568856','11 Sun Close',NULL,'1967-12-12');
+INSERT INTO Employee VALUES('E89897', 'Diane Kruger','F','6155540666','77/22 Hill Rd','56685525','1988-01-23');
+INSERT INTO Employee VALUES('E12213', 'Zhou Ming', 'M','43535565','13 Richard Rd','06568865','1993-04-05');
+INSERT INTO Employee VALUES('E00099', 'Suzanne Lowe', 'F','0456558889','33/22 Palla Street',NULL,'1950-05-30');
+INSERT INTO Employee VALUES('E98898', 'Daniel McContyre','M','0455568931','668 Dagula Hill',NULL,'1989-06-07');
 
 INSERT INTO Position VALUES('P22343', 'Salesperson', 20.00);
 INSERT INTO Position VALUES('P22311', 'Manager', 23.00);
@@ -374,4 +384,3 @@ INSERT INTO AllowanceType VALUES('AT4087488', 'Disability', 'For person with a m
 INSERT INTO AllowanceType VALUES('AT6568565', 'Shift Allowance', 'People whom work undesirable hours', 'daily');
 INSERT INTO AllowanceType VALUES('AT5865656', 'First aid allowance', 'Have medical skills', 'quarterly');
 INSERT INTO AllowanceType VALUES('AT9869869', 'Maternity leave', '3 months leave', 'When needed');
-

@@ -5,6 +5,8 @@
 --Date Created 4/4/2017
 --Date Modified 7/4/2017
 --Foreign key tables:
+DROP TABLE EmployeeAllowanceType
+DROP TABLE Allowance
 DROP TABLE QuoteProduct
 DROP TABLE SupplierProduct
 DROP TABLE CustOrdProduct
@@ -27,7 +29,6 @@ DROP TABLE Customer
 DROP TABLE Employee
 DROP TABLE Position
 DROP TABLE AllowanceType
-DROP TABLE Allowance
 DROP TABLE TaxBracket
 
 CREATE TABLE Supplier
@@ -254,25 +255,18 @@ CREATE TABLE Assignment
 );
 GO
 
--- added from feedback
-CREATE TABLE Allowance 
-(
-	allowanceID					VARCHAR(10),
-	amount							FLOAT,
-	description						VARCHAR(100),
-	PRIMARY KEY(allowanceID)
-);
-GO
 
 CREATE TABLE AllowanceType
 (
 	allowanceTypeID			VARCHAR(10),
+	
 	allowType						VARCHAR(50),	
 	aDescription					VARCHAR(100),       
 	frequency						VARCHAR(10)							CHECK(frequency IN('yearly', 'monthly', 'quarterly', 'weekly','daily')),
 	PRIMARY KEY(allowanceTypeID)
 );
 GO
+
 
 CREATE TABLE TaxBracket
 (
@@ -300,8 +294,31 @@ CREATE TABLE Payslip
 	netPay								FLOAT,
 	PRIMARY KEY(payslipID),
 	FOREIGN KEY(employeeID) REFERENCES Employee(employeeID),
-	FOREIGN KEY(allowanceID) REFERENCES Allowance(allowanceID),
 	FOREIGN KEY(taxBracketID) REFERENCES TaxBracket(taxBracketID)
+);
+GO
+
+-- added from feedback
+CREATE TABLE Allowance 
+(
+	allowanceID					VARCHAR(10),
+	payslipID							VARCHAR(10),
+	allowanceTypeID			VARCHAR(10),
+	amount							FLOAT,
+	description						VARCHAR(100),
+	FOREIGN KEY(payslipID) REFERENCES Payslip(payslipID),
+	FOREIGN KEY(allowanceTypeID) REFERENCES AllowanceType(allowanceTypeID),
+	PRIMARY KEY(allowanceID)
+);
+GO
+
+CREATE TABLE EmployeeAllowanceType
+(
+	allowanceID					VARCHAR(10),
+	allowanceTypeID			VARCHAR(10),
+	FOREIGN KEY(allowanceID) REFERENCES Allowance(allowanceID),
+	FOREIGN KEY(allowanceTypeID) REFERENCES  AllowanceType(allowanceTypeID),
+	PRIMARY KEY(allowanceID, allowanceTypeID)
 );
 GO
 

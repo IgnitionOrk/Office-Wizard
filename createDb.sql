@@ -59,9 +59,9 @@ CREATE TABLE Product
 	categoryID							VARCHAR(10)						NOT NULL,
 	pDescription						VARCHAR(255),
 	qtyDescription					VARCHAR(100),
-	unitPrice								FLOAT									CHECK(unitPrice != 0.00),
-	pStatus								VARCHAR(10)						CHECK(pStatus IN('available', 'out of stock')),
-	availQty								INT										CHECK(availQty >= 0),
+	unitPrice								FLOAT									CHECK(unitPrice < 0.00), -- Office Wizard could be giving them away for free. 
+	pStatus								VARCHAR(10)						CHECK(pStatus IN('Available', 'Out of stock')),
+	availQty								INT										CHECK(availQty >= 0)		DEFAULT 0,
 	reorderLevel						INT										CHECK(reorderLevel > 0),
 	maxDiscount						FLOAT									CHECK(maxDiscount >= 0.00),
 	PRIMARY KEY(productID),
@@ -71,8 +71,8 @@ GO
 
 CREATE TABLE SupplierProduct
 (
-	supplierID							VARCHAR(10),
-	productID							VARCHAR(10),
+	supplierID							VARCHAR(10)						NOT NULL,
+	productID							VARCHAR(10)						NOT NULL,
 	FOREIGN KEY(supplierID) REFERENCES Supplier(supplierID),
 	FOREIGN KEY(productID) REFERENCES Product(productID)
 );
@@ -81,30 +81,16 @@ GO
 CREATE TABLE Employee
 (
 	employeeID							VARCHAR(10),
-	eName								VARCHAR(100),
+	eName								VARCHAR(100)					NOT NULL,
 	gender									CHAR(1)								CHECK(gender IN('M', 'F', 'O')),
 	phoneNo								VARCHAR(12)						NOT NULL,
 	homeAddress						VARCHAR(100)					NOT NULL,
 	homePhone						VARCHAR(12),
-	dob										DATE									CHECK(dob BETWEEN  '1900-01-01' AND GETDATE()),
+	DOB										DATE									CHECK(DOB BETWEEN  '1900-01-01' AND GETDATE()),
 	PRIMARY KEY(employeeID)
 );
 GO
 
-CREATE TABLE CustomerOrder
-(
-	custOrdID							VARCHAR(10),
-	employeeID							VARCHAR(10)						DEFAULT NULL,
-	_date									DATE									NOT NULL,								--Date is already defined as a data type. 
-	discountGiven						FLOAT									DEFAULT NULL, 
-	amountDue							FLOAT,
-	amountPAID						FLOAT, 
-	custOrdStatus						VARCHAR(10)						CHECK(custOrdStatus IN ('Processing','Delivered','Cancelled','Awaiting Payment','Completed')),
-	modeOfSale						VARCHAR(10)						CHECK(modeOfSale IN ('Online','In Store','Phone')),
-	PRIMARY KEY(custOrdID),
-	FOREIGN KEY(employeeID) REFERENCES Employee(employeeID)
-);
-GO
 
 CREATE TABLE Quote
 (
@@ -135,16 +121,59 @@ GO
 CREATE TABLE SupplierOrder
 (
 	suppOrdID				    		VARCHAR(10),
-	suppOrdDate						DATE									NOT NULL, --Date in which the order was made
-	supplierID							VARCHAR(10)						NOT NULL,
+	suppOrdDate						DATE									NOT NULL, 
 	suppOrdDescription			VARCHAR(255)					DEFAULT NULL,
 	quoteID								VARCHAR(10)						NOT NULL,
-	totalAmount						FLOAT									CHECK(totalAmount > 0),
+	totalAmount						FLOAT									CHECK(totalAmount >= 0),
 	suppOrdStatus					VARCHAR(10)						CHECK(suppOrdStatus  IN ('Processing','Delivered','Cancelled','Awaiting Payment','Completed')),
 	suppOrdRcvDate				DATE									NOT NULL,
 	PRIMARY KEY(suppOrdID),
-	FOREIGN KEY(supplierID) REFERENCES Supplier(supplierID),
 	FOREIGN KEY(quoteID) REFERENCES Quote(quoteID)
+);
+GO
+
+
+CREATE TABLE SupplierOrderProduct
+(
+	suppOrdID							VARCHAR(10)						NOT NULL,
+	productID							VARCHAR(10)						NOT NULL,
+	unitPurchasePrice				FLOAT,
+	qty										INT,
+	FOREIGN KEY(suppOrdID) REFERENCES SupplierOrder(suppOrdID),
+	FOREIGN KEY(productID) REFERENCES Product(productID),
+	PRIMARY KEY(suppOrdID, productID)
+);
+GO
+
+
+CREATE TABLE Customer
+(
+	customerID							VARCHAR(10),
+	cName									VARCHAR(100)					NOT NULL,
+	address								VARCHAR(100),
+	phoneNo								VARCHAR(12),
+	faxNo									VARCHAR(12)						DEFAULT NULL,
+	email									VARCHAR(100),
+	contactPerson   					VARCHAR(100)					DEFAULT NULL,		--Only provide if the customer is a company
+	gender									CHAR(1)								CHECK(gender IN('M', 'F', 'O')),
+	PRIMARY KEY(customerID)
+);
+GO
+
+CREATE TABLE CustomerOrder
+(
+	custOrdID							VARCHAR(10),
+	employeeID							VARCHAR(10)						DEFAULT NULL,						--Null because order may have been online. 
+	customerID							VARCHAR(10),
+	orderDate							DATE									NOT NULL,					
+	discountGiven						FLOAT									DEFAULT NULL, 
+	amountDue							FLOAT,
+	amountPaid						FLOAT, 
+	custOrdStatus						VARCHAR(10)						CHECK(custOrdStatus IN ('Processing','Delivered','Cancelled','Awaiting Payment','Completed')),
+	modeOfSale						VARCHAR(10)						CHECK(modeOfSale IN ('Online','In Store','Phone')),
+	PRIMARY KEY(custOrdID),
+	FOREIGN KEY(employeeID) REFERENCES Employee(employeeID),
+	FOREIGN KEY(customerID) REFERENCES Customer(customerID)
 );
 GO
 
@@ -164,32 +193,6 @@ CREATE TABLE ProductItem
 );
 GO
 
-CREATE TABLE SupplierOrderProduct
-(
-	suppOrdID							VARCHAR(10)						NOT NULL,
-	productID							VARCHAR(10)						NOT NULL,
-	unitPurchasePrice				FLOAT,
-	qty										INT,
-	FOREIGN KEY(suppOrdID) REFERENCES SupplierOrder(suppOrdID),
-	FOREIGN KEY(productID) REFERENCES Product(productID)
-);
-GO
-
-
-CREATE TABLE Customer
-(
-	customerID							VARCHAR(10),
-	cName									VARCHAR(100)					NOT NULL,
-	address								VARCHAR(100)					NOT NULL,
-	phoneNo								VARCHAR(12)						NOT NULL,
-	faxNo									VARCHAR(12)						DEFAULT NULL,
-	email									VARCHAR(100),
-	contactPerson   					VARCHAR(100)					DEFAULT NULL,		--Only provide if the customer is a company
-	gender									CHAR(1)								CHECK(gender IN('M', 'F', 'O')),
-	PRIMARY KEY(customerID)
-);
-GO
-
 CREATE TABLE CustOrdProduct
 (
 	custOrdID							VARCHAR(10),
@@ -198,23 +201,24 @@ CREATE TABLE CustOrdProduct
 	unitPurchasePrice				FLOAT,
 	subtotal								FLOAT,
 	FOREIGN KEY(custOrdID) REFERENCES CustomerOrder(custOrdID),
-	FOREIGN KEY(productID) REFERENCES Product(productID)
+	FOREIGN KEY(productID) REFERENCES Product(productID),
+	PRIMARY KEY(custOrdID, productID)
 );
 GO
 
 CREATE TABLE Delivery
 (
-	custOrdID							VARCHAR(10),
+	custOrdID							VARCHAR(10)						NOT NULL,
 	delAddress							VARCHAR(100)					NOT NULL,
 	delCharge							FLOAT									CHECK(delCharge >= 0.00),
-	delDate								DATETIME							NOT NULL,
+	delDateTime						DATETIME							NOT NULL,
 	FOREIGN KEY(custOrdID) REFERENCES CustomerOrder(custOrdID)
 );
 GO
 
 CREATE TABLE Pickup
 (
-	custOrdID	    					VARCHAR(10),
+	custOrdID	    					VARCHAR(10)						NOT NULL,
 	pickupDateTime	    			DATETIME							NOT NULL,
 	FOREIGN KEY(custOrdID) REFERENCES CustomerOrder(custOrdID)
 );
@@ -224,8 +228,8 @@ CREATE TABLE Payment
 (
 	paymentRefNo		    		VARCHAR(10),
 	paymentDate			    		DATE									NOT NULL,
-	custOrdID							VARCHAR(10)						NOT NULL,
-	suppOrdID							VARCHAR(10)						NOT NULL,
+	custOrdID							VARCHAR(10)	,
+	suppOrdID							VARCHAR(10)	,
 	PRIMARY KEY(paymentRefNo),
 	FOREIGN KEY(custOrdID) REFERENCES CustomerOrder(custOrdID),
 	FOREIGN KEY(suppOrdID) REFERENCES SupplierOrder(suppOrdID)
@@ -237,7 +241,7 @@ CREATE TABLE Position
 (
 	positionID						VARCHAR(10),
 	positionName					VARCHAR(50)							NOT NULL,
-	hourlyRate						FLOAT										CHECK(hourlyRate > 0.00),
+	hourlyRate						FLOAT										CHECK(hourlyRate >= 0.00),
 	PRIMARY KEY(positionID)
 );
 GO
@@ -245,9 +249,9 @@ GO
 CREATE TABLE Assignment
 (
 	assignmentID					VARCHAR(10),
-	employeeID						VARCHAR(10)							NOT NULL,
-	positionID						VARCHAR(10)							NOT NULL,
-	startDate							DATE										CHECK(startDate >= GETDATE()),
+	employeeID						VARCHAR(10),
+	positionID						VARCHAR(10),
+	startDate							DATE										NOT NULL,
 	finishDate						DATE										DEFAULT NULL,
 	PRIMARY KEY(assignmentID, employeeID, positionID),
 	FOREIGN KEY(employeeID) REFERENCES Employee(employeeID),
@@ -258,11 +262,10 @@ GO
 
 CREATE TABLE AllowanceType
 (
-	allowanceTypeID			VARCHAR(10),
-	
+	allowanceTypeID			VARCHAR(10),	
 	allowType						VARCHAR(50),	
-	aDescription					VARCHAR(100),       
-	frequency						VARCHAR(10)							CHECK(frequency IN('yearly', 'monthly', 'quarterly', 'weekly','daily')),
+	aTDescription					VARCHAR(100),       
+	frequency						VARCHAR(20)							CHECK(frequency IN('Yearly', 'Monthly', 'Quarterly', 'Weekly','Daily', 'When needed')),
 	PRIMARY KEY(allowanceTypeID)
 );
 GO
@@ -271,8 +274,8 @@ GO
 CREATE TABLE TaxBracket
 (
 	taxBracketID					VARCHAR(10),
-	startAmount					FLOAT										CHECK(startAmount > 0),
-	endAmount						FLOAT,
+	startAmount					FLOAT										CHECK(startAmount >= 0),
+	endAmount						FLOAT										CHECK(endAmount > 0),
 	taxRate							FLOAT,
 	effectiveYear					CHAR(4),
 	PRIMARY KEY(taxBracketID)
@@ -283,29 +286,27 @@ CREATE TABLE Payslip
 (
 	payslipID							VARCHAR(10),
 	employeeID						VARCHAR(10)						NOT NULL,
-	startDate							DATE,
-	endDate							DATE,
+	taxBracketID					VARCHAR(10)						NOT NULL,
+	startDate							DATE									NOT NULL,
+	endDate							DATE									NOT NULL,
 	workedHours			    	FLOAT									CHECK(workedHours >= 0),
 	hourlyRate						FLOAT									CHECK(hourlyRate >= 0.00),
 	basePay							FLOAT,
-	allowanceID					VARCHAR(10)						DEFAULT NULL,
-	taxBracketID					VARCHAR(10)						NOT NULL,
 	taxableIncome				FLOAT,
 	netPay								FLOAT,
 	PRIMARY KEY(payslipID),
 	FOREIGN KEY(employeeID) REFERENCES Employee(employeeID),
-	FOREIGN KEY(taxBracketID) REFERENCES TaxBracket(taxBracketID)
+	FOREIGN KEY(taxBracketID) REFERENCES TaxBracket(taxBracketID),
 );
 GO
 
--- added from feedback
 CREATE TABLE Allowance 
 (
 	allowanceID					VARCHAR(10),
-	payslipID							VARCHAR(10),
-	allowanceTypeID			VARCHAR(10),
+	payslipID							VARCHAR(10)					NOT NULL,
+	allowanceTypeID			VARCHAR(10)					NOT NULL,
 	amount							FLOAT,
-	description						VARCHAR(100),
+	allowDescription				VARCHAR(100),
 	FOREIGN KEY(payslipID) REFERENCES Payslip(payslipID),
 	FOREIGN KEY(allowanceTypeID) REFERENCES AllowanceType(allowanceTypeID),
 	PRIMARY KEY(allowanceID)
@@ -314,11 +315,10 @@ GO
 
 CREATE TABLE EmployeeAllowanceType
 (
-	allowanceID					VARCHAR(10),
-	allowanceTypeID			VARCHAR(10),
+	allowanceID					VARCHAR(10)					NOT NULL,
+	allowanceTypeID			VARCHAR(10)					NOT NULL,
 	FOREIGN KEY(allowanceID) REFERENCES Allowance(allowanceID),
 	FOREIGN KEY(allowanceTypeID) REFERENCES  AllowanceType(allowanceTypeID),
-	PRIMARY KEY(allowanceID, allowanceTypeID)
 );
 GO
 
@@ -373,4 +373,5 @@ INSERT INTO AllowanceType VALUES('AT0970970', 'Redundancy','Payment for being ma
 INSERT INTO AllowanceType VALUES('AT4087488', 'Disability', 'For person with a medical condition', 'daily');
 INSERT INTO AllowanceType VALUES('AT6568565', 'Shift Allowance', 'People whom work undesirable hours', 'daily');
 INSERT INTO AllowanceType VALUES('AT5865656', 'First aid allowance', 'Have medical skills', 'quarterly');
+INSERT INTO AllowanceType VALUES('AT9869869', 'Maternity leave', '3 months leave', 'When needed');
 

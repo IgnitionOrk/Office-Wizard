@@ -73,8 +73,8 @@ CREATE TABLE SupplierProduct
 (
 	supplierID							VARCHAR(10)						NOT NULL,
 	productID							VARCHAR(10)						NOT NULL,
-	FOREIGN KEY(supplierID) REFERENCES Supplier(supplierID),
-	FOREIGN KEY(productID) REFERENCES Product(productID)
+	FOREIGN KEY(supplierID) REFERENCES Supplier(supplierID) ON DELETE CASCADE,
+	FOREIGN KEY(productID) REFERENCES Product(productID) ON DELETE CASCADE
 );
 GO
 
@@ -101,8 +101,8 @@ CREATE TABLE Quote
 	supplierID							VARCHAR(10)						NOT NULL, 
 	employeeID							VARCHAR(10)						NOT NULL,
 	PRIMARY KEY(quoteID),
-	FOREIGN KEY(supplierID) REFERENCES Supplier(supplierID),
-	FOREIGN KEY(employeeID) REFERENCES Employee(employeeID)	
+	FOREIGN KEY(supplierID) REFERENCES Supplier(supplierID) ON DELETE NO ACTION,
+	FOREIGN KEY(employeeID) REFERENCES Employee(employeeID) ON DELETE NO ACTION	
 );
 GO
 
@@ -128,7 +128,7 @@ CREATE TABLE SupplierOrder
 	suppOrdStatus					VARCHAR(10)						CHECK(suppOrdStatus  IN ('Processing','Delivered','Cancelled','Awaiting Payment','Completed')),
 	suppOrdRcvDate				DATE									NOT NULL,
 	PRIMARY KEY(suppOrdID),
-	FOREIGN KEY(quoteID) REFERENCES Quote(quoteID)
+	FOREIGN KEY(quoteID) REFERENCES Quote(quoteID) ON DELETE NO ACTION
 );
 GO
 
@@ -139,8 +139,8 @@ CREATE TABLE SupplierOrderProduct
 	productID							VARCHAR(10)						NOT NULL,
 	unitPurchasePrice				FLOAT,
 	qty										INT,
-	FOREIGN KEY(suppOrdID) REFERENCES SupplierOrder(suppOrdID),
-	FOREIGN KEY(productID) REFERENCES Product(productID),
+	FOREIGN KEY(suppOrdID) REFERENCES SupplierOrder(suppOrdID) ON DELETE CASCADE,
+	FOREIGN KEY(productID) REFERENCES Product(productID) ON DELETE NO ACTION,
 	PRIMARY KEY(suppOrdID, productID)
 );
 GO
@@ -172,8 +172,8 @@ CREATE TABLE CustomerOrder
 	custOrdStatus						VARCHAR(10)						CHECK(custOrdStatus IN ('Processing','Delivered','Cancelled','Awaiting Payment','Completed')),
 	modeOfSale						VARCHAR(10)						CHECK(modeOfSale IN ('Online','In Store','Phone')),
 	PRIMARY KEY(custOrdID),
-	FOREIGN KEY(employeeID) REFERENCES Employee(employeeID),
-	FOREIGN KEY(customerID) REFERENCES Customer(customerID)
+	FOREIGN KEY(employeeID) REFERENCES Employee(employeeID) ON DELETE NO ACTION,
+	FOREIGN KEY(customerID) REFERENCES Customer(customerID) ON DELETE NO ACTION
 );
 GO
 
@@ -187,9 +187,9 @@ CREATE TABLE ProductItem
 	custOrdID							VARCHAR(10)						NOT NULL,
 	status									VARCHAR(10)						CHECK(status IN('in-stock', 'sold', 'lost')),
 	PRIMARY KEY(itemNo),
-	FOREIGN KEY(productID) REFERENCES Product(productID),
-	FOREIGN KEY(suppOrdID) REFERENCES SupplierOrder(suppOrdID),
-	FOREIGN KEY(custOrdID) REFERENCES CustomerOrder(custOrdID)
+	FOREIGN KEY(productID) REFERENCES Product(productID) ON DELETE CASCADE,
+	FOREIGN KEY(suppOrdID) REFERENCES SupplierOrder(suppOrdID) ON DELETE CASCADE,
+	FOREIGN KEY(custOrdID) REFERENCES CustomerOrder(custOrdID) ON DELETE CASCADE
 );
 GO
 
@@ -212,7 +212,7 @@ CREATE TABLE Delivery
 	delAddress							VARCHAR(100)					NOT NULL,
 	delCharge							FLOAT									CHECK(delCharge >= 0.00),
 	delDateTime						DATETIME							NOT NULL,
-	FOREIGN KEY(custOrdID) REFERENCES CustomerOrder(custOrdID)
+	FOREIGN KEY(custOrdID) REFERENCES CustomerOrder(custOrdID) ON DELETE CASCADE
 );
 GO
 
@@ -220,7 +220,7 @@ CREATE TABLE Pickup
 (
 	custOrdID	    					VARCHAR(10)						NOT NULL,
 	pickupDateTime	    			DATETIME							NOT NULL,
-	FOREIGN KEY(custOrdID) REFERENCES CustomerOrder(custOrdID)
+	FOREIGN KEY(custOrdID) REFERENCES CustomerOrder(custOrdID) ON DELETE CASCADE
 );
 GO
 
@@ -231,8 +231,8 @@ CREATE TABLE Payment
 	custOrdID							VARCHAR(10)	,
 	suppOrdID							VARCHAR(10)	,
 	PRIMARY KEY(paymentRefNo),
-	FOREIGN KEY(custOrdID) REFERENCES CustomerOrder(custOrdID),
-	FOREIGN KEY(suppOrdID) REFERENCES SupplierOrder(suppOrdID)
+	FOREIGN KEY(custOrdID) REFERENCES CustomerOrder(custOrdID) ON DELETE NO ACTION,
+	FOREIGN KEY(suppOrdID) REFERENCES SupplierOrder(suppOrdID) ON DELETE NO ACTION
 
 );
 GO
@@ -254,8 +254,8 @@ CREATE TABLE Assignment
 	startDate							DATE										NOT NULL,
 	finishDate						DATE										DEFAULT NULL,
 	PRIMARY KEY(assignmentID, employeeID, positionID),
-	FOREIGN KEY(employeeID) REFERENCES Employee(employeeID),
-	FOREIGN KEY(positionID) REFERENCES Position(positionID)
+	FOREIGN KEY(employeeID) REFERENCES Employee(employeeID) ON DELETE NO ACTION,
+	FOREIGN KEY(positionID) REFERENCES Position(positionID) ON DELETE NO ACTION
 );
 GO
 
@@ -295,8 +295,8 @@ CREATE TABLE Payslip
 	taxableIncome				FLOAT,
 	netPay								FLOAT,
 	PRIMARY KEY(payslipID),
-	FOREIGN KEY(employeeID) REFERENCES Employee(employeeID),
-	FOREIGN KEY(taxBracketID) REFERENCES TaxBracket(taxBracketID),
+	FOREIGN KEY(employeeID) REFERENCES Employee(employeeID) ON DELETE NO ACTION,
+	FOREIGN KEY(taxBracketID) REFERENCES TaxBracket(taxBracketID) ON DELETE NO ACTION
 );
 GO
 
@@ -307,18 +307,18 @@ CREATE TABLE Allowance
 	allowanceTypeID			VARCHAR(10)					NOT NULL,
 	amount							FLOAT,
 	allowDescription				VARCHAR(100),
-	FOREIGN KEY(payslipID) REFERENCES Payslip(payslipID),
-	FOREIGN KEY(allowanceTypeID) REFERENCES AllowanceType(allowanceTypeID),
+	FOREIGN KEY(payslipID) REFERENCES Payslip(payslipID) ON DELETE CASCADE,
+	FOREIGN KEY(allowanceTypeID) REFERENCES AllowanceType(allowanceTypeID) ON DELETE NO ACTION,
 	PRIMARY KEY(allowanceID)
 );
 GO
 
 CREATE TABLE EmployeeAllowanceType
 (
-	allowanceID					VARCHAR(10)					NOT NULL,
+	employeeID						VARCHAR(10)					NOT NULL,
 	allowanceTypeID			VARCHAR(10)					NOT NULL,
-	FOREIGN KEY(allowanceID) REFERENCES Allowance(allowanceID),
-	FOREIGN KEY(allowanceTypeID) REFERENCES  AllowanceType(allowanceTypeID),
+	FOREIGN KEY(employeeID) REFERENCES Employee(employeeID) ON DELETE CASCADE ,
+	FOREIGN KEY(allowanceTypeID) REFERENCES  AllowanceType(allowanceTypeID) ON DELETE CASCADE
 );
 GO
 

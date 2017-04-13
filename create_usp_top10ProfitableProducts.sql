@@ -32,3 +32,8 @@ AS
 			ORDER BY profit 
 		END
 GO
+
+
+
+
+EXECUTE usp_Top10ProfitableProducts

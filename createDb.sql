@@ -421,9 +421,16 @@ INSERT INTO Product VALUES('P1235', 'Solid chair','Furniture experts','PC1234567
 INSERT INTO Product VALUES('P3265', 'Kids chair','Furniture experts','PC12345671','Child office chair','Single chair','Out of stock',0,10, 0.23);
 INSERT INTO Product VALUES('P4566', 'Kids desk','Furniture experts','PC12345671','Child office desk','Single desk','Available',2,5, 0.10);
 
+<<<<<<< HEAD
 INSERT INTO Payslip VALUES ('PS0000000112', 'E00099', 'T556555', '2017-01-01', '2017-01-06', 12, 50000, 1000, 49000);
 INSERT INTO Payslip VALUES ('PS0000000113', 'E00119', 'T111111', '2017-01-10', '2017-01-16', 20, 50000, 1000, 49000);
 INSERT INTO Payslip VALUES ('PS0000000113', 'E00120', 'T111111', '2017-02-10', '2017-02-16', 20, 46000, 1000, 45000);
+=======
+
+INSERT INTO Payslip VALUES ('PS00000112', 'E00099', 'T556555', '2017-01-01', '2017-01-06', 12, 50000, 1000, 49000);
+INSERT INTO Payslip VALUES ('PS00000113', 'E00119', 'T111111', '2017-01-10', '2017-01-16', 20, 50000, 1000, 49000);
+INSERT INTO Payslip VALUES ('PS00000113', 'E00120', 'T111111', '2017-02-10', '2017-02-16', 20, 46000, 1000, 45000);
+>>>>>>> origin/master
 
 INSERT INTO SupplierProduct VALUES('S777777777', 'P1234', 1.24);
 INSERT INTO SupplierProduct VALUES('S111111111', 'P1234', 1.28);
@@ -452,7 +459,10 @@ INSERT INTO SupplierProduct VALUES('S444444444','P4566', 52.35);
 INSERT INTO SupplierProduct VALUES('S000000000','P4566', 55.35);
 INSERT INTO SupplierProduct VALUES('S222222222','P4566', 50.35);
 
+<<<<<<< HEAD
 --INSERT INTO Payslip VALUES ('PS0000000112', 'E00099', 'T556555', '2017-01-01', '2017-01-06', );
+=======
+>>>>>>> origin/master
 
 INSERT INTO Quote VALUES ('QUO1004567', '2017-01-02', '2017-01-03', 'Reasonable quote for a bulk supply of silly pens to suit all your silly stationary needs', 'S111111111', 'E68889');
 INSERT INTO Quote VALUES ('QUO1022222', '2017-01-10', '2017-01-11', 'Supply of arty stuff for creative people', 'S111111111', 'E68889');

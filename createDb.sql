@@ -171,7 +171,7 @@ CREATE TABLE CustomerOrder
 	discountGiven FLOAT DEFAULT NULL, 
 	amountDue	 FLOAT,
 	amountPaid FLOAT, 
-	custOrdStatus VARCHAR(10) CHECK(custOrdStatus IN ('Processing','Delivered','Cancelled','Awaiting Payment','Completed')),
+	custOrdStatus VARCHAR(50) CHECK(custOrdStatus IN ('Processing','Delivered','Cancelled','Awaiting Payment','Completed')),
 	modeOfSale VARCHAR(10) CHECK(modeOfSale IN ('Online','In Store','Phone')),
 	PRIMARY KEY(custOrdID),
 	FOREIGN KEY(employeeID) REFERENCES Employee(employeeID) ON DELETE NO ACTION,
@@ -195,15 +195,6 @@ CREATE TABLE ProductItem
 );
 GO
 
--- NORMALISED!!!
-CREATE TABLE CustomerOrderItem
-(
-	itemNo VARCHAR(10),
-	custOrdID VARCHAR(10),
-	FOREIGN KEY(itemNo) REFERENCES ProductItem(itemNo) ON DELETE NO ACTION,
-	FOREIGN KEY(custOrdID) REFERENCES CustomerOrder(custOrdID) ON DELETE NO ACTION
-);
-GO
 
 CREATE TABLE CustOrdProduct
 (

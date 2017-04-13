@@ -473,7 +473,16 @@ INSERT INTO SupplierOrder VALUES ('SO00000016', '2016-11-14', 'This supplier ord
 INSERT INTO SupplierOrder VALUES ('SO00000017', '2017-01-12', 'This supplier order is filled with order for items that include a small supply of creative inducing pens. Please refer back to quote for more information.', 'QUO1022222', 500, 'Completed','2017-01-14');
 INSERT INTO SupplierOrder VALUES ('SO00000018', '2017-01-14', 'This supplier order is filled with order for items that include a bulk supply of fun family items. Please refer back to quote for more information.', 'QUO1231239', 500, 'Completed','2017-01-16');
 
-INSERT INTO SupplierOrderProduct VALUES ()
+
+-- Suppliers used are S777777777, S222222222, S666666666 and S111111111
+INSERT INTO SupplierOrderProduct VALUES ('SO00000011', 'P1234', 1.30, 200);
+INSERT INTO SupplierOrderProduct VALUES ('SO00000012', 'P1234', 1.30, 200);
+INSERT INTO SupplierOrderProduct VALUES ('SO00000013', 'P1234', 1.30, 200);
+INSERT INTO SupplierOrderProduct VALUES ('SO00000014', 'P1234', 1.30, 200);
+INSERT INTO SupplierOrderProduct VALUES ('SO00000015', 'P1234', 1.30, 200);
+INSERT INTO SupplierOrderProduct VALUES ('SO00000016', 'P1234', 1.30, 200);
+INSERT INTO SupplierOrderProduct VALUES ('SO00000017', 'P1234', 1.30, 200);
+INSERT INTO SupplierOrderProduct VALUES ('SO00000018', 'P1234', 1.30, 200);
 
 --INSERT INTO ProductItem VALUES
 

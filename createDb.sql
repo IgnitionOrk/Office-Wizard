@@ -460,11 +460,20 @@ INSERT INTO Quote VALUES ('QUO1022222', '2017-01-10', '2017-01-11', 'Supply of a
 INSERT INTO Quote VALUES ('QUO2244237', '2017-02-02', '2017-02-03', 'Quote must be responded to as soon as possible to obtain your bulk supply of sitting needs', 'S222222222', 'E68889');
 INSERT INTO Quote VALUES ('QUO1231238', '2017-01-12', '2017-01-13', 'This quote was obtained 20 minutes before the response was due', 'S222222222', 'E68889');
 INSERT INTO Quote VALUES ('QUO1234438', '2017-03-12', '2017-03-13', 'Barry from Family Fun constructed this quote a day before they required the feedback. Please respond before COB so ensure your fun family items will arrive in time.', 'S666666666', 'E12345');
+INSERT INTO Quote VALUES ('QUO1231239', '2017-01-12', '2017-01-13', 'An easter special has been applied to this quote to ensure the few customers you have that have fun families will be slightly more fun.', 'S666666666', 'E68889');
+INSERT INTO Quote VALUES ('QUO1234448', '2017-04-12', '2017-04-13', 'Stationary Centre staff Mary onstructed this quote a day before they required the feedback. Please respond before COB so ensure your fun stationary items will arrive in time.', 'S777777777', 'E12346');
+INSERT INTO Quote VALUES ('QUO1231240', '2016-11-12', '2016-11-13', 'An easter special has been applied to this quote to ensure the few customers you have that froth over stationary will be slightly more neat.', 'S777777777', 'E12346');
 
+INSERT INTO SupplierOrder VALUES ('SO00000011', '2017-01-04', 'This supplier order is filled with order for items that include a bulk supply of silly pens. Please refer back to quote for more information.', 'QUO1004567', 500, 'Completed','2017-01-06');
+INSERT INTO SupplierOrder VALUES ('SO00000012', '2017-03-14', 'This supplier order is filled with order for items that include a bulk supply of family fun products. Please refer back to quote for more information.', 'QUO1234438', 5000, 'Completed','2017-03-15');
+INSERT INTO SupplierOrder VALUES ('SO00000013', '2017-02-04', 'This supplier order is filled with order for items that include a bulk supply of silly seats. Please refer back to quote for more information.', 'QUO2244237', 2000, 'Completed','2017-02-05');
+INSERT INTO SupplierOrder VALUES ('SO00000014', '2017-01-14', 'This supplier order is filled with order for items that include a bulk supply of silly body support stools. Please refer back to quote for more information.', 'QUO1231238', 1000, 'Completed','2017-01-15');
+INSERT INTO SupplierOrder VALUES ('SO00000015', '2017-04-14', 'This supplier order is filled with order for items that include a supply of pretty stationary. Please refer back to quote for more information.', 'QUO1234448', 6000, 'Completed','2017-04-15');
+INSERT INTO SupplierOrder VALUES ('SO00000016', '2016-11-14', 'This supplier order is filled with order for items that include a big amount of normal pens, normal paper, and 100 pack of folders to organise unorganised people. Please refer back to quote for more information.', 'QUO1231240', 2500, 'Completed','2016-11-15');
+INSERT INTO SupplierOrder VALUES ('SO00000017', '2017-01-12', 'This supplier order is filled with order for items that include a small supply of creative inducing pens. Please refer back to quote for more information.', 'QUO1022222', 500, 'Completed','2017-01-14');
+INSERT INTO SupplierOrder VALUES ('SO00000018', '2017-01-14', 'This supplier order is filled with order for items that include a bulk supply of fun family items. Please refer back to quote for more information.', 'QUO1231239', 500, 'Completed','2017-01-16');
 
---INSERT INTO SupplierOrder VALUES ('SO10000011', )
-
---INSERT INTO SupplierOrderProduct VALUES ()
+INSERT INTO SupplierOrderProduct VALUES ()
 
 --INSERT INTO ProductItem VALUES
 

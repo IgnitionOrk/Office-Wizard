@@ -59,8 +59,7 @@ CREATE TABLE Product
 	manufacturer VARCHAR(100),
 	categoryID VARCHAR(10) NOT NULL,
 	pDescription VARCHAR(255),
-	qtyDescription VARCHAR(100),
-	unitPrice FLOAT	NOT NULL CHECK(NOT unitPrice < 0.00), -- Office Wizard could be giving them away for free. 
+	qtyDescription VARCHAR(100), 
 	pStatus VARCHAR(20)	NOT NULL CHECK(pStatus IN('Available', 'Out of stock')),
 	availQty INT NOT NULL CHECK(availQty >= 0) DEFAULT 0,
 	reorderLevel INT NOT NULL CHECK(reorderLevel > 0),
@@ -74,8 +73,10 @@ CREATE TABLE SupplierProduct
 (
 	supplierID VARCHAR(10) NOT NULL,
 	productID VARCHAR(10) NOT NULL,
+	unitPrice FLOAT NOT NULL CHECK(NOT unitPrice < 0.00), -- Office Wizard could be giving them away for free.,
 	FOREIGN KEY(supplierID) REFERENCES Supplier(supplierID) ON DELETE CASCADE,
-	FOREIGN KEY(productID) REFERENCES Product(productID) ON DELETE CASCADE
+	FOREIGN KEY(productID) REFERENCES Product(productID) ON DELETE CASCADE,
+	PRIMARY KEY(supplierID, productID)
 );
 GO
 
@@ -112,7 +113,6 @@ CREATE TABLE QuoteProduct
 	productID VARCHAR(10),
 	quoteID VARCHAR(10),
 	qty INT CHECK(qty > 0),
-	unitPrice FLOAT,
 	FOREIGN KEY(productID) REFERENCES Product(productID),
 	FOREIGN KEY(quoteID) REFERENCES Quote(quoteID),
 	PRIMARY KEY(productID, quoteID)
@@ -396,30 +396,30 @@ INSERT INTO AllowanceType VALUES('AT5865656', 'First aid allowance', 'Have medic
 INSERT INTO AllowanceType VALUES('AT9869869', 'Maternity leave', '3 months leave', 'When needed');
 
 -- Category: Stationary
-INSERT INTO Product VALUES('P1234', 'Silly pens','All things stationary','PC12345674','Colour pens','Half dozen of pens',1.95,'Available',23,5, 0.50);
-INSERT INTO Product VALUES('P1223', 'Ruler', 'All things stationary','PC12345674','Measurement tool','Single ruler',0.50,'Out of stock',0,10, 0.15);
-INSERT INTO Product VALUES('P1254', 'Sticky Sticky Glue stick','All things stationary','PC12345674','Binding product','3 pack of glue stick', 1.00,'Available',20,10, 0.10);
-INSERT INTO Product VALUES('P2112', 'Writing Pens','All things stationary','PC12345674','Everyday pens','Half dozen of pens',1.95,'Available',14,5, 0.10);
+INSERT INTO Product VALUES('P1234', 'Silly pens','All things stationary','PC12345674','Colour pens','Half dozen of pens','Available',23,5, 0.50);
+INSERT INTO Product VALUES('P1223', 'Ruler', 'All things stationary','PC12345674','Measurement tool','Single ruler','Out of stock',0,10, 0.15);
+INSERT INTO Product VALUES('P1254', 'Sticky Sticky Glue stick','All things stationary','PC12345674','Binding product','3 pack of glue stick', 'Available',20,10, 0.10);
+INSERT INTO Product VALUES('P2112', 'Writing Pens','All things stationary','PC12345674','Everyday pens','Half dozen of pens','Available',14,5, 0.10);
 -- Category: Storage
-INSERT INTO Product VALUES('P9084', 'Your safe, all safe','Storage mania','PC12345673','Protective storage','Single safe',100.00,'Available',5,2, 0.10);
-INSERT INTO Product VALUES('P4378', 'Book shelf','Storage mania','PC12345673',NULL,'Half dozen of pens',50.00,'Available',5, 4, 0.20);
-INSERT INTO Product VALUES('P3911', 'Office desk','Storage mania','PC12345673', NULL,'Single desk',50.00,'Out of stock',0 ,5, 0.20);
-INSERT INTO Product VALUES('P1232', 'File Cabinet', 'Storage mania','PC12345673','Storage for important documents','Single cabinet',30.50,'Available',15,5, 0.05);
+INSERT INTO Product VALUES('P9084', 'Your safe, all safe','Storage mania','PC12345673','Protective storage','Single safe','Available',5,2, 0.10);
+INSERT INTO Product VALUES('P4378', 'Book shelf','Storage mania','PC12345673',NULL,'Half dozen of pens','Available',5, 4, 0.20);
+INSERT INTO Product VALUES('P3911', 'Office desk','Storage mania','PC12345673', NULL,'Single desk','Out of stock',0 ,5, 0.20);
+INSERT INTO Product VALUES('P1232', 'File Cabinet', 'Storage mania','PC12345673','Storage for important documents','Single cabinet','Available',15,5, 0.05);
 -- Category: Electronic
-INSERT INTO Product VALUES('P0000', 'Stereo Magic','Electronic Experts','PC12345675','Sound system','Single sound system',215.95,'Available',10, 5, 0.20);
-INSERT INTO Product VALUES('P5645', 'Gaming Monitor','Electronic Experts','PC12345675','Computer monitor','Single monitor',315.35,'Out of stock',0,5, 0.15);
-INSERT INTO Product VALUES('P8988', 'Power board','Electronic Experts','PC12345675',NULL,'Single power board',21.15,'Available',6,5, 0.10);
-INSERT INTO Product VALUES('P9999', 'Amazing Sound','Electronic Experts','PC12345675','Sound system','Single sound system',230.95,'Available',7,3, 0.27);
+INSERT INTO Product VALUES('P0000', 'Stereo Magic','Electronic Experts','PC12345675','Sound system','Single sound system','Available',10, 5, 0.20);
+INSERT INTO Product VALUES('P5645', 'Gaming Monitor','Electronic Experts','PC12345675','Computer monitor','Single monitor','Out of stock',0,5, 0.15);
+INSERT INTO Product VALUES('P8988', 'Power board','Electronic Experts','PC12345675',NULL,'Single power board','Available',6,5, 0.10);
+INSERT INTO Product VALUES('P9999', 'Amazing Sound','Electronic Experts','PC12345675','Sound system','Single sound system','Available',7,3, 0.27);
 -- Category: Book
-INSERT INTO Product VALUES('P4565', 'Kids programming','All things Education','PC12345676','Programming textbook','Single textbook',27.95,'Available',23,5, 0.50);
-INSERT INTO Product VALUES('P7895', 'Programming for dummies','All things Education','PC12345676','Programming textbook','Single textbook',21.50,'Available',10,8, 0.50);
-INSERT INTO Product VALUES('P9885', 'Artbook','Art central','PC12345676','Picture book of art','Single book',15.95,'Out of stock',20,10, 0.05);
-INSERT INTO Product VALUES('P0022', 'Mathematics','All things Education','PC12345676','Mathematics textbook','Single textbook',18.75,'Available',25,3, 0.75);
+INSERT INTO Product VALUES('P4565', 'Kids programming','All things Education','PC12345676','Programming textbook','Single textbook','Available',23,5, 0.50);
+INSERT INTO Product VALUES('P7895', 'Programming for dummies','All things Education','PC12345676','Programming textbook','Single textbook','Available',10,8, 0.50);
+INSERT INTO Product VALUES('P9885', 'Artbook','Art central','PC12345676','Picture book of art','Single book','Out of stock',20,10, 0.05);
+INSERT INTO Product VALUES('P0022', 'Mathematics','All things Education','PC12345676','Mathematics textbook','Single textbook','Available',25,3, 0.75);
 -- Category: Furniture
-INSERT INTO Product VALUES('P1211', 'Office Desk','Furniture experts','PC12345671','Office Desk','Single desk',80.00,'Available',6,3, 0.50);
-INSERT INTO Product VALUES('P1235', 'Solid chair','Furniture experts','PC12345671','Desk chair','Single chair',30.00,'Available',10, 2, 0.10);
-INSERT INTO Product VALUES('P3265', 'Kids chair','Furniture experts','PC12345671','Child office chair','Single chair',35.75,'Out of stock',0,10, 0.23);
-INSERT INTO Product VALUES('P4566', 'Kids desk','Furniture experts','PC12345671','Child office desk','Single desk',47.95,'Available',2,5, 0.10);
+INSERT INTO Product VALUES('P1211', 'Office Desk','Furniture experts','PC12345671','Office Desk','Single desk','Available',6,3, 0.50);
+INSERT INTO Product VALUES('P1235', 'Solid chair','Furniture experts','PC12345671','Desk chair','Single chair','Available',10, 2, 0.10);
+INSERT INTO Product VALUES('P3265', 'Kids chair','Furniture experts','PC12345671','Child office chair','Single chair','Out of stock',0,10, 0.23);
+INSERT INTO Product VALUES('P4566', 'Kids desk','Furniture experts','PC12345671','Child office desk','Single desk','Available',2,5, 0.10);
 
 --	INSERT INTO Payslip VALUES ('PS0000000112', 'E00099', 'T556555', '2017-01-01', '2017-01-06', );
 

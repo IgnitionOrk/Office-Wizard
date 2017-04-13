@@ -290,7 +290,6 @@ CREATE TABLE Payslip
 	startDate DATE NOT NULL,
 	endDate DATE NOT NULL,
 	workedHours FLOAT CHECK(workedHours >= 0),
-	hourlyRate FLOAT CHECK(hourlyRate >= 0.00),
 	basePay FLOAT,
 	taxableIncome FLOAT,
 	netPay FLOAT,
@@ -327,9 +326,10 @@ GO
 --Created by: 
 	--  Ryan Cunneen  :(c3179234)
 	--  Micay Conway  :(c3232648)
-	--  Jamie Sy	 	      :(c3207040)
+	--  Jamie Sy	  :(c3207040)
 --Date Created  4-Apr-2017
 --Date Modified 11-Apr-2017
+
 
 INSERT INTO Supplier VALUES('S111111111', 'World of Pens', '121 Industrial Rd', '123456789012', '1234-1234-12', 'Mary Jane');
 INSERT INTO Supplier VALUES('S222222222', 'Chair R Us', '11 Matthew Avenue',  '210987654321',  '12-4321-4321', 'Bob Walts');
@@ -373,7 +373,7 @@ INSERT INTO Employee VALUES('E98898', 'Daniel McContyre','M','0455568931','668 D
 INSERT INTO Position VALUES('P22343', 'Salesperson', 20.00);
 INSERT INTO Position VALUES('P22311', 'Manager', 23.00);
 INSERT INTO Position VALUES('P22222', 'Store Manager', 30.00);
-INSERT INTO Position VALUES('P33223', 'Stock hand', 19.00);
+INSERT INTO Position VALUES('P33223', 'Stock Hand', 19.00);
 INSERT INTO Position VALUES('P33211', 'Human Resources', 19.00);
 INSERT INTO Position VALUES('P90999', 'Accountant', 21.00);
 
@@ -419,3 +419,18 @@ INSERT INTO Product VALUES('P1211', 'Office Desk','Furniture experts','PC1234567
 INSERT INTO Product VALUES('P1235', 'Solid chair','Furniture experts','PC12345671','Desk chair','Single chair',30.00,'Available',10, 2, 0.10);
 INSERT INTO Product VALUES('P3265', 'Kids chair','Furniture experts','PC12345671','Child office chair','Single chair',35.75,'Out of stock',0,10, 0.23);
 INSERT INTO Product VALUES('P4566', 'Kids desk','Furniture experts','PC12345671','Child office desk','Single desk',47.95,'Available',2,5, 0.10);
+
+--	INSERT INTO Payslip VALUES ('PS0000000112', 'E00099', 'T556555', '2017-01-01', '2017-01-06', );
+
+--INSERT INTO Quote VALUES ('QUO1004567', '2017-01-02', '2017-01-03', 'Silly pens to suit all your silly stationary needs', 'S111111111', 'E68889');
+--INSERT INTO Quote VALUES ('QUO1222222', '2017-01-10', '2017-01-11', 'Arty stuff for creative people', 'S111111111', 'E68889');
+--INSERT INTO Quote VALUES ('QUO1234237', '2017-01-02', '2017-01-03', 'Silly pens to suit all your silly stationary needs', 'S111111111', 'E68889');
+--INSERT INTO Quote VALUES ('QUO1231237', '2017-01-02', '2017-01-03', 'Silly pens to suit all your silly stationary needs', 'S111111111', 'E68889');
+
+--INSERT INTO SupplierOrder VALUES ('SO10000011', )
+
+--	INSERT INTO SupplierOrderProduct VALUES ()
+
+--	INSERT INTO ProductItem VALUES
+
+

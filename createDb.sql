@@ -457,8 +457,10 @@ INSERT INTO SupplierProduct VALUES('S222222222','P4566', 50.35);
 
 INSERT INTO Quote VALUES ('QUO1004567', '2017-01-02', '2017-01-03', 'Reasonable quote for a bulk supply of silly pens to suit all your silly stationary needs', 'S111111111', 'E68889');
 INSERT INTO Quote VALUES ('QUO1022222', '2017-01-10', '2017-01-11', 'Supply of arty stuff for creative people', 'S111111111', 'E68889');
-INSERT INTO Quote VALUES ('QUO2244237', '2017-02-02', '2017-02-03', 'Quote must be responded to ', 'S222222222', 'E68889');
-INSERT INTO Quote VALUES ('QUO1231237', '2017-01-12', '2017-01-13', 'Silly pens to suit all your silly stationary needs', 'S111111111', 'E68889');
+INSERT INTO Quote VALUES ('QUO2244237', '2017-02-02', '2017-02-03', 'Quote must be responded to as soon as possible to obtain your bulk supply of sitting needs', 'S222222222', 'E68889');
+INSERT INTO Quote VALUES ('QUO1231238', '2017-01-12', '2017-01-13', 'This quote was obtained 20 minutes before the response was due', 'S222222222', 'E68889');
+INSERT INTO Quote VALUES ('QUO1234438', '2017-03-12', '2017-03-13', 'Barry from Family Fun constructed this quote a day before they required the feedback. Please respond before COB so ensure your fun family items will arrive in time.', 'S666666666', 'E12345');
+
 
 --INSERT INTO SupplierOrder VALUES ('SO10000011', )
 

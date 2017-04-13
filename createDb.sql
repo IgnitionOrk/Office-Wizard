@@ -421,7 +421,7 @@ INSERT INTO Product VALUES('P1235', 'Solid chair','Furniture experts','PC1234567
 INSERT INTO Product VALUES('P3265', 'Kids chair','Furniture experts','PC12345671','Child office chair','Single chair','Out of stock',0,10, 0.23);
 INSERT INTO Product VALUES('P4566', 'Kids desk','Furniture experts','PC12345671','Child office desk','Single desk','Available',2,5, 0.10);
 
---	INSERT INTO Payslip VALUES ('PS0000000112', 'E00099', 'T556555', '2017-01-01', '2017-01-06', );
+--INSERT INTO Payslip VALUES ('PS0000000112', 'E00099', 'T556555', '2017-01-01', '2017-01-06', );
 
 --INSERT INTO Quote VALUES ('QUO1004567', '2017-01-02', '2017-01-03', 'Silly pens to suit all your silly stationary needs', 'S111111111', 'E68889');
 --INSERT INTO Quote VALUES ('QUO1222222', '2017-01-10', '2017-01-11', 'Arty stuff for creative people', 'S111111111', 'E68889');

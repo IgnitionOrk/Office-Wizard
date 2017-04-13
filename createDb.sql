@@ -421,17 +421,19 @@ INSERT INTO Product VALUES('P1235', 'Solid chair','Furniture experts','PC1234567
 INSERT INTO Product VALUES('P3265', 'Kids chair','Furniture experts','PC12345671','Child office chair','Single chair','Out of stock',0,10, 0.23);
 INSERT INTO Product VALUES('P4566', 'Kids desk','Furniture experts','PC12345671','Child office desk','Single desk','Available',2,5, 0.10);
 
---INSERT INTO Payslip VALUES ('PS0000000112', 'E00099', 'T556555', '2017-01-01', '2017-01-06', );
+INSERT INTO Payslip VALUES ('PS0000000112', 'E00099', 'T556555', '2017-01-01', '2017-01-06', 12, 50000, 1000, 49000);
+INSERT INTO Payslip VALUES ('PS0000000113', 'E00119', 'T111111', '2017-01-10', '2017-01-16', 20, 50000, 1000, 49000);
+INSERT INTO Payslip VALUES ('PS0000000113', 'E00120', 'T111111', '2017-02-10', '2017-02-16', 20, 46000, 1000, 45000);
 
---INSERT INTO Quote VALUES ('QUO1004567', '2017-01-02', '2017-01-03', 'Silly pens to suit all your silly stationary needs', 'S111111111', 'E68889');
---INSERT INTO Quote VALUES ('QUO1222222', '2017-01-10', '2017-01-11', 'Arty stuff for creative people', 'S111111111', 'E68889');
---INSERT INTO Quote VALUES ('QUO1234237', '2017-01-02', '2017-01-03', 'Silly pens to suit all your silly stationary needs', 'S111111111', 'E68889');
---INSERT INTO Quote VALUES ('QUO1231237', '2017-01-02', '2017-01-03', 'Silly pens to suit all your silly stationary needs', 'S111111111', 'E68889');
+INSERT INTO Quote VALUES ('QUO1004567', '2017-01-02', '2017-01-03', 'Reasonable quote for a bulk supply of silly pens to suit all your silly stationary needs', 'S111111111', 'E68889');
+INSERT INTO Quote VALUES ('QUO1022222', '2017-01-10', '2017-01-11', 'Supply of arty stuff for creative people', 'S111111111', 'E68889');
+INSERT INTO Quote VALUES ('QUO2244237', '2017-02-02', '2017-02-03', 'Quote must be responded to ', 'S222222222', 'E68889');
+INSERT INTO Quote VALUES ('QUO1231237', '2017-01-12', '2017-01-13', 'Silly pens to suit all your silly stationary needs', 'S111111111', 'E68889');
 
 --INSERT INTO SupplierOrder VALUES ('SO10000011', )
 
---	INSERT INTO SupplierOrderProduct VALUES ()
+--INSERT INTO SupplierOrderProduct VALUES ()
 
---	INSERT INTO ProductItem VALUES
+--INSERT INTO ProductItem VALUES
 
 

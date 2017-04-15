@@ -187,7 +187,7 @@ CREATE TABLE ProductItem
 	suppOrdID VARCHAR(10) NOT NULL,
 	costPrice FLOAT CHECK(costPrice > 0), 			--Cost price is the cost of each individual item. i.e. one carton($1) could have 10 pens and each pen would cost us 10 cents each pen.
 	sellingPrice FLOAT CHECK(sellingPrice > 0),
-	custOrdID VARCHAR(10) NOT NULL,
+	custOrdID VARCHAR(10) DEFAULT NULL,
 	status VARCHAR(10) CHECK(status IN('in-stock', 'sold', 'lost')),
 	PRIMARY KEY(itemNo),
 	FOREIGN KEY(productID) REFERENCES Product(productID) ON DELETE CASCADE,
@@ -196,15 +196,6 @@ CREATE TABLE ProductItem
 );
 GO
 
--- NORMALISED!!!
-CREATE TABLE CustomerOrderItem
-(
-	itemNo VARCHAR(10),
-	custOrdID VARCHAR(10),
-	FOREIGN KEY(itemNo) REFERENCES ProductItem(itemNo) ON DELETE NO ACTION,
-	FOREIGN KEY(custOrdID) REFERENCES CustomerOrder(custOrdID) ON DELETE NO ACTION
-);
-GO
 
 CREATE TABLE CustOrdProduct
 (
@@ -529,13 +520,13 @@ INSERT INTO ProductItem VALUES ('PI10000008', 'P2112', 'SO00000018', 2.10, 2.50,
 
 =======
 INSERT INTO ProductItem VALUES ('PI10000003', 'P9084', 'SO00000013', 100, 140, 'CO0001003', 'in-stock');
-INSERT INTO ProductItem VALUES ('PI10000004', 'P4566', 'SO00000014', 50, 55, 'CO0001004', 'in-stock');
+INSERT INTO ProductItem VALUES ('PI10000004', 'P4566', 'SO00000014', 50, 55, NULL, 'in-stock');
 INSERT INTO ProductItem VALUES ('PI10000005', 'P1234', 'SO00000015', 1, 1.70, 'CO0001005', 'in-stock');
 INSERT INTO ProductItem VALUES ('PI10000006', 'P2112', 'SO00000016', 1.5, 2.5, 'CO0001006', 'in-stock');
 INSERT INTO ProductItem VALUES ('PI10000007', 'P1234', 'SO00000017', 0.50, 1.70, 'CO0001007', 'in-stock');
 INSERT INTO ProductItem VALUES ('PI10000008', 'P2112', 'SO00000018', 2, 2.5, 'CO0001008', 'in-stock');
-INSERT INTO ProductItem VALUES ('PI10000009', 'P9999', 'SO00000018', 100, 200, 'CO0001008', 'in-stock');
-INSERT INTO ProductItem VALUES ('PI10000010', 'P9885', 'SO00000011', 20, 30, 'CO0001008', 'in-stock');
+INSERT INTO ProductItem VALUES ('PI10000009', 'P9999', 'SO00000018', 100, 200, NULL, 'in-stock');
+INSERT INTO ProductItem VALUES ('PI10000010', 'P9885', 'SO00000011', 20, 30,NULL, 'in-stock');
 INSERT INTO ProductItem VALUES ('PI10000011', 'P3265', 'SO00000011', 20, 25, 'CO0001008', 'in-stock');
 INSERT INTO ProductItem VALUES ('PI10000012', 'P1235', 'SO00000018', 0.80, 2.50, 'CO0001008', 'in-stock');
 INSERT INTO ProductItem VALUES ('PI10000013', 'P3911', 'SO00000012', 2., 2.50, 'CO0001008', 'in-stock');
@@ -557,4 +548,8 @@ INSERT INTO CustOrdProduct VALUES ('CO0001008', 'P2112', 5, 1.70, 8.5);
 INSERT INTO CustOrdProduct VALUES ('CO0001008', 'P2112', 5, 1.70, 8.5);
 
 
+<<<<<<< HEAD
+>>>>>>> origin/master
+=======
+SELECT * FROM ProductItem WHERE custOrdID IS NULL
 >>>>>>> origin/master

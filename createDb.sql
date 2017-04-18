@@ -190,7 +190,7 @@ CREATE TABLE ProductItem
 	sellingPrice FLOAT CHECK(sellingPrice > 0),
 	custOrdID VARCHAR(10) DEFAULT NULL,
 	status VARCHAR(10) CHECK(status IN('in-stock', 'sold', 'lost')),
-	PRIMARY KEY(itemNo),
+	PRIMARY KEY(itemNo, productID, suppOrdID),
 	FOREIGN KEY(productID) REFERENCES Product(productID) ON DELETE CASCADE,
 	FOREIGN KEY(suppOrdID) REFERENCES SupplierOrder(suppOrdID) ON DELETE CASCADE,
 	FOREIGN KEY(custOrdID) REFERENCES CustomerOrder(custOrdID) ON DELETE CASCADE
@@ -555,7 +555,15 @@ INSERT INTO Pickup VALUES('CO0001007', '');
 INSERT INTO Pickup VALUES('CO0001008', '');
 
 
+-- Here will needed to be normalized, why?
+-- The functional dependency F(productID, suppOrdID) -> sellingPrice, costPrice.
+-- True the itemNo can be different, but we can order multiples of the same product from the Supplier.
+--ProductItem represents the single (physically) item e.g. a pen.
 INSERT INTO ProductItem VALUES ('PI10000003', 'P9084', 'SO00000013', 100, 140, 'CO0001003', 'in-stock');
+INSERT INTO ProductItem VALUES ('PI10000044', 'P9084', 'SO00000013', 100, 140, 'CO0001003', 'in-stock');
+INSERT INTO ProductItem VALUES ('PI10000045', 'P9084', 'SO00000013', 100, 140, 'CO0001003', 'in-stock');
+
+
 INSERT INTO ProductItem VALUES ('PI10000004', 'P4566', 'SO00000014', 50, 55, NULL, 'in-stock');
 INSERT INTO ProductItem VALUES ('PI10000005', 'P1234', 'SO00000015', 1, 1.70, 'CO0001005', 'in-stock');
 INSERT INTO ProductItem VALUES ('PI10000006', 'P2112', 'SO00000016', 1.5, 2.5, 'CO0001006', 'in-stock');
@@ -565,18 +573,22 @@ INSERT INTO ProductItem VALUES ('PI10000009', 'P9999', 'SO00000018', 100, 200, N
 INSERT INTO ProductItem VALUES ('PI10000010', 'P9885', 'SO00000011', 20, 30,NULL, 'in-stock');
 INSERT INTO ProductItem VALUES ('PI10000011', 'P3265', 'SO00000011', 20, 25, 'CO0001008', 'in-stock');
 INSERT INTO ProductItem VALUES ('PI10000012', 'P1235', 'SO00000018', 0.80, 2.50, 'CO0001008', 'in-stock');
-INSERT INTO ProductItem VALUES ('PI10000013', 'P3911', 'SO00000012', 2., 2.50, 'CO0001008', 'in-stock');
+INSERT INTO ProductItem VALUES ('PI10000013', 'P3911', 'SO00000012', 2, 2.50, 'CO0001008', 'in-stock');
 INSERT INTO ProductItem VALUES ('PI10000014', 'P3265', 'SO00000017', 20, 25, 'CO0001008', 'in-stock');
 INSERT INTO ProductItem VALUES ('PI10000015', 'P0000', 'SO00000013', 159, 250, 'CO0001008', 'in-stock');
+INSERT INTO ProductItem VALUES('PI00001', 'P1234','SO00000015' , 1, 1.70, 'CO0001001', 'in-stock');
+INSERT INTO ProductItem VALUES('PI00002', 'P1234','SO00000015' , 1, 1.70, 'CO0001001', 'in-stock');
+INSERT INTO ProductItem VALUES('PI99909', 'P4565', 'SO00000011', 2, 1.22, 'CO0001002', 'in-stock');
 
-INSERT INTO CustOrdProduct VALUES ('CO0001001', 'P1234', 5, 1.70, 8.5);
-INSERT INTO CustOrdProduct VALUES ('CO0001002', 'P4565', 5, 15, 8.5);
-INSERT INTO CustOrdProduct VALUES ('CO0001003', 'P9084', 5, 140, 8.5);
-INSERT INTO CustOrdProduct VALUES ('CO0001004', 'P4566', 5, 55, 8.5);
-INSERT INTO CustOrdProduct VALUES ('CO0001005', 'P1234', 5, 1.70, 8.5);
-INSERT INTO CustOrdProduct VALUES ('CO0001006', 'P2112', 5, 1.70, 8.5);
-INSERT INTO CustOrdProduct VALUES ('CO0001007', 'P1234', 5, 1.70, 8.5);
-INSERT INTO CustOrdProduct VALUES ('CO0001008', 'P2112', 5, 1.70, 8.5);
+
+INSERT INTO CustOrdProduct VALUES ('CO0001001', 'P1234', 2, 1.70, 8.5);
+INSERT INTO CustOrdProduct VALUES ('CO0001002', 'P4565', 1, 15, 8.5);
+INSERT INTO CustOrdProduct VALUES ('CO0001003', 'P9084', 3, 140, 8.5);
+INSERT INTO CustOrdProduct VALUES ('CO0001004', 'P4566', 4, 55, 8.5);
+INSERT INTO CustOrdProduct VALUES ('CO0001005', 'P1234', 2, 1.70, 8.5);
+INSERT INTO CustOrdProduct VALUES ('CO0001006', 'P2112', 1, 1.70, 8.5);
+INSERT INTO CustOrdProduct VALUES ('CO0001007', 'P1234', 2, 1.70, 8.5);
+INSERT INTO CustOrdProduct VALUES ('CO0001008', 'P2112', 4, 1.70, 8.5);
 
 INSERT INTO Assignment VALUES('A1234', 'E12345', 'P22311', '2010-12-12', NULL);
 INSERT INTO Assignment VALUES('A1235', 'E12346', 'P33223', '2010-12-12', NULL);
@@ -673,7 +685,6 @@ EXECUTE usp_OrderDelivery5To7Days
 EXECUTE usp_PickupOrderIn3Days
 GO
 
-SELECT * FROM Delivery
 
 DROP PROCEDURE usp_OrderDelivery5To7Days
 DROP PROCEDURE usp_PickupOrderIn3Days

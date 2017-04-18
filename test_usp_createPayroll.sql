@@ -1,7 +1,8 @@
 DROP TYPE payroll_TVP
 
-CREATE TYPE payroll_TVP AS TABLE
-(
+/*CREATE PROCEDURE usp_createPayroll
+  @startDate DATE, @endDate DATE, @
+
   
   
 );

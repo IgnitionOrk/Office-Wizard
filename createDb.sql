@@ -622,6 +622,7 @@ AS
 	DECLARE @custOrdID VARCHAR(10)
 	DECLARE @date DATE
 	SET @custOrdID = ''
+
 	DECLARE weekendCursor CURSOR
 	FOR 
 	SELECT custOrdID
@@ -629,18 +630,19 @@ AS
 	WHERE custOrdID NOT IN(SELECT custOrdID FROM Pickup)
 	FOR READ ONLY
 
+	-- We are populating the Cursor by determing what customer orders are not pick-ups.
 	OPEN weekendCursor
 	FETCH NEXT FROM weekendCursor INTO @custOrdID
 	WHILE @@FETCH_STATUS = 0
 		BEGIN 
-
 			-- Determine the date the order was submitted by the customer. 
 			SET @date =  (SELECT orderDate FROM CustomerOrder WHERE CustomerOrder.custOrdID = @custOrdID)
 
-			-- If the expected order date is either Sunday (1), or Saturday(7).
-			-- Then we change due date the order will be delivered to Monday.
+			-- If the expected delivery date is either Sunday (1), or Saturday(7).
+			-- Then we change due date the order will be delivered to Monday. 
 			IF DATEPART(DW, DATEADD(day, 5, @date)) IN(1,7)
 				BEGIN
+					-- The delivery date is a Sunday. 
 					IF DATEPART(DW, DATEADD(day, 5, @date)) IN(1)
 						BEGIN
 							-- Customers order was submitted on Tuesday, and will be delivered on Monday.
@@ -672,7 +674,8 @@ AS
 	DEALLOCATE weekendCursor
 GO
 
-GO
+
+
 CREATE PROCEDURE usp_PickupOrderIn3Days
 AS
 	-- So the Customer can pick up their order, 3 days after they have submitted their order.

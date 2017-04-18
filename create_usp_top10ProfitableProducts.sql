@@ -4,10 +4,11 @@
 -- Date modified: 18-Apr-2017
 DROP TABLE productQuantityProfit
 
+
 CREATE TABLE productQuantityProfit(
 	productID VARCHAR(10),
 	pName VARCHAR(50),
-	sQuantity INT, 
+	quantity INT, 
 	profit FLOAT
 );
 GO

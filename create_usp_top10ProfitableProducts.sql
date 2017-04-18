@@ -48,8 +48,8 @@ AS
 			-- Therefore, there quantity will be null.
 			SET @qty = (SELECT SUM(qty) 
 							FROM Product 
-							INNER JOIN CustOrdProduct 
-								ON Product.productID = CustOrdProduct.productID
+								INNER JOIN CustOrdProduct 
+									ON Product.productID = CustOrdProduct.productID
 							WHERE Product.productID = @productID)
 
 

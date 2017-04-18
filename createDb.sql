@@ -523,5 +523,13 @@ INSERT INTO CustOrdProduct VALUES ('CO0001007', 'P1234', 5, 1.70, 8.5);
 INSERT INTO CustOrdProduct VALUES ('CO0001008', 'P2112', 5, 1.70, 8.5);
 
 
+-- QuoteProduct
+-- Assignbment
+--EmployeeAllowanceType
+--Payslip
+--Allowance
+--Payment
+--Delivery
+--Pickup
 
 SELECT * FROM ProductItem WHERE custOrdID IS NULL

@@ -115,7 +115,11 @@ CREATE TABLE QuoteProduct
 	quoteID VARCHAR(10),
 	productID VARCHAR(10),
 	qty INT CHECK(qty > 0),
+<<<<<<< HEAD
 	unitPrice FLOAT,
+=======
+	unitPrice FLOAT	NOT NULL,
+>>>>>>> origin/master
 	FOREIGN KEY(productID) REFERENCES Product(productID),
 	FOREIGN KEY(quoteID) REFERENCES Quote(quoteID),
 	PRIMARY KEY(productID, quoteID)
@@ -389,6 +393,19 @@ INSERT INTO TaxBracket VALUES('T443343', 40000.01, 50000.00, 0.20, '2017');
 INSERT INTO TaxBracket VALUES('T898889', 50000.01, 60000.00, 0.21, '2017');
 INSERT INTO TaxBracket VALUES('T444544', 60000.01, 70000.00, 0.22, '2006');
 
+INSERT INTO Assignment VALUES('A1234', 'E12345', 'P22311', '2010-12-12', NULL);
+INSERT INTO Assignment VALUES('A1235', 'E12346', 'P33223', '2010-12-12', NULL);
+INSERT INTO Assignment VALUES('A1236', 'E12347', 'P33223', '2009-01-12', '2009-07-09');
+INSERT INTO Assignment VALUES('A1222', 'E12347', 'P22311', '2009-07-10', NULL);
+INSERT INTO Assignment VALUES('A1237', 'E12348', 'P90999', '2001-04-21', NULL);
+INSERT INTO Assignment VALUES('A1238', 'E12349', 'P90999', '2007-04-21', NULL);
+INSERT INTO Assignment VALUES('A1239', 'E68889', 'P22222', '2001-05-04', NULL);
+INSERT INTO Assignment VALUES('A1230', 'E89897', 'P33211', '2004-09-09', '2005-10-11');
+INSERT INTO Assignment VALUES('A1241', 'E89897', 'P22311', '2005-10-12', NULL);
+INSERT INTO Assignment VALUES('A1231', 'E12213', 'P22343', '2008-11-23', NULL);
+INSERT INTO Assignment VALUES('A1232', 'E00099', 'P22343', '2008-07-24', NULL);
+INSERT INTO Assignment VALUES('A1233', 'E98898', 'P33223', '2010-12-12', '2015-12-24');
+
 INSERT INTO AllowanceType VALUES('AT7778878', 'Sales bonus', 'End of year sales bonus', 'yearly');
 INSERT INTO AllowanceType VALUES('AT7779966', 'Long service leave', '', 'quarterly');
 INSERT INTO AllowanceType VALUES('AT3778783', 'Uniform allowance', 'Uniform cost', 'monthly');
@@ -400,6 +417,7 @@ INSERT INTO AllowanceType VALUES('AT5865656', 'First aid allowance', 'Have medic
 INSERT INTO AllowanceType VALUES('AT9869869', 'Maternity leave', '3 months leave', 'When needed');
 
 --EmployeeAllowanceType
+<<<<<<< HEAD
 /*
 INSERT INTO EmployeeAllowanceType VALUES ('E12345', '')
 INSERT INTO EmployeeAllowanceType VALUES ('E12346', '')
@@ -413,6 +431,49 @@ INSERT INTO EmployeeAllowanceType VALUES ('E00099', '')
 INSERT INTO EmployeeAllowanceType VALUES ('E98898', '')
 */
 --Allowance
+=======
+INSERT INTO EmployeeAllowanceType VALUES ('E12345', 'AT7779966');
+INSERT INTO EmployeeAllowanceType VALUES ('E12346', 'AT7779966');
+INSERT INTO EmployeeAllowanceType VALUES ('E12347', 'AT6568565');
+INSERT INTO EmployeeAllowanceType VALUES ('E12348', 'AT7787987');
+INSERT INTO EmployeeAllowanceType VALUES ('E12349', 'AT4087488');
+INSERT INTO EmployeeAllowanceType VALUES ('E68889', 'AT6568565');
+INSERT INTO EmployeeAllowanceType VALUES ('E89897', 'AT7779966');
+INSERT INTO EmployeeAllowanceType VALUES ('E12213', 'AT7778878');
+INSERT INTO EmployeeAllowanceType VALUES ('E00099', 'AT9869869');
+INSERT INTO EmployeeAllowanceType VALUES ('E00099', 'AT7779966');
+INSERT INTO EmployeeAllowanceType VALUES ('E98898', 'AT0970970');
+
+INSERT INTO Allowance VALUES ('A00010010', 'PS00000110', 'AT6568565', 20, 'This allowance is rewarded to this employee due to working shifts that are undesirable.');
+INSERT INTO Allowance VALUES ('A00010011', 'PS00000111', 'AT7779966', ,1500 'This allowance is rewarded to this employee due to staying with Office Wizard for at least 5 years.');
+INSERT INTO Allowance VALUES ('A00010012', 'PS00000112', 'AT4087488', 850, 'This allowance is rewarded to this employee due to their physical disability yet still makes the effort to work.');
+INSERT INTO Allowance VALUES ('A00010013', 'PS00000113', 'AT6568565', 250, 'This allowance is rewarded to this employee due to working shifts that are during a storm tat might have put him in danger');
+INSERT INTO Allowance VALUES ('A00010014', 'PS00000114', 'AT6568565', 250, 'This allowance is rewarded to this employee due to working shifts that are undesirable.');
+INSERT INTO Allowance VALUES ('A00010015', 'PS00000115', 'AT7778878', 200, 'This allowance is rewarded to this employee due to performing the best in the sales team last year.');
+INSERT INTO Allowance VALUES ('A00010016', 'PS00000116', 'AT7779966', 1000, 'This allowance is rewarded to this employee due to staying with Office Wizard for at least 5 years.');
+INSERT INTO Allowance VALUES ('A00010017', 'PS00000117', 'AT6568565', 40, 'This allowance is rewarded to this employee due to working shifts that are undesirable.');
+INSERT INTO Allowance VALUES ('A00010018', 'PS00000118', 'AT7779966', 800, 'This allowance is rewarded to this employee due to staying with Office Wizard for at least 5 years.');
+INSERT INTO Allowance VALUES ('A00010019', 'PS00000119', 'AT9869869', 1500, 'This allowance is rewarded to this employee due to giving birth for another future wizard.');
+INSERT INTO Allowance VALUES ('A00010020', 'PS00000120', 'AT7779966', 400, 'This allowance is rewarded to this employee due to staying with Office Wizard for at least 5 years.');
+INSERT INTO Allowance VALUES ('A00010021', 'PS00000121', 'AT7779966', 350, 'This allowance is rewarded to this employee due to staying with Office Wizard for at least 5 years.');
+INSERT INTO Allowance VALUES ('A00010022', 'PS00000122', 'AT6568565', 250, 'This allowance is rewarded to this employee due to working shifts that are undesirable.');
+INSERT INTO Allowance VALUES ('A00010023', 'PS00000123', 'AT7779966', 400, 'This allowance is rewarded to this employee due to staying with Office Wizard for at least 5 years.');
+
+INSERT INTO Payslip VALUES ('PS00000110', 'E68889', 'T556555', '2017-01-01', '2017-01-06', 12, 50000, 1000, 49000);
+INSERT INTO Payslip VALUES ('PS00000111', 'E12346', 'T556555', '2017-01-01', '2017-01-06', 12, 50000, 1000, 49000);
+INSERT INTO Payslip VALUES ('PS00000112', 'E12349', 'T556555', '2017-01-01', '2017-01-06', 12, 50000, 1000, 49000);
+INSERT INTO Payslip VALUES ('PS00000113', 'E68889', 'T111111', '2017-01-10', '2017-01-16', 20, 50000, 1000, 49000);
+INSERT INTO Payslip VALUES ('PS00000114', 'E68889', 'T111111', '2017-02-10', '2017-02-16', 20, 46000, 1000, 45000);
+INSERT INTO Payslip VALUES ('PS00000115', 'E12213', 'T556555', '2017-01-01', '2017-01-06', 12, 50000, 1000, 49000);
+INSERT INTO Payslip VALUES ('PS00000116', 'E00099', 'T111111', '2017-01-10', '2017-01-16', 20, 50000, 1000, 49000);
+INSERT INTO Payslip VALUES ('PS00000117', 'E12347', 'T111111', '2017-02-10', '2017-02-16', 20, 46000, 1000, 45000);
+INSERT INTO Payslip VALUES ('PS00000118', 'E12346', 'T111111', '2017-01-10', '2017-01-16', 20, 50000, 1000, 49000);
+INSERT INTO Payslip VALUES ('PS00000119', 'E00099', 'T111111', '2017-02-10', '2017-02-16', 20, 46000, 1000, 45000);
+INSERT INTO Payslip VALUES ('PS00000120', 'E89897', 'T111111', '2017-01-10', '2017-01-16', 20, 50000, 1000, 49000);
+INSERT INTO Payslip VALUES ('PS00000121', 'E89897', 'T111111', '2017-02-10', '2017-02-16', 20, 46000, 1000, 45000);
+INSERT INTO Payslip VALUES ('PS00000122', 'E12347', 'T111111', '2017-03-10', '2017-03-16', 20, 50000, 1000, 49000);
+INSERT INTO Payslip VALUES ('PS00000123', 'E12345', 'T111111', '2017-02-10', '2017-02-16', 20, 46000, 1000, 45000);
+>>>>>>> origin/master
 
 -- Category: Stationary
 INSERT INTO Product VALUES('P1234', 'Silly pens','All things stationary','PC12345674','Colour pens','Half dozen of pens', 1.00,'Available',23,5, 0.20);
@@ -439,11 +500,6 @@ INSERT INTO Product VALUES('P1211', 'Office Desk','Furniture experts','PC1234567
 INSERT INTO Product VALUES('P1235', 'Solid chair','Furniture experts','PC12345671','Desk chair','Single chair',57.63,'Available',10, 2, 0.10);
 INSERT INTO Product VALUES('P3265', 'Kids chair','Furniture experts','PC12345671','Child office chair','Single chair',12.75,'Out of stock',0,10, 0.23);
 INSERT INTO Product VALUES('P4566', 'Kids desk','Furniture experts','PC12345671','Child office desk','Single desk',25.75,'Available',2,5, 0.10);
-
-INSERT INTO Payslip VALUES ('PS00000112', 'E68889', 'T556555', '2017-01-01', '2017-01-06', 12, 50000, 1000, 49000);
-INSERT INTO Payslip VALUES ('PS00000113', 'E68889', 'T111111', '2017-01-10', '2017-01-16', 20, 50000, 1000, 49000);
-INSERT INTO Payslip VALUES ('PS00000114', 'E68889', 'T111111', '2017-02-10', '2017-02-16', 20, 46000, 1000, 45000);
-
 
 INSERT INTO SupplierProduct VALUES('S777777777', 'P1234');
 INSERT INTO SupplierProduct VALUES('S111111111', 'P1234');
@@ -512,6 +568,39 @@ INSERT INTO CustomerOrder VALUES ('CO0001006', 'E12346', 'C1237', '2017-04-10', 
 INSERT INTO CustomerOrder VALUES ('CO0001007', 'E12346', 'C1234', '2017-04-11', 0.05, 0, 150, 'Delivered', 'Phone');
 INSERT INTO CustomerOrder VALUES ('CO0001008', 'E12346', 'C1237', '2017-04-11', 0.05, 0, 0, 'Cancelled', 'Phone');
 
+<<<<<<< HEAD
+=======
+INSERT INTO Payment VALUES ('PAY000101', 2017-03-06, 'CO0001001', 'SO00000011');
+INSERT INTO Payment VALUES ('PAY000102', 2017-04-15, 'CO0001002', 'SO00000012');
+INSERT INTO Payment VALUES ('PAY000103', 2017-04-10, 'CO0001003', 'SO00000013');
+INSERT INTO Payment VALUES ('PAY000104', 2017-04-10, 'CO0001004', 'SO00000014');
+INSERT INTO Payment VALUES ('PAY000105', 2017-04-11, 'CO0001005', 'SO00000015');
+INSERT INTO Payment VALUES ('PAY000106', 2017-04-12, 'CO0001006', 'SO00000016');
+INSERT INTO Payment VALUES ('PAY000107', 2017-04-15, 'CO0001007', 'SO00000017');
+INSERT INTO Payment VALUES ('PAY000108', 2017-04-15, 'CO0001008', 'SO00000018');
+/*CREATE TABLE Delivery
+(
+	custOrdID VARCHAR(10) NOT NULL,
+	delAddress VARCHAR(100) NOT NULL,
+	delCharge FLOAT CHECK(delCharge >= 0.00),
+	delDateTime DATETIME	 NOT NULL,
+	FOREIGN KEY(custOrdID) REFERENCES CustomerOrder(custOrdID) ON DELETE CASCADE
+);
+GO
+*/
+INSERT INTO Delivery VALUES('CO0001001');
+INSERT INTO Delivery VALUES('CO0001002');
+INSERT INTO Delivery VALUES('CO0001003');
+INSERT INTO Delivery VALUES('CO0001004');
+/*
+CREATE TABLE Pickup
+(
+	custOrdID VARCHAR(10) NOT NULL,
+	pickupDateTime DATETIME NOT NULL,
+	FOREIGN KEY(custOrdID) REFERENCES CustomerOrder(custOrdID) ON DELETE CASCADE
+);
+GO*/
+>>>>>>> origin/master
 
 
 INSERT INTO Delivery VALUES('CO0001001','','','');
@@ -548,6 +637,7 @@ INSERT INTO CustOrdProduct VALUES ('CO0001006', 'P2112', 5, 1.70, 8.5);
 INSERT INTO CustOrdProduct VALUES ('CO0001007', 'P1234', 5, 1.70, 8.5);
 INSERT INTO CustOrdProduct VALUES ('CO0001008', 'P2112', 5, 1.70, 8.5);
 
+<<<<<<< HEAD
 INSERT INTO Assignment VALUES('A1234', 'E12345', 'P22311', '2010-12-12', NULL);
 INSERT INTO Assignment VALUES('A1235', 'E12346', 'P33223', '2010-12-12', NULL);
 INSERT INTO Assignment VALUES('A1236', 'E12347', 'P33223', '2009-01-12', '2009-07-09');
@@ -564,6 +654,8 @@ INSERT INTO Assignment VALUES('A1233', 'E98898', 'P33223', '2010-12-12', '2015-1
 --EmployeeAllowanceType
 --Payslip
 --Allowance
+=======
+>>>>>>> origin/master
 INSERT INTO QuoteProduct VALUES ('QUO1004567', 'P1234',  200, 1.70);
 INSERT INTO QuoteProduct VALUES ('QUO1022222', 'P2112',  200, 1.70);
 INSERT INTO QuoteProduct VALUES ('QUO2244237', 'P9084',  150, 140);
@@ -573,6 +665,7 @@ INSERT INTO QuoteProduct VALUES ('QUO1231239', 'P9885',  80, 10.00);
 INSERT INTO QuoteProduct VALUES ('QUO1234448', 'P1254',  150, 1.02);
 INSERT INTO QuoteProduct VALUES ('QUO1231240', 'P1223',  200, 0.75);
 
+<<<<<<< HEAD
 
 GO
 CREATE PROCEDURE usp_OrderDelivery5To7Days
@@ -616,3 +709,5 @@ SELECT * FROM Delivery
 GO
 DROP PROCEDURE usp_OrderDelivery5To7Days
 DROP PROCEDURE usp_PickupOrderIn3Days
+=======
+>>>>>>> origin/master

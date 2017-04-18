@@ -333,7 +333,7 @@ GO
 	--  Micay Conway  :(c3232648)
 	--  Jamie Sy	  :(c3207040)
 --Date Created  4-Apr-2017
---Date Modified 11-Apr-2017
+--Date Modified 18-Apr-2017
 
 
 INSERT INTO Supplier VALUES('S111111111', 'World of Pens', '121 Industrial Rd', '123456789012', '1234-1234-12', 'Mary Jane');

@@ -416,16 +416,44 @@ INSERT INTO AllowanceType VALUES('AT9869869', 'Maternity leave', '3 months leave
 INSERT INTO EmployeeAllowanceType VALUES ('E12345', 'AT7779966');
 INSERT INTO EmployeeAllowanceType VALUES ('E12346', 'AT7779966');
 INSERT INTO EmployeeAllowanceType VALUES ('E12347', 'AT6568565');
-INSERT INTO EmployeeAllowanceType VALUES ('E12348', '');
-INSERT INTO EmployeeAllowanceType VALUES ('E12349', '');
-INSERT INTO EmployeeAllowanceType VALUES ('E68889', '');
-INSERT INTO EmployeeAllowanceType VALUES ('E89897', '');
-INSERT INTO EmployeeAllowanceType VALUES ('E12213', '');
+INSERT INTO EmployeeAllowanceType VALUES ('E12348', 'AT7787987');
+INSERT INTO EmployeeAllowanceType VALUES ('E12349', 'AT4087488');
+INSERT INTO EmployeeAllowanceType VALUES ('E68889', 'AT6568565');
+INSERT INTO EmployeeAllowanceType VALUES ('E89897', 'AT7779966');
+INSERT INTO EmployeeAllowanceType VALUES ('E12213', 'AT7778878');
 INSERT INTO EmployeeAllowanceType VALUES ('E00099', 'AT9869869');
 INSERT INTO EmployeeAllowanceType VALUES ('E00099', 'AT7779966');
 INSERT INTO EmployeeAllowanceType VALUES ('E98898', 'AT0970970');
 
---Allowance
+INSERT INTO Allowance VALUES ('A00010010', 'PS00000110', 'AT6568565', 20, 'This allowance is rewarded to this employee due to working shifts that are undesirable.');
+INSERT INTO Allowance VALUES ('A00010011', 'PS00000111', 'AT7779966', ,1500 'This allowance is rewarded to this employee due to staying with Office Wizard for at least 5 years.');
+INSERT INTO Allowance VALUES ('A00010012', 'PS00000112', 'AT4087488', 850, 'This allowance is rewarded to this employee due to their physical disability yet still makes the effort to work.');
+INSERT INTO Allowance VALUES ('A00010013', 'PS00000113', 'AT6568565', 250, 'This allowance is rewarded to this employee due to working shifts that are during a storm tat might have put him in danger');
+INSERT INTO Allowance VALUES ('A00010014', 'PS00000114', 'AT6568565', 250, 'This allowance is rewarded to this employee due to working shifts that are undesirable.');
+INSERT INTO Allowance VALUES ('A00010015', 'PS00000115', 'AT7778878', 200, 'This allowance is rewarded to this employee due to performing the best in the sales team last year.');
+INSERT INTO Allowance VALUES ('A00010016', 'PS00000116', 'AT7779966', 1000, 'This allowance is rewarded to this employee due to staying with Office Wizard for at least 5 years.');
+INSERT INTO Allowance VALUES ('A00010017', 'PS00000117', 'AT6568565', 40, 'This allowance is rewarded to this employee due to working shifts that are undesirable.');
+INSERT INTO Allowance VALUES ('A00010018', 'PS00000118', 'AT7779966', 800, 'This allowance is rewarded to this employee due to staying with Office Wizard for at least 5 years.');
+INSERT INTO Allowance VALUES ('A00010019', 'PS00000119', 'AT9869869', 1500, 'This allowance is rewarded to this employee due to giving birth for another future wizard.');
+INSERT INTO Allowance VALUES ('A00010020', 'PS00000120', 'AT7779966', 400, 'This allowance is rewarded to this employee due to staying with Office Wizard for at least 5 years.');
+INSERT INTO Allowance VALUES ('A00010021', 'PS00000121', 'AT7779966', 350, 'This allowance is rewarded to this employee due to staying with Office Wizard for at least 5 years.');
+INSERT INTO Allowance VALUES ('A00010022', 'PS00000122', 'AT6568565', 250, 'This allowance is rewarded to this employee due to working shifts that are undesirable.');
+INSERT INTO Allowance VALUES ('A00010023', 'PS00000123', 'AT7779966', 400, 'This allowance is rewarded to this employee due to staying with Office Wizard for at least 5 years.');
+
+INSERT INTO Payslip VALUES ('PS00000110', 'E68889', 'T556555', '2017-01-01', '2017-01-06', 12, 50000, 1000, 49000);
+INSERT INTO Payslip VALUES ('PS00000111', 'E12346', 'T556555', '2017-01-01', '2017-01-06', 12, 50000, 1000, 49000);
+INSERT INTO Payslip VALUES ('PS00000112', 'E12349', 'T556555', '2017-01-01', '2017-01-06', 12, 50000, 1000, 49000);
+INSERT INTO Payslip VALUES ('PS00000113', 'E68889', 'T111111', '2017-01-10', '2017-01-16', 20, 50000, 1000, 49000);
+INSERT INTO Payslip VALUES ('PS00000114', 'E68889', 'T111111', '2017-02-10', '2017-02-16', 20, 46000, 1000, 45000);
+INSERT INTO Payslip VALUES ('PS00000115', 'E12213', 'T556555', '2017-01-01', '2017-01-06', 12, 50000, 1000, 49000);
+INSERT INTO Payslip VALUES ('PS00000116', 'E00099', 'T111111', '2017-01-10', '2017-01-16', 20, 50000, 1000, 49000);
+INSERT INTO Payslip VALUES ('PS00000117', 'E12347', 'T111111', '2017-02-10', '2017-02-16', 20, 46000, 1000, 45000);
+INSERT INTO Payslip VALUES ('PS00000118', 'E12346', 'T111111', '2017-01-10', '2017-01-16', 20, 50000, 1000, 49000);
+INSERT INTO Payslip VALUES ('PS00000119', 'E00099', 'T111111', '2017-02-10', '2017-02-16', 20, 46000, 1000, 45000);
+INSERT INTO Payslip VALUES ('PS00000120', 'E89897', 'T111111', '2017-01-10', '2017-01-16', 20, 50000, 1000, 49000);
+INSERT INTO Payslip VALUES ('PS00000121', 'E89897', 'T111111', '2017-02-10', '2017-02-16', 20, 46000, 1000, 45000);
+INSERT INTO Payslip VALUES ('PS00000122', 'E12347', 'T111111', '2017-03-10', '2017-03-16', 20, 50000, 1000, 49000);
+INSERT INTO Payslip VALUES ('PS00000123', 'E12345', 'T111111', '2017-02-10', '2017-02-16', 20, 46000, 1000, 45000);
 
 -- Category: Stationary
 INSERT INTO Product VALUES('P1234', 'Silly pens','All things stationary','PC12345674','Colour pens','Half dozen of pens', 1.00,'Available',23,5, 0.20);
@@ -452,11 +480,6 @@ INSERT INTO Product VALUES('P1211', 'Office Desk','Furniture experts','PC1234567
 INSERT INTO Product VALUES('P1235', 'Solid chair','Furniture experts','PC12345671','Desk chair','Single chair',57.63,'Available',10, 2, 0.10);
 INSERT INTO Product VALUES('P3265', 'Kids chair','Furniture experts','PC12345671','Child office chair','Single chair',12.75,'Out of stock',0,10, 0.23);
 INSERT INTO Product VALUES('P4566', 'Kids desk','Furniture experts','PC12345671','Child office desk','Single desk',25.75,'Available',2,5, 0.10);
-
-INSERT INTO Payslip VALUES ('PS00000112', 'E68889', 'T556555', '2017-01-01', '2017-01-06', 12, 50000, 1000, 49000);
-INSERT INTO Payslip VALUES ('PS00000113', 'E68889', 'T111111', '2017-01-10', '2017-01-16', 20, 50000, 1000, 49000);
-INSERT INTO Payslip VALUES ('PS00000114', 'E68889', 'T111111', '2017-02-10', '2017-02-16', 20, 46000, 1000, 45000);
-
 
 INSERT INTO SupplierProduct VALUES('S777777777', 'P1234');
 INSERT INTO SupplierProduct VALUES('S111111111', 'P1234');

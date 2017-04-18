@@ -310,7 +310,7 @@ CREATE TABLE Allowance
 	payslipID VARCHAR(10) NOT NULL,
 	allowanceTypeID VARCHAR(10) NOT NULL,
 	amount FLOAT,
-	allowDescription VARCHAR(100),
+	allowDescription VARCHAR(255),
 	FOREIGN KEY(payslipID) REFERENCES Payslip(payslipID) ON DELETE CASCADE,
 	FOREIGN KEY(allowanceTypeID) REFERENCES AllowanceType(allowanceTypeID) ON DELETE NO ACTION,
 	PRIMARY KEY(allowanceID)
@@ -389,19 +389,6 @@ INSERT INTO TaxBracket VALUES('T443343', 40000.01, 50000.00, 0.20, '2017');
 INSERT INTO TaxBracket VALUES('T898889', 50000.01, 60000.00, 0.21, '2017');
 INSERT INTO TaxBracket VALUES('T444544', 60000.01, 70000.00, 0.22, '2006');
 
-INSERT INTO Assignment VALUES('A1234', 'E12345', 'P22311', '2010-12-12', NULL);
-INSERT INTO Assignment VALUES('A1235', 'E12346', 'P33223', '2010-12-12', NULL);
-INSERT INTO Assignment VALUES('A1236', 'E12347', 'P33223', '2009-01-12', '2009-07-09');
-INSERT INTO Assignment VALUES('A1222', 'E12347', 'P22311', '2009-07-10', NULL);
-INSERT INTO Assignment VALUES('A1237', 'E12348', 'P90999', '2001-04-21', NULL);
-INSERT INTO Assignment VALUES('A1238', 'E12349', 'P90999', '2007-04-21', NULL);
-INSERT INTO Assignment VALUES('A1239', 'E68889', 'P22222', '2001-05-04', NULL);
-INSERT INTO Assignment VALUES('A1230', 'E89897', 'P33211', '2004-09-09', '2005-10-11');
-INSERT INTO Assignment VALUES('A1241', 'E89897', 'P22311', '2005-10-12', NULL);
-INSERT INTO Assignment VALUES('A1231', 'E12213', 'P22343', '2008-11-23', NULL);
-INSERT INTO Assignment VALUES('A1232', 'E00099', 'P22343', '2008-07-24', NULL);
-INSERT INTO Assignment VALUES('A1233', 'E98898', 'P33223', '2010-12-12', '2015-12-24');
-
 INSERT INTO AllowanceType VALUES('AT7778878', 'Sales bonus', 'End of year sales bonus', 'yearly');
 INSERT INTO AllowanceType VALUES('AT7779966', 'Long service leave', '', 'quarterly');
 INSERT INTO AllowanceType VALUES('AT3778783', 'Uniform allowance', 'Uniform cost', 'monthly');
@@ -424,6 +411,21 @@ INSERT INTO EmployeeAllowanceType VALUES ('E00099', 'AT9869869');
 INSERT INTO EmployeeAllowanceType VALUES ('E00099', 'AT7779966');
 INSERT INTO EmployeeAllowanceType VALUES ('E98898', 'AT0970970');
 
+INSERT INTO Payslip VALUES ('PS00000110', 'E68889', 'T556555', '2017-01-01', '2017-01-06', 12, 50000, 1000, 49000);
+INSERT INTO Payslip VALUES ('PS00000111', 'E12346', 'T556555', '2017-01-01', '2017-01-06', 12, 50000, 1000, 49000);
+INSERT INTO Payslip VALUES ('PS00000112', 'E12349', 'T556555', '2017-01-01', '2017-01-06', 12, 50000, 1000, 49000);
+INSERT INTO Payslip VALUES ('PS00000113', 'E68889', 'T111111', '2017-01-10', '2017-01-16', 20, 50000, 1000, 49000);
+INSERT INTO Payslip VALUES ('PS00000114', 'E68889', 'T111111', '2017-02-10', '2017-02-16', 20, 46000, 1000, 45000);
+INSERT INTO Payslip VALUES ('PS00000115', 'E12213', 'T556555', '2017-01-01', '2017-01-06', 12, 50000, 1000, 49000);
+INSERT INTO Payslip VALUES ('PS00000116', 'E00099', 'T111111', '2017-01-10', '2017-01-16', 20, 50000, 1000, 49000);
+INSERT INTO Payslip VALUES ('PS00000117', 'E12347', 'T111111', '2017-02-10', '2017-02-16', 20, 46000, 1000, 45000);
+INSERT INTO Payslip VALUES ('PS00000118', 'E12346', 'T111111', '2017-01-10', '2017-01-16', 20, 50000, 1000, 49000);
+INSERT INTO Payslip VALUES ('PS00000119', 'E00099', 'T111111', '2017-02-10', '2017-02-16', 20, 46000, 1000, 45000);
+INSERT INTO Payslip VALUES ('PS00000120', 'E89897', 'T111111', '2017-01-10', '2017-01-16', 20, 50000, 1000, 49000);
+INSERT INTO Payslip VALUES ('PS00000121', 'E89897', 'T111111', '2017-02-10', '2017-02-16', 20, 46000, 1000, 45000);
+INSERT INTO Payslip VALUES ('PS00000122', 'E12347', 'T111111', '2017-03-10', '2017-03-16', 20, 50000, 1000, 49000);
+INSERT INTO Payslip VALUES ('PS00000123', 'E12345', 'T111111', '2017-02-10', '2017-02-16', 20, 46000, 1000, 45000);
+
 INSERT INTO Allowance VALUES ('A00010010', 'PS00000110', 'AT6568565', 20, 'This allowance is rewarded to this employee due to working shifts that are undesirable.');
 INSERT INTO Allowance VALUES ('A00010011', 'PS00000111', 'AT7779966',1500, 'This allowance is rewarded to this employee due to staying with Office Wizard for at least 5 years.');
 INSERT INTO Allowance VALUES ('A00010012', 'PS00000112', 'AT4087488', 850, 'This allowance is rewarded to this employee due to their physical disability yet still makes the effort to work.');
@@ -439,20 +441,6 @@ INSERT INTO Allowance VALUES ('A00010021', 'PS00000121', 'AT7779966', 350, 'This
 INSERT INTO Allowance VALUES ('A00010022', 'PS00000122', 'AT6568565', 250, 'This allowance is rewarded to this employee due to working shifts that are undesirable.');
 INSERT INTO Allowance VALUES ('A00010023', 'PS00000123', 'AT7779966', 400, 'This allowance is rewarded to this employee due to staying with Office Wizard for at least 5 years.');
 
-INSERT INTO Payslip VALUES ('PS00000110', 'E68889', 'T556555', '2017-01-01', '2017-01-06', 12, 50000, 1000, 49000);
-INSERT INTO Payslip VALUES ('PS00000111', 'E12346', 'T556555', '2017-01-01', '2017-01-06', 12, 50000, 1000, 49000);
-INSERT INTO Payslip VALUES ('PS00000112', 'E12349', 'T556555', '2017-01-01', '2017-01-06', 12, 50000, 1000, 49000);
-INSERT INTO Payslip VALUES ('PS00000113', 'E68889', 'T111111', '2017-01-10', '2017-01-16', 20, 50000, 1000, 49000);
-INSERT INTO Payslip VALUES ('PS00000114', 'E68889', 'T111111', '2017-02-10', '2017-02-16', 20, 46000, 1000, 45000);
-INSERT INTO Payslip VALUES ('PS00000115', 'E12213', 'T556555', '2017-01-01', '2017-01-06', 12, 50000, 1000, 49000);
-INSERT INTO Payslip VALUES ('PS00000116', 'E00099', 'T111111', '2017-01-10', '2017-01-16', 20, 50000, 1000, 49000);
-INSERT INTO Payslip VALUES ('PS00000117', 'E12347', 'T111111', '2017-02-10', '2017-02-16', 20, 46000, 1000, 45000);
-INSERT INTO Payslip VALUES ('PS00000118', 'E12346', 'T111111', '2017-01-10', '2017-01-16', 20, 50000, 1000, 49000);
-INSERT INTO Payslip VALUES ('PS00000119', 'E00099', 'T111111', '2017-02-10', '2017-02-16', 20, 46000, 1000, 45000);
-INSERT INTO Payslip VALUES ('PS00000120', 'E89897', 'T111111', '2017-01-10', '2017-01-16', 20, 50000, 1000, 49000);
-INSERT INTO Payslip VALUES ('PS00000121', 'E89897', 'T111111', '2017-02-10', '2017-02-16', 20, 46000, 1000, 45000);
-INSERT INTO Payslip VALUES ('PS00000122', 'E12347', 'T111111', '2017-03-10', '2017-03-16', 20, 50000, 1000, 49000);
-INSERT INTO Payslip VALUES ('PS00000123', 'E12345', 'T111111', '2017-02-10', '2017-02-16', 20, 46000, 1000, 45000);
 
 -- Category: Stationary
 INSERT INTO Product VALUES('P1234', 'Silly pens','All things stationary','PC12345674','Colour pens','Half dozen of pens', 1.00,'Available',23,5, 0.20);
@@ -561,12 +549,6 @@ INSERT INTO Delivery VALUES('CO0001002','','','');
 INSERT INTO Delivery VALUES('CO0001003','','','');
 INSERT INTO Delivery VALUES('CO0001004','','','');
 
-
-INSERT INTO Delivery VALUES('CO0001001','','','');
-INSERT INTO Delivery VALUES('CO0001002','','','');
-INSERT INTO Delivery VALUES('CO0001003','','','');
-INSERT INTO Delivery VALUES('CO0001004','','','');
-
 INSERT INTO Pickup VALUES('CO0001005', '');
 INSERT INTO Pickup VALUES('CO0001006', '');
 INSERT INTO Pickup VALUES('CO0001007', '');
@@ -623,6 +605,7 @@ GO
 CREATE PROCEDURE usp_OrderDelivery5To7Days
 AS
 	DECLARE @custOrdID VARCHAR(10)
+	DECLARE @date DATE
 	SET @custOrdID = ''
 	DECLARE weekendCursor CURSOR
 	FOR 
@@ -631,31 +614,31 @@ AS
 	WHERE custOrdID NOT IN(SELECT custOrdID FROM Pickup)
 	FOR READ ONLY
 
-
 	OPEN weekendCursor
 	FETCH NEXT FROM weekendCursor INTO @custOrdID
 	WHILE @@FETCH_STATUS = 0
 		BEGIN 
-			PRINT 'HERE'			
+			SET @date =  (SELECT orderDate FROM CustomerOrder WHERE CustomerOrder.custOrdID = @custOrdID)
+			PRINT @date
+			IF DATEPART(DW, DATEADD(day, 5, @date)) IN(1,7)
+				BEGIN
+					UPDATE Delivery SET delDateTime = DATEADD(day, 7, @date)
+					FROM CustomerOrder, Delivery
+					WHERE Delivery.custOrdID = @custOrdID
+				END
+			ELSE 
+				BEGIN
+					UPDATE Delivery SET delDateTime = DATEADD(day, 5, @date)
+					FROM CustomerOrder, Delivery
+					WHERE Delivery.custOrdID = @custOrdID
+				END
+			PRINT @custOrdID
+			FETCH NEXT FROM weekendCursor INTO @custOrdID	
 		END
 	CLOSE weekendCursor
 	DEALLOCATE weekendCursor
 GO
-/*IF DATEPART(DW, (SELECT orderDate FROM CustomerOrder WHERE CustomerOrder.custOrdID = @custOrdID)) IN (1, 7)
-				BEGIN 
-					IF DATEPART(DW, (SELECT orderDate FROM CustomerOrder WHERE CustomerOrder.custOrdID = @custOrdID)) = 1
-						UPDATE Delivery SET delDateTime = DATEADD(day, 1, CustomerOrder.orderDate)
-						FROM CustomerOrder
-					ELSE 
-						UPDATE Delivery SET delDateTime = DATEADD(day, 2, CustomerOrder.orderDate)
-						FROM CustomerOrder
-				END
-			ELSE 
-				BEGIN
-					UPDATE Delivery SET delDateTime = DATEADD(day, 5, CustomerOrder.orderDate)
-				FROM CustomerOrder
-				END
-			FETCH NEXT FROM weekendCursor INTO @custOrdID*/
+
 GO
 CREATE PROCEDURE usp_PickupOrderIn3Days
 AS
@@ -667,7 +650,9 @@ GO
 
 EXECUTE usp_OrderDelivery5To7Days
 EXECUTE usp_PickupOrderIn3Days
+GO
 
+SELECT * FROM Delivery
 
 DROP PROCEDURE usp_OrderDelivery5To7Days
 DROP PROCEDURE usp_PickupOrderIn3Days

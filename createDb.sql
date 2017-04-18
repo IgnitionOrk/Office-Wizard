@@ -600,8 +600,11 @@ INSERT INTO QuoteProduct VALUES ('QUO1231239', 'P9885',  80, 10.00);
 INSERT INTO QuoteProduct VALUES ('QUO1234448', 'P1254',  150, 1.02);
 INSERT INTO QuoteProduct VALUES ('QUO1231240', 'P1223',  200, 0.75);
 
-
 GO
+
+
+-- Determines if the correct date the order should be delivered.
+-- The minimum number (of working) days is 5.
 CREATE PROCEDURE usp_OrderDelivery5To7Days
 AS
 	DECLARE @custOrdID VARCHAR(10)
@@ -618,21 +621,39 @@ AS
 	FETCH NEXT FROM weekendCursor INTO @custOrdID
 	WHILE @@FETCH_STATUS = 0
 		BEGIN 
+
+			-- Determine the date the order was submitted by the customer. 
 			SET @date =  (SELECT orderDate FROM CustomerOrder WHERE CustomerOrder.custOrdID = @custOrdID)
-			PRINT @date
+
+			-- If the expected order date is either Sunday (1), or Saturday(7).
+			-- Then we change due date the order will be delivered to Monday.
 			IF DATEPART(DW, DATEADD(day, 5, @date)) IN(1,7)
 				BEGIN
-					UPDATE Delivery SET delDateTime = DATEADD(day, 7, @date)
-					FROM CustomerOrder, Delivery
-					WHERE Delivery.custOrdID = @custOrdID
+					IF DATEPART(DW, DATEADD(day, 5, @date)) IN(1)
+						BEGIN
+							-- Customers order was submitted on Tuesday, and will be delivered on Monday.
+							UPDATE Delivery SET delDateTime = DATEADD(day, 8, @date)
+							FROM CustomerOrder, Delivery
+							WHERE Delivery.custOrdID = @custOrdID
+						END
+					ELSE
+						BEGIN 
+							-- Customers order was submitted on Wedesday, and will be delivered on Monday
+							UPDATE Delivery SET delDateTime = DATEADD(day, 7, @date)
+							FROM CustomerOrder, Delivery
+							WHERE Delivery.custOrdID = @custOrdID
+						END		
 				END
 			ELSE 
 				BEGIN
+					-- The expected delivery date is not Saturday or Sunday.
+					-- Therefore, it will take 5 working days. 
 					UPDATE Delivery SET delDateTime = DATEADD(day, 5, @date)
 					FROM CustomerOrder, Delivery
 					WHERE Delivery.custOrdID = @custOrdID
 				END
-			PRINT @custOrdID
+
+			-- Fetch the next row of custOrdID's
 			FETCH NEXT FROM weekendCursor INTO @custOrdID	
 		END
 	CLOSE weekendCursor

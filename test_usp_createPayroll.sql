@@ -1,6 +1,11 @@
+DROP TYPE payroll_TVP
 
-CREATE PROCEDURE usp_createPayroll
-AS
+CREATE TYPE payroll_TVP AS TABLE
+(
+  
+  
+);
+GO
 /*
 start date (input) – Start date for start of pay period
 end date (input) – End date for pay period
@@ -16,5 +21,14 @@ to be calculated and stored for each payslip.
 Note that all errors must be caught and handled. Appropriate error messages must be
 raised. The stored procedure must be extensively tested in the test script.
 */
+CREATE PROCEDURE usp_createPayroll
 
+AS
+
+  BEGIN
+  
+    INSERT INTO Payslip
+    SELECT @startDate, @endDate, 
+
+    
 GO

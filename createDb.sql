@@ -398,6 +398,20 @@ INSERT INTO AllowanceType VALUES('AT6568565', 'Shift Allowance', 'People whom wo
 INSERT INTO AllowanceType VALUES('AT5865656', 'First aid allowance', 'Have medical skills', 'quarterly');
 INSERT INTO AllowanceType VALUES('AT9869869', 'Maternity leave', '3 months leave', 'When needed');
 
+--EmployeeAllowanceType
+INSERT INTO EmployeeAllowanceType VALUES ('E12345', '')
+INSERT INTO EmployeeAllowanceType VALUES ('E12346', '')
+INSERT INTO EmployeeAllowanceType VALUES ('E12347', '')
+INSERT INTO EmployeeAllowanceType VALUES ('E12348', '')
+INSERT INTO EmployeeAllowanceType VALUES ('E12349', '')
+INSERT INTO EmployeeAllowanceType VALUES ('E68889', '')
+INSERT INTO EmployeeAllowanceType VALUES ('E89897', '')
+INSERT INTO EmployeeAllowanceType VALUES ('E12213', '')
+INSERT INTO EmployeeAllowanceType VALUES ('E00099', '')
+INSERT INTO EmployeeAllowanceType VALUES ('E98898', '')
+
+--Allowance
+
 -- Category: Stationary
 INSERT INTO Product VALUES('P1234', 'Silly pens','All things stationary','PC12345674','Colour pens','Half dozen of pens', 1.00,'Available',23,5, 0.20);
 INSERT INTO Product VALUES('P1223', 'Ruler', 'All things stationary','PC12345674','Measurement tool','Single ruler',0.75,'Out of stock',0,10, 0.15);
@@ -520,20 +534,16 @@ INSERT INTO CustOrdProduct VALUES ('CO0001007', 'P1234', 5, 1.70, 8.5);
 INSERT INTO CustOrdProduct VALUES ('CO0001008', 'P2112', 5, 1.70, 8.5);
 
 
-INSERT INTO QuoteProduct VALUES ('QUO1004567', 'P1234',  200, 1.70); --SUPPLIER 1
-INSERT INTO QuoteProduct VALUES ('QUO1022222', 'P2112',  200, 1.70); -- SUPPLIER 1
-INSERT INTO QuoteProduct VALUES ('QUO2244237', 'P9084',  150, 140);-- SUPP 2
-INSERT INTO QuoteProduct VALUES ('QUO1231238', 'P4566',  15, 55);--SUPP2
-INSERT INTO QuoteProduct VALUES ('QUO1234438', 'P7895',  35, 25.96);--SUPP6
-INSERT INTO QuoteProduct VALUES ('QUO1231239', 'P9885',  80, 10.00);--SUPP 6
-INSERT INTO QuoteProduct VALUES ('QUO1234448', 'P1254',  150, 1.02);--SUPP7
-INSERT INTO QuoteProduct VALUES ('QUO1231240', 'P1223',  200, 0.75);--SUPP7
+INSERT INTO QuoteProduct VALUES ('QUO1004567', 'P1234',  200, 1.70);
+INSERT INTO QuoteProduct VALUES ('QUO1022222', 'P2112',  200, 1.70);
+INSERT INTO QuoteProduct VALUES ('QUO2244237', 'P9084',  150, 140);
+INSERT INTO QuoteProduct VALUES ('QUO1231238', 'P4566',  15, 55);
+INSERT INTO QuoteProduct VALUES ('QUO1234438', 'P7895',  35, 25.96);
+INSERT INTO QuoteProduct VALUES ('QUO1231239', 'P9885',  80, 10.00);
+INSERT INTO QuoteProduct VALUES ('QUO1234448', 'P1254',  150, 1.02);
+INSERT INTO QuoteProduct VALUES ('QUO1231240', 'P1223',  200, 0.75);
 
 
--- Assignbment
---EmployeeAllowanceType
---Payslip
---Allowance
 --Payment
 --Delivery
 --Pickup

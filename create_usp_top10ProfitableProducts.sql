@@ -4,12 +4,11 @@ AS
 		-- SupplierOrderProduct
 		-- Product
 		-- ProductItem
+		
 		BEGIN 
-<<<<<<< HEAD
 			DECLARE @count INT
 			-- @count essentially will determine the number of product items Office wizard has on the floor
-			SET @count = (SELECT COUNT(*)
-									  FROM ProductItem)
+			SET @count = (SELECT COUNT(*) FROM ProductItem)
 			
 			-- Insufficient data has been populated in the database to show the top 10.
 			IF @count < 10
@@ -21,10 +20,8 @@ AS
 					PRINT 'Displaying top 10'
 					SET @count = 10 					
 				END
-			SELECT DISTINCT(pro.productID), p.pName,100, pro.sellingPrice - pro.costPrice  AS profit
-=======
+				
 			SELECT TOP 10 pro.productID, p.pName,100, pro.sellingPrice - pro.costPrice  AS profit
->>>>>>> origin/master
 			FROM  Product p, ProductItem pro
 			WHERE p.productID = pro.productID
 			ORDER BY profit DESC 

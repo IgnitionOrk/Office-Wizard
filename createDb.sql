@@ -115,6 +115,7 @@ CREATE TABLE QuoteProduct
 	productID VARCHAR(10),
 	quoteID VARCHAR(10),
 	qty INT CHECK(qty > 0),
+	unitPrice FLOAT	NOT NULL,
 	FOREIGN KEY(productID) REFERENCES Product(productID),
 	FOREIGN KEY(quoteID) REFERENCES Quote(quoteID),
 	PRIMARY KEY(productID, quoteID)
@@ -388,6 +389,19 @@ INSERT INTO TaxBracket VALUES('T443343', 40000.01, 50000.00, 0.20, '2017');
 INSERT INTO TaxBracket VALUES('T898889', 50000.01, 60000.00, 0.21, '2017');
 INSERT INTO TaxBracket VALUES('T444544', 60000.01, 70000.00, 0.22, '2006');
 
+INSERT INTO Assignment VALUES('A1234', 'E12345', 'P22311', '2010-12-12', NULL);
+INSERT INTO Assignment VALUES('A1235', 'E12346', 'P33223', '2010-12-12', NULL);
+INSERT INTO Assignment VALUES('A1236', 'E12347', 'P33223', '2009-01-12', '2009-07-09');
+INSERT INTO Assignment VALUES('A1222', 'E12347', 'P22311', '2009-07-10', NULL);
+INSERT INTO Assignment VALUES('A1237', 'E12348', 'P90999', '2001-04-21', NULL);
+INSERT INTO Assignment VALUES('A1238', 'E12349', 'P90999', '2007-04-21', NULL);
+INSERT INTO Assignment VALUES('A1239', 'E68889', 'P22222', '2001-05-04', NULL);
+INSERT INTO Assignment VALUES('A1230', 'E89897', 'P33211', '2004-09-09', '2005-10-11');
+INSERT INTO Assignment VALUES('A1241', 'E89897', 'P22311', '2005-10-12', NULL);
+INSERT INTO Assignment VALUES('A1231', 'E12213', 'P22343', '2008-11-23', NULL);
+INSERT INTO Assignment VALUES('A1232', 'E00099', 'P22343', '2008-07-24', NULL);
+INSERT INTO Assignment VALUES('A1233', 'E98898', 'P33223', '2010-12-12', '2015-12-24');
+
 INSERT INTO AllowanceType VALUES('AT7778878', 'Sales bonus', 'End of year sales bonus', 'yearly');
 INSERT INTO AllowanceType VALUES('AT7779966', 'Long service leave', '', 'quarterly');
 INSERT INTO AllowanceType VALUES('AT3778783', 'Uniform allowance', 'Uniform cost', 'monthly');
@@ -399,16 +413,17 @@ INSERT INTO AllowanceType VALUES('AT5865656', 'First aid allowance', 'Have medic
 INSERT INTO AllowanceType VALUES('AT9869869', 'Maternity leave', '3 months leave', 'When needed');
 
 --EmployeeAllowanceType
-INSERT INTO EmployeeAllowanceType VALUES ('E12345', '')
-INSERT INTO EmployeeAllowanceType VALUES ('E12346', '')
-INSERT INTO EmployeeAllowanceType VALUES ('E12347', '')
-INSERT INTO EmployeeAllowanceType VALUES ('E12348', '')
-INSERT INTO EmployeeAllowanceType VALUES ('E12349', '')
-INSERT INTO EmployeeAllowanceType VALUES ('E68889', '')
-INSERT INTO EmployeeAllowanceType VALUES ('E89897', '')
-INSERT INTO EmployeeAllowanceType VALUES ('E12213', '')
-INSERT INTO EmployeeAllowanceType VALUES ('E00099', '')
-INSERT INTO EmployeeAllowanceType VALUES ('E98898', '')
+INSERT INTO EmployeeAllowanceType VALUES ('E12345', 'AT7779966');
+INSERT INTO EmployeeAllowanceType VALUES ('E12346', 'AT7779966');
+INSERT INTO EmployeeAllowanceType VALUES ('E12347', 'AT6568565');
+INSERT INTO EmployeeAllowanceType VALUES ('E12348', '');
+INSERT INTO EmployeeAllowanceType VALUES ('E12349', '');
+INSERT INTO EmployeeAllowanceType VALUES ('E68889', '');
+INSERT INTO EmployeeAllowanceType VALUES ('E89897', '');
+INSERT INTO EmployeeAllowanceType VALUES ('E12213', '');
+INSERT INTO EmployeeAllowanceType VALUES ('E00099', 'AT9869869');
+INSERT INTO EmployeeAllowanceType VALUES ('E00099', 'AT7779966');
+INSERT INTO EmployeeAllowanceType VALUES ('E98898', 'AT0970970');
 
 --Allowance
 
@@ -558,24 +573,6 @@ INSERT INTO CustOrdProduct VALUES ('CO0001006', 'P2112', 5, 1.70, 8.5);
 INSERT INTO CustOrdProduct VALUES ('CO0001007', 'P1234', 5, 1.70, 8.5);
 INSERT INTO CustOrdProduct VALUES ('CO0001008', 'P2112', 5, 1.70, 8.5);
 
-INSERT INTO Assignment VALUES('A1234', 'E12345', 'P22311', '2010-12-12', NULL);
-INSERT INTO Assignment VALUES('A1235', 'E12346', 'P33223', '2010-12-12', NULL);
-INSERT INTO Assignment VALUES('A1236', 'E12347', 'P33223', '2009-01-12', '2009-07-09');
-INSERT INTO Assignment VALUES('A1222', 'E12347', 'P22311', '2009-07-10', NULL);
-INSERT INTO Assignment VALUES('A1237', 'E12348', 'P90999', '2001-04-21', NULL);
-INSERT INTO Assignment VALUES('A1238', 'E12349', 'P90999', '2007-04-21', NULL);
-INSERT INTO Assignment VALUES('A1239', 'E68889', 'P22222', '2001-05-04', NULL);
-INSERT INTO Assignment VALUES('A1230', 'E89897', 'P33211', '2004-09-09', '2005-10-11');
-INSERT INTO Assignment VALUES('A1241', 'E89897', 'P22311', '2005-10-12', NULL);
-INSERT INTO Assignment VALUES('A1231', 'E12213', 'P22343', '2008-11-23', NULL);
-INSERT INTO Assignment VALUES('A1232', 'E00099', 'P22343', '2008-07-24', NULL);
-INSERT INTO Assignment VALUES('A1233', 'E98898', 'P33223', '2010-12-12', '2015-12-24');
-
-<<<<<<< HEAD
---EmployeeAllowanceType
---Payslip
---Allowance
-=======
 INSERT INTO QuoteProduct VALUES ('QUO1004567', 'P1234',  200, 1.70);
 INSERT INTO QuoteProduct VALUES ('QUO1022222', 'P2112',  200, 1.70);
 INSERT INTO QuoteProduct VALUES ('QUO2244237', 'P9084',  150, 140);
@@ -585,8 +582,6 @@ INSERT INTO QuoteProduct VALUES ('QUO1231239', 'P9885',  80, 10.00);
 INSERT INTO QuoteProduct VALUES ('QUO1234448', 'P1254',  150, 1.02);
 INSERT INTO QuoteProduct VALUES ('QUO1231240', 'P1223',  200, 0.75);
 
-
->>>>>>> origin/master
 --Payment
 --Delivery
 --Pickup

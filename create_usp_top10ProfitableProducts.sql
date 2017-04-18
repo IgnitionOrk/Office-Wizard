@@ -17,7 +17,7 @@ AS
 	-- Table used by procedure:
 	-- Product
 	-- CustOrdProduct
-	--ProductItem
+	-- ProductItem
 	DECLARE @productID VARCHAR(10)
 	DECLARE @pName VARCHAR(50)
 	DECLARE @qty INT
@@ -53,7 +53,7 @@ AS
 
 
 			-- Determine if the variable @qty is null, so we can determine the rest of the variables used.
-			-- We are saving time checking if @qty is null.
+			-- We are saving time checking if @qty is null, and pointless calculations.
 			IF @qty IS NOT NULL
 			BEGIN
 					SET @pName = (SELECT pName 
@@ -69,7 +69,6 @@ AS
 					 -- Insert into our temporary table.
 					 INSERT INTO productQuantityProfit VALUES(@productID, @pName, @qty,@profit); 
 			END
-
 
 			-- Fetching the next row in the Cursor
 			FETCH NEXT FROM cProduct INTO @productID

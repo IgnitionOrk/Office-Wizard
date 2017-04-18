@@ -112,9 +112,10 @@ GO
 
 CREATE TABLE QuoteProduct
 (
-	productID VARCHAR(10),
 	quoteID VARCHAR(10),
+	productID VARCHAR(10),
 	qty INT CHECK(qty > 0),
+	unitPrice FLOAT,
 	FOREIGN KEY(productID) REFERENCES Product(productID),
 	FOREIGN KEY(quoteID) REFERENCES Quote(quoteID),
 	PRIMARY KEY(productID, quoteID)
@@ -399,6 +400,7 @@ INSERT INTO AllowanceType VALUES('AT5865656', 'First aid allowance', 'Have medic
 INSERT INTO AllowanceType VALUES('AT9869869', 'Maternity leave', '3 months leave', 'When needed');
 
 --EmployeeAllowanceType
+/*
 INSERT INTO EmployeeAllowanceType VALUES ('E12345', '')
 INSERT INTO EmployeeAllowanceType VALUES ('E12346', '')
 INSERT INTO EmployeeAllowanceType VALUES ('E12347', '')
@@ -409,7 +411,7 @@ INSERT INTO EmployeeAllowanceType VALUES ('E89897', '')
 INSERT INTO EmployeeAllowanceType VALUES ('E12213', '')
 INSERT INTO EmployeeAllowanceType VALUES ('E00099', '')
 INSERT INTO EmployeeAllowanceType VALUES ('E98898', '')
-
+*/
 --Allowance
 
 -- Category: Stationary
@@ -510,30 +512,18 @@ INSERT INTO CustomerOrder VALUES ('CO0001006', 'E12346', 'C1237', '2017-04-10', 
 INSERT INTO CustomerOrder VALUES ('CO0001007', 'E12346', 'C1234', '2017-04-11', 0.05, 0, 150, 'Delivered', 'Phone');
 INSERT INTO CustomerOrder VALUES ('CO0001008', 'E12346', 'C1237', '2017-04-11', 0.05, 0, 0, 'Cancelled', 'Phone');
 
-/*CREATE TABLE Delivery
-(
-	custOrdID VARCHAR(10) NOT NULL,
-	delAddress VARCHAR(100) NOT NULL,
-	delCharge FLOAT CHECK(delCharge >= 0.00),
-	delDateTime DATETIME	 NOT NULL,
-	FOREIGN KEY(custOrdID) REFERENCES CustomerOrder(custOrdID) ON DELETE CASCADE
-);
-GO
-*/
-INSERT INTO Delivery VALUES('CO0001001');
-INSERT INTO Delivery VALUES('CO0001002');
-INSERT INTO Delivery VALUES('CO0001003');
-INSERT INTO Delivery VALUES('CO0001004');
-/*
-CREATE TABLE Pickup
-(
-	custOrdID VARCHAR(10) NOT NULL,
-	pickupDateTime DATETIME NOT NULL,
-	FOREIGN KEY(custOrdID) REFERENCES CustomerOrder(custOrdID) ON DELETE CASCADE
-);
-GO*/
 
-INSERT INTO Pickup VALUES();
+
+INSERT INTO Delivery VALUES('CO0001001','','','');
+INSERT INTO Delivery VALUES('CO0001002','','','');
+INSERT INTO Delivery VALUES('CO0001003','','','');
+INSERT INTO Delivery VALUES('CO0001004','','','');
+
+INSERT INTO Pickup VALUES('CO0001005', '');
+INSERT INTO Pickup VALUES('CO0001006', '');
+INSERT INTO Pickup VALUES('CO0001007', '');
+INSERT INTO Pickup VALUES('CO0001008', '');
+
 
 INSERT INTO ProductItem VALUES ('PI10000003', 'P9084', 'SO00000013', 100, 140, 'CO0001003', 'in-stock');
 INSERT INTO ProductItem VALUES ('PI10000004', 'P4566', 'SO00000014', 50, 55, NULL, 'in-stock');
@@ -571,11 +561,9 @@ INSERT INTO Assignment VALUES('A1231', 'E12213', 'P22343', '2008-11-23', NULL);
 INSERT INTO Assignment VALUES('A1232', 'E00099', 'P22343', '2008-07-24', NULL);
 INSERT INTO Assignment VALUES('A1233', 'E98898', 'P33223', '2010-12-12', '2015-12-24');
 
-<<<<<<< HEAD
 --EmployeeAllowanceType
 --Payslip
 --Allowance
-=======
 INSERT INTO QuoteProduct VALUES ('QUO1004567', 'P1234',  200, 1.70);
 INSERT INTO QuoteProduct VALUES ('QUO1022222', 'P2112',  200, 1.70);
 INSERT INTO QuoteProduct VALUES ('QUO2244237', 'P9084',  150, 140);
@@ -586,7 +574,45 @@ INSERT INTO QuoteProduct VALUES ('QUO1234448', 'P1254',  150, 1.02);
 INSERT INTO QuoteProduct VALUES ('QUO1231240', 'P1223',  200, 0.75);
 
 
->>>>>>> origin/master
---Payment
---Delivery
---Pickup
+GO
+CREATE PROCEDURE usp_OrderDelivery5To7Days
+AS
+	DECLARE @custOrdID VARCHAR(10)
+	SET @custOrdID = ''
+	DECLARE weekendCursor CURSOR
+	FOR 
+	SELECT custOrdID
+	FROM CustomerOrder
+	WHERE custOrdID NOT IN(SELECT custOrdID FROM Pickup)
+	FOR READ ONLY
+
+
+	OPEN weekendCursor
+	FETCH NEXT FROM weekendCursor INTO @custOrdID
+	WHILE @@FETCH_STATUS = 0
+		BEGIN 
+			PRINT DATEPART(DW, (SELECT orderDate FROM CustomerOrder WHERE CustomerOrder.custOrdID = @custOrdID)) 
+			
+		END
+	CLOSE weekendCursor
+	DEALLOCATE weekendCursor
+GO
+
+GO
+CREATE PROCEDURE usp_PickupOrderIn3Days
+AS
+	-- So the Customer can pick up their order, 3 days after they have submitted their order.
+	UPDATE Pickup SET pickupDateTime = DATEADD(day, 3, CustomerOrder.orderDate)
+	FROM CustomerOrder, Pickup
+	WHERE CustomerOrder.custOrdID = Pickup.custOrdID
+GO
+
+EXECUTE usp_OrderDelivery5To7Days
+EXECUTE usp_PickupOrderIn3Days
+GO
+SELECT * FROM Pickup
+SELECT * FROM Delivery
+
+GO
+DROP PROCEDURE usp_OrderDelivery5To7Days
+DROP PROCEDURE usp_PickupOrderIn3Days

@@ -398,6 +398,20 @@ INSERT INTO AllowanceType VALUES('AT6568565', 'Shift Allowance', 'People whom wo
 INSERT INTO AllowanceType VALUES('AT5865656', 'First aid allowance', 'Have medical skills', 'quarterly');
 INSERT INTO AllowanceType VALUES('AT9869869', 'Maternity leave', '3 months leave', 'When needed');
 
+--EmployeeAllowanceType
+INSERT INTO EmployeeAllowanceType VALUES ('E12345', '')
+INSERT INTO EmployeeAllowanceType VALUES ('E12346', '')
+INSERT INTO EmployeeAllowanceType VALUES ('E12347', '')
+INSERT INTO EmployeeAllowanceType VALUES ('E12348', '')
+INSERT INTO EmployeeAllowanceType VALUES ('E12349', '')
+INSERT INTO EmployeeAllowanceType VALUES ('E68889', '')
+INSERT INTO EmployeeAllowanceType VALUES ('E89897', '')
+INSERT INTO EmployeeAllowanceType VALUES ('E12213', '')
+INSERT INTO EmployeeAllowanceType VALUES ('E00099', '')
+INSERT INTO EmployeeAllowanceType VALUES ('E98898', '')
+
+--Allowance
+
 -- Category: Stationary
 INSERT INTO Product VALUES('P1234', 'Silly pens','All things stationary','PC12345674','Colour pens','Half dozen of pens', 1.00,'Available',23,5, 0.20);
 INSERT INTO Product VALUES('P1223', 'Ruler', 'All things stationary','PC12345674','Measurement tool','Single ruler',0.75,'Out of stock',0,10, 0.15);
@@ -456,7 +470,6 @@ INSERT INTO SupplierProduct VALUES('S444444444','P4566');
 INSERT INTO SupplierProduct VALUES('S000000000','P4566');
 INSERT INTO SupplierProduct VALUES('S222222222','P4566');
 
-
 INSERT INTO Quote VALUES ('QUO1004567', '2017-01-02', '2017-01-03', 'Reasonable quote for a bulk supply of silly pens to suit all your silly stationary needs', 'S111111111', 'E68889');
 INSERT INTO Quote VALUES ('QUO1022222', '2017-01-10', '2017-01-11', 'Supply of arty stuff for creative people', 'S111111111', 'E68889');
 INSERT INTO Quote VALUES ('QUO2244237', '2017-02-02', '2017-02-03', 'Quote must be responded to as soon as possible to obtain your bulk supply of sitting needs', 'S222222222', 'E68889');
@@ -474,7 +487,6 @@ INSERT INTO SupplierOrder VALUES ('SO00000015', '2017-04-14', 'This supplier ord
 INSERT INTO SupplierOrder VALUES ('SO00000016', '2016-11-14', 'This supplier order is filled with order for items that include a big amount of normal pens, normal paper, and 100 pack of folders to organise unorganised people. Please refer back to quote for more information.', 'QUO1231240', 2500, 'Completed','2016-11-15');
 INSERT INTO SupplierOrder VALUES ('SO00000017', '2017-01-12', 'This supplier order is filled with order for items that include a small supply of creative inducing pens. Please refer back to quote for more information.', 'QUO1022222', 500, 'Completed','2017-01-14');
 INSERT INTO SupplierOrder VALUES ('SO00000018', '2017-01-14', 'This supplier order is filled with order for items that include a bulk supply of fun family items. Please refer back to quote for more information.', 'QUO1231239', 500, 'Completed','2017-01-16');
-
 
 INSERT INTO SupplierOrderProduct VALUES ('SO00000011', 'P1234', 1.30, 200);
 INSERT INTO SupplierOrderProduct VALUES ('SO00000012', 'P4565', 13, 300);
@@ -537,7 +549,6 @@ INSERT INTO ProductItem VALUES ('PI10000013', 'P3911', 'SO00000012', 2., 2.50, '
 INSERT INTO ProductItem VALUES ('PI10000014', 'P3265', 'SO00000017', 20, 25, 'CO0001008', 'in-stock');
 INSERT INTO ProductItem VALUES ('PI10000015', 'P0000', 'SO00000013', 159, 250, 'CO0001008', 'in-stock');
 
--- TO REDO!!!!!
 INSERT INTO CustOrdProduct VALUES ('CO0001001', 'P1234', 5, 1.70, 8.5);
 INSERT INTO CustOrdProduct VALUES ('CO0001002', 'P4565', 5, 15, 8.5);
 INSERT INTO CustOrdProduct VALUES ('CO0001003', 'P9084', 5, 140, 8.5);
@@ -560,9 +571,22 @@ INSERT INTO Assignment VALUES('A1231', 'E12213', 'P22343', '2008-11-23', NULL);
 INSERT INTO Assignment VALUES('A1232', 'E00099', 'P22343', '2008-07-24', NULL);
 INSERT INTO Assignment VALUES('A1233', 'E98898', 'P33223', '2010-12-12', '2015-12-24');
 
+<<<<<<< HEAD
 --EmployeeAllowanceType
 --Payslip
 --Allowance
+=======
+INSERT INTO QuoteProduct VALUES ('QUO1004567', 'P1234',  200, 1.70);
+INSERT INTO QuoteProduct VALUES ('QUO1022222', 'P2112',  200, 1.70);
+INSERT INTO QuoteProduct VALUES ('QUO2244237', 'P9084',  150, 140);
+INSERT INTO QuoteProduct VALUES ('QUO1231238', 'P4566',  15, 55);
+INSERT INTO QuoteProduct VALUES ('QUO1234438', 'P7895',  35, 25.96);
+INSERT INTO QuoteProduct VALUES ('QUO1231239', 'P9885',  80, 10.00);
+INSERT INTO QuoteProduct VALUES ('QUO1234448', 'P1254',  150, 1.02);
+INSERT INTO QuoteProduct VALUES ('QUO1231240', 'P1223',  200, 0.75);
+
+
+>>>>>>> origin/master
 --Payment
 --Delivery
 --Pickup

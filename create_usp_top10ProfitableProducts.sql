@@ -2,10 +2,10 @@
 -- Student number: 3179234
 -- Date created: 18-Apr-2017
 -- Date modified: 18-Apr-2017
-DROP TABLE productQuantityProfit
+DROP TABLE ProductQuantityProfit
 
 
-CREATE TABLE productQuantityProfit(
+CREATE TABLE ProductQuantityProfit(
 	productID VARCHAR(10),
 	pName VARCHAR(50),
 	quantity INT, 
@@ -68,7 +68,7 @@ AS
 											 WHERE productID = @productID)
 
 					 -- Insert into our temporary table.
-					 INSERT INTO productQuantityProfit VALUES(@productID, @pName, @qty,@profit); 
+					 INSERT INTO ProductQuantityProfit VALUES(@productID, @pName, @qty,@profit); 
 			END
 
 			-- Fetching the next row in the Cursor
@@ -84,7 +84,7 @@ AS
 	-- View the top 10 most profitable products 
 	-- Note will also sort in 'descending order'
 	SELECT TOP 10 * 
-	FROM productQuantityProfit
+	FROM ProductQuantityProfit
 	ORDER BY profit DESC
 GO
 

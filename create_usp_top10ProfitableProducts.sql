@@ -56,20 +56,20 @@ AS
 			-- Determine if the variable @qty is null, so we can determine the rest of the variables used.
 			-- We are saving time checking if @qty is null, and pointless calculations.
 			IF @qty IS NOT NULL
-			BEGIN
-					SET @pName = (SELECT pName 
-												FROM Product 
-												WHERE productID = @productID) 
+				BEGIN
+						SET @pName = (SELECT pName 
+													FROM Product 
+													WHERE productID = @productID) 
 
-					 -- Sum the profit made, by finding all the product items that were sold by productID
-					 -- Product item is the physically (single) item. Each item will have a unique barcode. 
-					 SET @profit = (SELECT SUM(sellingPrice - costPrice )
-											 FROM ProductItem 
-											 WHERE productID = @productID)
+						 -- Sum the profit made, by finding all the product items that were sold by productID
+						 -- Product item is the physically (single) item. Each item will have a unique barcode. 
+						 SET @profit = (SELECT SUM(sellingPrice - costPrice )
+												 FROM ProductItem 
+												 WHERE productID = @productID)
 
-					 -- Insert into our temporary table.
-					 INSERT INTO ProductQuantityProfit VALUES(@productID, @pName, @qty,@profit); 
-			END
+						 -- Insert into our temporary table.
+						 INSERT INTO ProductQuantityProfit VALUES(@productID, @pName, @qty,@profit); 
+				END
 
 			-- Fetching the next row in the Cursor
 			FETCH NEXT FROM cProduct INTO @productID

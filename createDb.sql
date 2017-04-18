@@ -115,11 +115,7 @@ CREATE TABLE QuoteProduct
 	quoteID VARCHAR(10),
 	productID VARCHAR(10),
 	qty INT CHECK(qty > 0),
-<<<<<<< HEAD
-	unitPrice FLOAT,
-=======
 	unitPrice FLOAT	NOT NULL,
->>>>>>> origin/master
 	FOREIGN KEY(productID) REFERENCES Product(productID),
 	FOREIGN KEY(quoteID) REFERENCES Quote(quoteID),
 	PRIMARY KEY(productID, quoteID)
@@ -416,22 +412,6 @@ INSERT INTO AllowanceType VALUES('AT6568565', 'Shift Allowance', 'People whom wo
 INSERT INTO AllowanceType VALUES('AT5865656', 'First aid allowance', 'Have medical skills', 'quarterly');
 INSERT INTO AllowanceType VALUES('AT9869869', 'Maternity leave', '3 months leave', 'When needed');
 
---EmployeeAllowanceType
-<<<<<<< HEAD
-/*
-INSERT INTO EmployeeAllowanceType VALUES ('E12345', '')
-INSERT INTO EmployeeAllowanceType VALUES ('E12346', '')
-INSERT INTO EmployeeAllowanceType VALUES ('E12347', '')
-INSERT INTO EmployeeAllowanceType VALUES ('E12348', '')
-INSERT INTO EmployeeAllowanceType VALUES ('E12349', '')
-INSERT INTO EmployeeAllowanceType VALUES ('E68889', '')
-INSERT INTO EmployeeAllowanceType VALUES ('E89897', '')
-INSERT INTO EmployeeAllowanceType VALUES ('E12213', '')
-INSERT INTO EmployeeAllowanceType VALUES ('E00099', '')
-INSERT INTO EmployeeAllowanceType VALUES ('E98898', '')
-*/
---Allowance
-=======
 INSERT INTO EmployeeAllowanceType VALUES ('E12345', 'AT7779966');
 INSERT INTO EmployeeAllowanceType VALUES ('E12346', 'AT7779966');
 INSERT INTO EmployeeAllowanceType VALUES ('E12347', 'AT6568565');
@@ -445,7 +425,7 @@ INSERT INTO EmployeeAllowanceType VALUES ('E00099', 'AT7779966');
 INSERT INTO EmployeeAllowanceType VALUES ('E98898', 'AT0970970');
 
 INSERT INTO Allowance VALUES ('A00010010', 'PS00000110', 'AT6568565', 20, 'This allowance is rewarded to this employee due to working shifts that are undesirable.');
-INSERT INTO Allowance VALUES ('A00010011', 'PS00000111', 'AT7779966', ,1500 'This allowance is rewarded to this employee due to staying with Office Wizard for at least 5 years.');
+INSERT INTO Allowance VALUES ('A00010011', 'PS00000111', 'AT7779966',1500, 'This allowance is rewarded to this employee due to staying with Office Wizard for at least 5 years.');
 INSERT INTO Allowance VALUES ('A00010012', 'PS00000112', 'AT4087488', 850, 'This allowance is rewarded to this employee due to their physical disability yet still makes the effort to work.');
 INSERT INTO Allowance VALUES ('A00010013', 'PS00000113', 'AT6568565', 250, 'This allowance is rewarded to this employee due to working shifts that are during a storm tat might have put him in danger');
 INSERT INTO Allowance VALUES ('A00010014', 'PS00000114', 'AT6568565', 250, 'This allowance is rewarded to this employee due to working shifts that are undesirable.');
@@ -473,7 +453,6 @@ INSERT INTO Payslip VALUES ('PS00000120', 'E89897', 'T111111', '2017-01-10', '20
 INSERT INTO Payslip VALUES ('PS00000121', 'E89897', 'T111111', '2017-02-10', '2017-02-16', 20, 46000, 1000, 45000);
 INSERT INTO Payslip VALUES ('PS00000122', 'E12347', 'T111111', '2017-03-10', '2017-03-16', 20, 50000, 1000, 49000);
 INSERT INTO Payslip VALUES ('PS00000123', 'E12345', 'T111111', '2017-02-10', '2017-02-16', 20, 46000, 1000, 45000);
->>>>>>> origin/master
 
 -- Category: Stationary
 INSERT INTO Product VALUES('P1234', 'Silly pens','All things stationary','PC12345674','Colour pens','Half dozen of pens', 1.00,'Available',23,5, 0.20);
@@ -568,39 +547,19 @@ INSERT INTO CustomerOrder VALUES ('CO0001006', 'E12346', 'C1237', '2017-04-10', 
 INSERT INTO CustomerOrder VALUES ('CO0001007', 'E12346', 'C1234', '2017-04-11', 0.05, 0, 150, 'Delivered', 'Phone');
 INSERT INTO CustomerOrder VALUES ('CO0001008', 'E12346', 'C1237', '2017-04-11', 0.05, 0, 0, 'Cancelled', 'Phone');
 
-<<<<<<< HEAD
-=======
-INSERT INTO Payment VALUES ('PAY000101', 2017-03-06, 'CO0001001', 'SO00000011');
-INSERT INTO Payment VALUES ('PAY000102', 2017-04-15, 'CO0001002', 'SO00000012');
-INSERT INTO Payment VALUES ('PAY000103', 2017-04-10, 'CO0001003', 'SO00000013');
-INSERT INTO Payment VALUES ('PAY000104', 2017-04-10, 'CO0001004', 'SO00000014');
-INSERT INTO Payment VALUES ('PAY000105', 2017-04-11, 'CO0001005', 'SO00000015');
-INSERT INTO Payment VALUES ('PAY000106', 2017-04-12, 'CO0001006', 'SO00000016');
-INSERT INTO Payment VALUES ('PAY000107', 2017-04-15, 'CO0001007', 'SO00000017');
-INSERT INTO Payment VALUES ('PAY000108', 2017-04-15, 'CO0001008', 'SO00000018');
-/*CREATE TABLE Delivery
-(
-	custOrdID VARCHAR(10) NOT NULL,
-	delAddress VARCHAR(100) NOT NULL,
-	delCharge FLOAT CHECK(delCharge >= 0.00),
-	delDateTime DATETIME	 NOT NULL,
-	FOREIGN KEY(custOrdID) REFERENCES CustomerOrder(custOrdID) ON DELETE CASCADE
-);
-GO
-*/
-INSERT INTO Delivery VALUES('CO0001001');
-INSERT INTO Delivery VALUES('CO0001002');
-INSERT INTO Delivery VALUES('CO0001003');
-INSERT INTO Delivery VALUES('CO0001004');
-/*
-CREATE TABLE Pickup
-(
-	custOrdID VARCHAR(10) NOT NULL,
-	pickupDateTime DATETIME NOT NULL,
-	FOREIGN KEY(custOrdID) REFERENCES CustomerOrder(custOrdID) ON DELETE CASCADE
-);
-GO*/
->>>>>>> origin/master
+INSERT INTO Payment VALUES ('PAY000101', '2017-03-06', 'CO0001001', 'SO00000011');
+INSERT INTO Payment VALUES ('PAY000102', '2017-04-15', 'CO0001002', 'SO00000012');
+INSERT INTO Payment VALUES ('PAY000103', '2017-04-10', 'CO0001003', 'SO00000013');
+INSERT INTO Payment VALUES ('PAY000104', '2017-04-10', 'CO0001004', 'SO00000014');
+INSERT INTO Payment VALUES ('PAY000105', '2017-04-11', 'CO0001005', 'SO00000015');
+INSERT INTO Payment VALUES ('PAY000106', '2017-04-12', 'CO0001006', 'SO00000016');
+INSERT INTO Payment VALUES ('PAY000107', '2017-04-15', 'CO0001007', 'SO00000017');
+INSERT INTO Payment VALUES ('PAY000108', '2017-04-15', 'CO0001008', 'SO00000018');
+
+INSERT INTO Delivery VALUES('CO0001001','','','');
+INSERT INTO Delivery VALUES('CO0001002','','','');
+INSERT INTO Delivery VALUES('CO0001003','','','');
+INSERT INTO Delivery VALUES('CO0001004','','','');
 
 
 INSERT INTO Delivery VALUES('CO0001001','','','');
@@ -637,7 +596,6 @@ INSERT INTO CustOrdProduct VALUES ('CO0001006', 'P2112', 5, 1.70, 8.5);
 INSERT INTO CustOrdProduct VALUES ('CO0001007', 'P1234', 5, 1.70, 8.5);
 INSERT INTO CustOrdProduct VALUES ('CO0001008', 'P2112', 5, 1.70, 8.5);
 
-<<<<<<< HEAD
 INSERT INTO Assignment VALUES('A1234', 'E12345', 'P22311', '2010-12-12', NULL);
 INSERT INTO Assignment VALUES('A1235', 'E12346', 'P33223', '2010-12-12', NULL);
 INSERT INTO Assignment VALUES('A1236', 'E12347', 'P33223', '2009-01-12', '2009-07-09');
@@ -651,11 +609,6 @@ INSERT INTO Assignment VALUES('A1231', 'E12213', 'P22343', '2008-11-23', NULL);
 INSERT INTO Assignment VALUES('A1232', 'E00099', 'P22343', '2008-07-24', NULL);
 INSERT INTO Assignment VALUES('A1233', 'E98898', 'P33223', '2010-12-12', '2015-12-24');
 
---EmployeeAllowanceType
---Payslip
---Allowance
-=======
->>>>>>> origin/master
 INSERT INTO QuoteProduct VALUES ('QUO1004567', 'P1234',  200, 1.70);
 INSERT INTO QuoteProduct VALUES ('QUO1022222', 'P2112',  200, 1.70);
 INSERT INTO QuoteProduct VALUES ('QUO2244237', 'P9084',  150, 140);
@@ -665,7 +618,6 @@ INSERT INTO QuoteProduct VALUES ('QUO1231239', 'P9885',  80, 10.00);
 INSERT INTO QuoteProduct VALUES ('QUO1234448', 'P1254',  150, 1.02);
 INSERT INTO QuoteProduct VALUES ('QUO1231240', 'P1223',  200, 0.75);
 
-<<<<<<< HEAD
 
 GO
 CREATE PROCEDURE usp_OrderDelivery5To7Days
@@ -684,13 +636,26 @@ AS
 	FETCH NEXT FROM weekendCursor INTO @custOrdID
 	WHILE @@FETCH_STATUS = 0
 		BEGIN 
-			PRINT DATEPART(DW, (SELECT orderDate FROM CustomerOrder WHERE CustomerOrder.custOrdID = @custOrdID)) 
-			
+			PRINT 'HERE'			
 		END
 	CLOSE weekendCursor
 	DEALLOCATE weekendCursor
 GO
-
+/*IF DATEPART(DW, (SELECT orderDate FROM CustomerOrder WHERE CustomerOrder.custOrdID = @custOrdID)) IN (1, 7)
+				BEGIN 
+					IF DATEPART(DW, (SELECT orderDate FROM CustomerOrder WHERE CustomerOrder.custOrdID = @custOrdID)) = 1
+						UPDATE Delivery SET delDateTime = DATEADD(day, 1, CustomerOrder.orderDate)
+						FROM CustomerOrder
+					ELSE 
+						UPDATE Delivery SET delDateTime = DATEADD(day, 2, CustomerOrder.orderDate)
+						FROM CustomerOrder
+				END
+			ELSE 
+				BEGIN
+					UPDATE Delivery SET delDateTime = DATEADD(day, 5, CustomerOrder.orderDate)
+				FROM CustomerOrder
+				END
+			FETCH NEXT FROM weekendCursor INTO @custOrdID*/
 GO
 CREATE PROCEDURE usp_PickupOrderIn3Days
 AS
@@ -702,12 +667,9 @@ GO
 
 EXECUTE usp_OrderDelivery5To7Days
 EXECUTE usp_PickupOrderIn3Days
-GO
-SELECT * FROM Pickup
-SELECT * FROM Delivery
 
-GO
+
 DROP PROCEDURE usp_OrderDelivery5To7Days
 DROP PROCEDURE usp_PickupOrderIn3Days
-=======
->>>>>>> origin/master
+
+

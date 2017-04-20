@@ -1,96 +1,40 @@
--- Created by: Ryan Cunneen
--- Student number: 3179234
--- Date created: 18-Apr-2017
--- Date modified: 18-Apr-2017
-DROP TABLE ProductQuantityProfit
+-- Created by: Micah Conway
+-- Student number: 3232648
+-- Date created: 19-Apr-2017
+-- Date modified: 20-Apr-2017
 
-
-CREATE TABLE ProductQuantityProfit(
-	productID VARCHAR(10),
-	pName VARCHAR(50),
-	quantity INT, 
-	profit FLOAT
-);
-GO
-
-CREATE PROCEDURE usp_Top10ProfitableProducts
+CREATE PROCEDURE usp_top10ProfitableProducts
 AS
-	-- Table used by procedure:
-	-- Product
-	-- CustOrdProduct
-	-- ProductItem
-	DECLARE @productID VARCHAR(10)
-	DECLARE @pName VARCHAR(50)
-	DECLARE @qty INT
-	DECLARE @profit FLOAT
+	DECLARE @pID varchar(10);
+	DECLARE @productName varchar(50);
+	DECLARE @qtySold int;
+	DECLARE @totalProfit float;
 
-	-- Declaring our new Cursor that will store only productIDs
-	-- Why? Because we can determine which products were sold, and how many.
-	DECLARE cProduct CURSOR
-	FOR
-	SELECT productID
-	FROM Product
-	FOR READ ONLY
+	DECLARE pItems CURSOR FOR
+		SELECT TOP 10 ProductItem.productID, Product.pName, COUNT(*), SUM(ProductItem.sellingPrice - ProductItem.costPrice) AS profit
+		FROM ProductItem, Product
+		WHERE ProductItem.productID = Product.productID AND productItem.status = 'sold'
+		GROUP BY ProductItem.productID, Product.pName
+		ORDER BY profit DESC;
+BEGIN
+	OPEN pItems
+	FETCH NEXT FROM pItems INTO @pID, @productName, @qtySold, @totalProfit
 
-	-- Open, and populate the Cursor
-	OPEN cProduct
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		PRINT (@pID + ' ' + @productName + ' ' + CAST(@qtySold AS CHAR) + ' Total profit: ' + CAST(@totalProfit AS CHAR));
 
-	-- Retrieve the first row from the Cursor
-	FETCH NEXT FROM cProduct INTO @productID
+		FETCH NEXT FROM pItems INTO @pID, @productName, @qtySold, @totalProfit
+	END
 
+	CLOSE pItems   
+	DEALLOCATE pItems
+	
+END;
 
-	-- For each productID in the Cursor we determine the pName, how many were sold
-	-- And the total pricing by adding the sellingPrice - costPrice.
-	WHILE @@FETCH_STATUS  = 0
-		BEGIN
-
-			-- There will be some products that have not been sold.
-			-- Therefore, there quantity will be null.
-			SET @qty = (SELECT SUM(qty) 
-							FROM Product 
-								INNER JOIN CustOrdProduct 
-									ON Product.productID = CustOrdProduct.productID
-							WHERE Product.productID = @productID)
-
-
-			-- Determine if the variable @qty is null, so we can determine the rest of the variables used.
-			-- We are saving time checking if @qty is null, and pointless calculations.
-			IF @qty IS NOT NULL
-				BEGIN
-						SET @pName = (SELECT pName 
-													FROM Product 
-													WHERE productID = @productID) 
-
-						 -- Sum the profit made, by finding all the product items that were sold by productID
-						 -- Product item is the physically (single) item. Each item will have a unique barcode. 
-						 SET @profit = (SELECT SUM(sellingPrice - costPrice )
-												 FROM ProductItem 
-												 WHERE productID = @productID)
-
-						 -- Insert into our temporary table.
-						 INSERT INTO ProductQuantityProfit VALUES(@productID, @pName, @qty,@profit); 
-				END
-
-			-- Fetching the next row in the Cursor
-			FETCH NEXT FROM cProduct INTO @productID
-	END	
-
-	CLOSE cProduct
-
-	-- Destroy the Cursor reference
-	DEALLOCATE cProduct	
-
-
-	-- View the top 10 most profitable products 
-	-- Note will also sort in 'descending order'
-	SELECT TOP 10 * 
-	FROM ProductQuantityProfit
-	ORDER BY profit DESC
 GO
 
-
-EXECUTE usp_Top10ProfitableProducts
+EXECUTE usp_top10ProfitableProducts;
 GO
-
-
-DROP PROCEDURE usp_Top10ProfitableProducts
+DROP PROCEDURE usp_top10ProfitableProducts
+GO

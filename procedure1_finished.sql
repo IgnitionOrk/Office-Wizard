@@ -15,7 +15,7 @@ AS
 		FROM ProductItem, Product
 		WHERE ProductItem.productID = Product.productID AND productItem.status = 'sold'
 		GROUP BY ProductItem.productID, Product.pName
-		ORDER BY profit;
+		ORDER BY profit DESC;
 BEGIN
 	OPEN pItems
 	FETCH NEXT FROM pItems INTO @pID, @productName, @qtySold, @totalProfit
@@ -35,5 +35,6 @@ END;
 GO
 
 EXECUTE usp_top10ProfitableProducts;
-
-DROP PROCEDURE usp_top10ProfitableProducts;
+GO
+DROP PROCEDURE usp_top10ProfitableProducts
+GO

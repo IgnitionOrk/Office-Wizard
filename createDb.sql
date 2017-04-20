@@ -1,13 +1,4 @@
-
---Created by: 
-	--  Ryan Cunneen  :(c3179234)
-	--  Micay Conway  :(c3232648)
-	--  Jamie Sy	 	      :(c3207040)
---Date Created  4-Apr-2017
---Date Modified 11-Apr-2017
-
-
---Foreign key tables:
+﻿--Foreign key tables:
 DROP TABLE EmployeeAllowanceType
 DROP TABLE Allowance
 DROP TABLE QuoteProduct
@@ -63,7 +54,7 @@ CREATE TABLE Product
 	categoryID VARCHAR(10) NOT NULL,
 	pDescription VARCHAR(255),
 	qtyDescription VARCHAR(100), 
-	unitPrice FLOAT NOT NULL CHECK(NOT unitPrice < 0.00), -- Office Wizard could be giving them away for free.,
+	unitPrice FLOAT NOT NULL CHECK(unitPrice >= 0.00), -- Office Wizard could be giving them away for free.,
 	pStatus VARCHAR(20)	NOT NULL CHECK(pStatus IN('Available', 'Out of stock')),
 	availQty INT NOT NULL CHECK(availQty >= 0) DEFAULT 0,
 	reorderLevel INT NOT NULL CHECK(reorderLevel > 0),
@@ -190,10 +181,10 @@ CREATE TABLE ProductItem
 	sellingPrice FLOAT CHECK(sellingPrice > 0),
 	custOrdID VARCHAR(10) DEFAULT NULL,
 	status VARCHAR(10) CHECK(status IN('in-stock', 'sold', 'lost')),
-	PRIMARY KEY(itemNo, productID, suppOrdID),
+	PRIMARY KEY(itemNo),
 	FOREIGN KEY(productID) REFERENCES Product(productID) ON DELETE CASCADE,
 	FOREIGN KEY(suppOrdID) REFERENCES SupplierOrder(suppOrdID) ON DELETE CASCADE,
-	FOREIGN KEY(custOrdID) REFERENCES CustomerOrder(custOrdID) ON DELETE CASCADE
+	FOREIGN KEY(custOrdID) REFERENCES CustomerOrder(custOrdID) ON DELETE NO ACTION
 );
 GO
 
@@ -555,27 +546,30 @@ INSERT INTO Pickup VALUES('CO0001007', '');
 INSERT INTO Pickup VALUES('CO0001008', '');
 
 
--- Here will needed to be normalized, why?
--- The functional dependency F(productID, suppOrdID) -> sellingPrice, costPrice.
--- True the itemNo can be different, but we can order multiples of the same product from the Supplier.
---ProductItem represents the single (physically) item e.g. a pen.
 INSERT INTO ProductItem VALUES ('PI10000003', 'P9084', 'SO00000013', 100, 140, 'CO0001003', 'in-stock');
 INSERT INTO ProductItem VALUES ('PI10000044', 'P9084', 'SO00000013', 100, 140, 'CO0001003', 'in-stock');
 INSERT INTO ProductItem VALUES ('PI10000045', 'P9084', 'SO00000013', 100, 140, 'CO0001003', 'in-stock');
-
 
 INSERT INTO ProductItem VALUES ('PI10000004', 'P4566', 'SO00000014', 50, 55, NULL, 'in-stock');
 INSERT INTO ProductItem VALUES ('PI10000005', 'P1234', 'SO00000015', 1, 1.70, 'CO0001005', 'in-stock');
 INSERT INTO ProductItem VALUES ('PI10000006', 'P2112', 'SO00000016', 1.5, 2.5, 'CO0001006', 'in-stock');
 INSERT INTO ProductItem VALUES ('PI10000007', 'P1234', 'SO00000017', 0.50, 1.70, 'CO0001007', 'in-stock');
 INSERT INTO ProductItem VALUES ('PI10000008', 'P2112', 'SO00000018', 2, 2.5, 'CO0001008', 'in-stock');
-INSERT INTO ProductItem VALUES ('PI10000009', 'P9999', 'SO00000018', 100, 200, NULL, 'in-stock');
-INSERT INTO ProductItem VALUES ('PI10000010', 'P9885', 'SO00000011', 20, 30,NULL, 'in-stock');
+
+INSERT INTO ProductItem VALUES ('PI10000009', 'P9999', 'SO00000018', 100, 200, NULL, 'sold');
+INSERT INTO ProductItem VALUES ('PI10000016', 'P9999', 'SO00000018', 100, 200, NULL, 'sold');
+INSERT INTO ProductItem VALUES ('PI10000017', 'P9999', 'SO00000018', 100, 200, NULL, 'sold');
+INSERT INTO ProductItem VALUES ('PI10000018', 'P9999', 'SO00000018', 100, 200, NULL, 'sold');
+INSERT INTO ProductItem VALUES ('PI10000019', 'P9999', 'SO00000018', 100, 200, NULL, 'in-stock');
+INSERT INTO ProductItem VALUES ('PI10000020', 'P9999', 'SO00000018', 100, 200, NULL, 'in-stock');
+
+INSERT INTO ProductItem VALUES ('PI10000010', 'P9885', 'SO00000011', 20, 30, NULL, 'in-stock');
 INSERT INTO ProductItem VALUES ('PI10000011', 'P3265', 'SO00000011', 20, 25, 'CO0001008', 'in-stock');
 INSERT INTO ProductItem VALUES ('PI10000012', 'P1235', 'SO00000018', 0.80, 2.50, 'CO0001008', 'in-stock');
 INSERT INTO ProductItem VALUES ('PI10000013', 'P3911', 'SO00000012', 2, 2.50, 'CO0001008', 'in-stock');
 INSERT INTO ProductItem VALUES ('PI10000014', 'P3265', 'SO00000017', 20, 25, 'CO0001008', 'in-stock');
 INSERT INTO ProductItem VALUES ('PI10000015', 'P0000', 'SO00000013', 159, 250, 'CO0001008', 'in-stock');
+
 INSERT INTO ProductItem VALUES('PI00001', 'P1234','SO00000015' , 1, 1.70, 'CO0001001', 'in-stock');
 INSERT INTO ProductItem VALUES('PI00002', 'P1234','SO00000015' , 1, 1.70, 'CO0001001', 'in-stock');
 INSERT INTO ProductItem VALUES('PI99909', 'P4565', 'SO00000011', 2, 1.22, 'CO0001002', 'in-stock');
@@ -611,85 +605,3 @@ INSERT INTO QuoteProduct VALUES ('QUO1234438', 'P7895',  35, 25.96);
 INSERT INTO QuoteProduct VALUES ('QUO1231239', 'P9885',  80, 10.00);
 INSERT INTO QuoteProduct VALUES ('QUO1234448', 'P1254',  150, 1.02);
 INSERT INTO QuoteProduct VALUES ('QUO1231240', 'P1223',  200, 0.75);
-
-GO
-
-
--- Determines if the correct date the order should be delivered.
--- The minimum number (of working) days is 5.
-CREATE PROCEDURE usp_OrderDelivery5To7Days
-AS
-	DECLARE @custOrdID VARCHAR(10)
-	DECLARE @date DATE
-	SET @custOrdID = ''
-
-	DECLARE weekendCursor CURSOR
-	FOR 
-	SELECT custOrdID
-	FROM CustomerOrder
-	WHERE custOrdID NOT IN(SELECT custOrdID FROM Pickup)
-	FOR READ ONLY
-
-	-- We are populating the Cursor by determing what customer orders are not pick-ups.
-	OPEN weekendCursor
-	FETCH NEXT FROM weekendCursor INTO @custOrdID
-	WHILE @@FETCH_STATUS = 0
-		BEGIN 
-			-- Determine the date the order was submitted by the customer. 
-			SET @date =  (SELECT orderDate FROM CustomerOrder WHERE CustomerOrder.custOrdID = @custOrdID)
-
-			-- If the expected delivery date is either Sunday (1), or Saturday(7).
-			-- Then we change due date the order will be delivered to Monday. 
-			IF DATEPART(DW, DATEADD(day, 5, @date)) IN(1,7)
-				BEGIN
-					-- The delivery date is a Sunday. 
-					IF DATEPART(DW, DATEADD(day, 5, @date)) IN(1)
-						BEGIN
-							-- Customers order was submitted on Tuesday, and will be delivered on Monday.
-							UPDATE Delivery SET delDateTime = DATEADD(day, 8, @date)
-							FROM CustomerOrder, Delivery
-							WHERE Delivery.custOrdID = @custOrdID
-						END
-					ELSE
-						BEGIN 
-							-- Customers order was submitted on Wedesday, and will be delivered on Monday
-							UPDATE Delivery SET delDateTime = DATEADD(day, 7, @date)
-							FROM CustomerOrder, Delivery
-							WHERE Delivery.custOrdID = @custOrdID
-						END		
-				END
-			ELSE 
-				BEGIN
-					-- The expected delivery date is not Saturday or Sunday.
-					-- Therefore, it will take 5 working days. 
-					UPDATE Delivery SET delDateTime = DATEADD(day, 5, @date)
-					FROM CustomerOrder, Delivery
-					WHERE Delivery.custOrdID = @custOrdID
-				END
-
-			-- Fetch the next row of custOrdID's
-			FETCH NEXT FROM weekendCursor INTO @custOrdID	
-		END
-	CLOSE weekendCursor
-	DEALLOCATE weekendCursor
-GO
-
-
-
-CREATE PROCEDURE usp_PickupOrderIn3Days
-AS
-	-- So the Customer can pick up their order, 3 days after they have submitted their order.
-	UPDATE Pickup SET pickupDateTime = DATEADD(day, 3, CustomerOrder.orderDate)
-	FROM CustomerOrder, Pickup
-	WHERE CustomerOrder.custOrdID = Pickup.custOrdID
-GO
-
-EXECUTE usp_OrderDelivery5To7Days
-EXECUTE usp_PickupOrderIn3Days
-GO
-
-
-DROP PROCEDURE usp_OrderDelivery5To7Days
-DROP PROCEDURE usp_PickupOrderIn3Days
-
-

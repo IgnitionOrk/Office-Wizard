@@ -25,49 +25,7 @@ AS
     ,@allowanceBonus AllowanceInfo READONLY
 AS
 BEGIN
-    INSERT INTO Payslip
-    SELECT @startDate
-        ,@endDate
-        ,n.hoursWorked
-        ,p.hourlyRate
-        ,p.hourlyRate * n.hoursWorked
-        ,(p.hourlyRate * n.hoursWorked) + a.allowanceAmount
-        ,((p.hourlyRate * n.hoursWorked) + a.allowanceAmount) * t.taxRate / 100
-        ,@taxID
-        ,a.allowanceID
-        ,n.employeeID
-    FROM @workedHours n
-        ,@allowanceBonus a
-        ,Position p
-        ,Employee e
-        ,Tax t
-    WHERE p.positionID = e.positionID
-        AND e.employeeID = n.employeeID
-        AND t.taxID = @taxID
-END
 
-DECLARE @employeeInfo EmployeeInfo;
-DECLARE @hoursWorked INT;
-
-INSERT @employeeInfo
-SELECT e.employeeID
-    ,@hoursWorked
-FROM Employee e
-WHERE e.employeeID = 1
-    AND @hoursWorked = 160
-
-DECLARE @allowanceInfo AllowanceInfo;
-DECLARE @empInfo EmployeeInfo
-
-INSERT @allowanceInfo
-SELECT e.employeeID
-    ,a.allowanceID
-    ,a.allowanceAmount
-FROM Employee e
-    ,Allowance a
-    ,@empInfo emp
-WHERE e.employeeID = emp.employeeID
-    AND a.allowanceID = 1
 
 EXECUTE usp_createPayroll;
 GO

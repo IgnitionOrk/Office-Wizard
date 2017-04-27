@@ -21,8 +21,8 @@ AS
 	@startDate DATE;
 	@endDate DATE;
 	@workedHours FLOAT;
-	@basePay 
-    ,@allowanceBonus AllowanceInfo READONLY
+	-- @basePay ;
+	@allowanceBonus AllowanceInfo READONLY
 AS
 BEGIN
 

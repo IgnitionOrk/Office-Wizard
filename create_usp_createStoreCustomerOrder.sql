@@ -66,6 +66,8 @@ AS
 				@salesOrdID, 
 				p.productID,
 				(SELECT COUNT(*) FROM ProductItem p2 WHERE p2.productID = p.productID), -- Determining the quantity
+
+
 				0.0, -- Need to calculate the unitPurchasePrice 
 				(SELECT SUM(sellingPrice) FROM ProductItem p3 WHERE p3.productID = p.productID) -- Calculating the subtotal
 			FROM ProductItem p, @barcodeList bl

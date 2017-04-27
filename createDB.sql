@@ -165,7 +165,7 @@ CREATE TABLE CustomerOrder
 	custOrdID VARCHAR(10),
 	employeeID	 VARCHAR(10) DEFAULT NULL,						--Null because order may have been online. 
 	customerID VARCHAR(10),
-	orderDate DATE	NOT NULL,					
+	orderDateTime DATETIME	NOT NULL,					
 	discountGiven FLOAT DEFAULT NULL, 
 	amountDue	 FLOAT,
 	amountPaid FLOAT, 

@@ -28,7 +28,6 @@ AS
 			-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 			-- Firstly 		
 			-- Need to calculate the discount,
-			-- Some how calculate discount
 			SET @totalDiscount = (SELECT SUM(maxDiscount) 
 												  FROM Product pro, ProductItem pItem, @barcodeList bl 
 												  WHERE pro.productID = pItem.productID AND pItem.itemNo = bl.barcodeID)
@@ -65,11 +64,15 @@ AS
 			SELECT 
 				@salesOrdID, 
 				p.productID,
-				(SELECT COUNT(*) FROM ProductItem p2 WHERE p2.productID = p.productID), -- Determining the quantity
-
+				-- Count all the Product Items that are a particular Product, and is found in the @barcodeList.
+				(SELECT COUNT(*) FROM ProductItem WHERE productID = p.productID AND itemNo IN(SELECT barcodeID FROM @barcodeList)),
 
 				0.0, -- Need to calculate the unitPurchasePrice 
-				(SELECT SUM(sellingPrice) FROM ProductItem p3 WHERE p3.productID = p.productID) -- Calculating the subtotal
+
+				-- Calculating the subtotal by adding all the sellingPrices of each Product Item that is a particular Product, and is found in @barcodeList.
+				-- subtotal is the total price for a particular Product.
+				(SELECT SUM(sellingPrice) FROM ProductItem WHERE productID = p.productID AND itemNo IN(SELECT barcodeID FROM @barcodeList)) 
+
 			FROM ProductItem p, @barcodeList bl
 			WHERE p.itemNo = bl.barcodeID
 
@@ -80,6 +83,8 @@ AS
 
 			-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 			-- Lastly insert the new created data.
+
+			-- The values will probably needed to be change. 
 			INSERT INTO CustomerOrder VALUES(@salesOrdID,  @employeeID, @customerID, GETDATE(), @totalDiscount, @amountDue, 0.00, 'Awaiting Payment', 'Phone');
 
 			-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

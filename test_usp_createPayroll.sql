@@ -15,13 +15,13 @@ GO
 
 CREATE PROCEDURE usp_createPayroll 
 AS
-	DECLARE @payslipID VARCHAR(10);
-	DECLARE @employeeID VARCHAR(10);
-	DECLARE @taxBracketID VARCHAR(10);
-	DECLARE @startDate DATE;
-	DECLARE @endDate DATE;
-	DECLARE @workedHours FLOAT;
-	DECLARE @basePay 
+	@payslipID VARCHAR(10);
+	@employeeID VARCHAR(10);
+	@taxBracketID VARCHAR(10);
+	@startDate DATE;
+	@endDate DATE;
+	@workedHours FLOAT;
+	@basePay 
     ,@allowanceBonus AllowanceInfo READONLY
 AS
 BEGIN

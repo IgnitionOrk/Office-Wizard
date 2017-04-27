@@ -620,3 +620,43 @@ INSERT INTO QuoteProduct VALUES ('QUO1234438', 'P7895',  35, 25.96);
 INSERT INTO QuoteProduct VALUES ('QUO1231239', 'P9885',  80, 10.00);
 INSERT INTO QuoteProduct VALUES ('QUO1234448', 'P1254',  150, 1.02);
 INSERT INTO QuoteProduct VALUES ('QUO1231240', 'P1223',  200, 0.75);
+
+GO
+CREATE PROCEDURE usp_OrderDelivery5To7Days
+AS
+	DECLARE @custOrdID VARCHAR(10)
+	SET @custOrdID = ''
+	DECLARE weekendCursor CURSOR
+	FOR 
+	SELECT custOrdID
+	FROM CustomerOrder
+	WHERE custOrdID NOT IN(SELECT custOrdID FROM Pickup)
+	FOR READ ONLY
+
+
+	OPEN weekendCursor
+	FETCH NEXT FROM weekendCursor INTO @custOrdID
+	WHILE @@FETCH_STATUS = 0
+		BEGIN 
+			PRINT DATEPART(DW, (SELECT orderDate FROM CustomerOrder WHERE CustomerOrder.custOrdID = @custOrdID)) 
+			
+		END
+	CLOSE weekendCursor
+	DEALLOCATE weekendCursor
+GO
+
+GO
+CREATE PROCEDURE usp_PickupOrderIn3Days
+AS
+	-- So the Customer can pick up their order, 3 days after they have submitted their order.
+	UPDATE Pickup SET pickupDateTime = DATEADD(day, 3, CustomerOrder.orderDate)
+	FROM CustomerOrder, Pickup
+	WHERE CustomerOrder.custOrdID = Pickup.custOrdID
+GO
+
+EXECUTE usp_OrderDelivery5To7Days
+EXECUTE usp_PickupOrderIn3Days
+GO
+ 
+DROP PROCEDURE usp_OrderDelivery5To7Days
+DROP PROCEDURE usp_PickupOrderIn3Days

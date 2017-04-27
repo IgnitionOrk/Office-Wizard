@@ -49,7 +49,6 @@ CREATE TYPE EmployeeInfo AS TABLE
 (
     employeeID INT,
     workedHours INT,
-    taxBracketID FLOAT,
     PRIMARY KEY (
         employeeID,
         workedHours
@@ -73,7 +72,7 @@ GO
 CREATE PROCEDURE usp_createPayroll
 	@startDate	DATE,
 	@endDate	DATE,
-	@workedHours	FLOAT,
+	@taxBracketID	INT,
 	@noHoursWorked EmployeeInfo READONLY,
 	@allowanceBonus AllowanceInfo READONLY
     
@@ -81,20 +80,44 @@ AS
 BEGIN
 	INSERT INTO payslip
 		SELECT 
-		n.employeeID,
-		n.taxBracketID,
-		@startDate,
-		@endDate,
-		n.workedHours,
-		p.
+			n.employeeID,
+			n.taxBracketID,
+			@startDate,
+			@endDate,
+			n.workedHours,
+			n.workedHours * p.hourlyRate,
+			(n.workedHours * p.hourlyRate) * t.taxRate, -- assumed that tax is not deducted from allowances
+			(n.wokedHours * p.hourlyRate) - ((n.workedHours * p.hourlyRate) * t.taxRate)
+		FROM
+			@noHoursWorked n,
+			@allowanceBonus a,
+			Position p,
+			Assignment pa,
+			TaxBracket t
+		WHERE
+			p.positionID = pa.positionID
+			AND pa.employeeID = n.employeeID
+			AND t.taxBracketID = @taxBracketID
 END
+
+DECLARE @employeeInfo EmployeeInfo;
+DECLARE @workedHours INT;
+
+INSERT @employeeInfo
+	SELECT 
+		e.employeeID,
+		@workedHours
+	FROM 
+		Employee e
+	WHERE
+		e.employeeID = 1
+		AND @
+
 
 
 
 -- Payslip (payslipID, employeeID, taxBracketID, startDate, endDate,
 --workedHours, basePay, taxPayable, netPay)
-
-
 
 
 

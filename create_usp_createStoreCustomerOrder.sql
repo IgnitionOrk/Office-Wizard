@@ -2,13 +2,18 @@
 -- Student number: 3179234
 -- Date created: 19-Apr-2017
 -- Date modified: 27-Apr-2017
+
+EXECUTE sp_dropmessage 50005;
+GO
+EXECUTE sp_addmessage 50005, 11, 'Error: %s';
+GO
+
 CREATE TYPE productBarcodes_TVP AS TABLE
 (
 	barcodeID VARCHAR(10),
 	PRIMARY KEY(barcodeID)
 );
 GO
-
 
 CREATE PROCEDURE usp_CreateNewOrder
 	@customerID VARCHAR(10), 
@@ -93,6 +98,8 @@ AS
 GO
 
 
+
+
 CREATE PROCEDURE  usp_createStoreCustomerOrder 
 	@customerID VARCHAR(10), 
 	@barcodeList productBarcodes_TVP READONLY, 
@@ -106,21 +113,32 @@ AS
 		BEGIN
 			EXECUTE usp_CreateNewOrder @customerID, @barcodeList, @employeeID, @salesOrdID
 		END
+
+
 	-- The @param customerID is not null, and it does reference a customer in the database,
 	-- create a new customer.
 	ELSE IF  @customerID IS NOT NULL AND NOT EXISTS (SELECT customerID FROM	 Customer WHERE customerID = @customerID)
 	    BEGIN
 			-- Should have a gender value for as Unspecified but that can be added later O will suffice for now.
 			INSERT INTO Customer VALUES(@customerID, DEFAULT,DEFAULT,'', NULL,'', NULL,'O');
+
+			-- Raise error that is associated with a customer that does not exist in the database.
+			RAISERROR(50005, 16, 1, 'Customer does not exist in the database! Customer has been inserted into the database')
 		END
+
+
 	-- The customer does not exist in the database, and we simply create a customer order without a customer associated with it. 
 	ELSE
 		BEGIN
 			EXECUTE usp_CreateNewOrder @customerID, @barcodeList, @employeeID, @salesOrdID
+
+			-- Raise error that is associated with a customer that does not exist in the database.
+			RAISERROR(50005, 16, 1, 'Customer does not exist in the database! New customer order has been created without a Customer ')
 		END
 	END TRY
+
 	BEGIN CATCH
-		
+		PRINT ERROR_MESSAGE()
 	END CATCH
 GO
 

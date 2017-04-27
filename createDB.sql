@@ -184,7 +184,6 @@ CREATE TABLE ProductItem
 	suppOrdID VARCHAR(10) NOT NULL,
 	costPrice FLOAT CHECK(costPrice > 0), 			--Cost price is the cost of each individual item. i.e. one carton($1) could have 10 pens and each pen would cost us 10 cents each pen.
 	sellingPrice FLOAT CHECK(sellingPrice > 0),
-	-- soldPrice	FLOAT CHECK (soldPrice >= 0),
 	custOrdID VARCHAR(10) DEFAULT NULL,
 	status VARCHAR(10) CHECK(status IN('in-stock', 'sold', 'lost')),
 	PRIMARY KEY(itemNo),

@@ -641,7 +641,7 @@ CREATE PROCEDURE usp_OrderDelivery5To7Days
   	FETCH NEXT FROM weekendCursor INTO @custOrdID
   	WHILE @@FETCH_STATUS = 0
   		BEGIN 
-  			SET @date =  (SELECT orderDate FROM CustomerOrder WHERE CustomerOrder.custOrdID = @custOrdID)
+  			SET @date =  (SELECT orderDateTime FROM CustomerOrder WHERE CustomerOrder.custOrdID = @custOrdID)
 
 			-- 5 days will be added to the date the order was made (orderDate).
  			UPDATE Delivery SET delDateTime = DATEADD(day, 5, @date)
@@ -657,7 +657,7 @@ CREATE PROCEDURE usp_OrderDelivery5To7Days
  CREATE PROCEDURE usp_PickupOrderIn3Days
  AS
  	-- So the Customer can pick up their order, 3 days after they have submitted their order.
- 	UPDATE Pickup SET pickupDateTime = DATEADD(day, 3, CustomerOrder.orderDate)
+ 	UPDATE Pickup SET pickupDateTime = DATEADD(day, 3, CustomerOrder.orderDateTime)
  	FROM CustomerOrder, Pickup
  	WHERE CustomerOrder.custOrdID = Pickup.custOrdID
  GO
@@ -665,7 +665,9 @@ CREATE PROCEDURE usp_OrderDelivery5To7Days
  EXECUTE usp_OrderDelivery5To7Days
  EXECUTE usp_PickupOrderIn3Days
  GO
- 
+
+
+  
  DROP PROCEDURE usp_OrderDelivery5To7Days
  DROP PROCEDURE usp_PickupOrderIn3Days
-
+ GO

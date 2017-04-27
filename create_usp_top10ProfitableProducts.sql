@@ -24,8 +24,8 @@ AS
 			PRINT (@pID + ' ' + @productName + ' ' + CAST(@qtySold AS CHAR) + ' Total profit: ' + CAST(@totalProfit AS CHAR));
 
 			FETCH NEXT FROM pItems INTO @pID, @productName, @qtySold, @totalProfit
-	END
+		END
 	CLOSE pItems   
 	DEALLOCATE pItems	
-END;
+	END;
 GO

@@ -17,13 +17,23 @@ CREATE PROCEDURE usp_CreateNewOrder
 	@salesOrdID VARCHAR(10) OUTPUT
 AS
 			DECLARE @amountDue FLOAT
-			DECLARE @discount FLOAT
+			DECLARE @productID VARCHAR(10)
+			DECLARE @productDiscount FLOAT
+			DECLARE @totalDiscount FLOAT
 			DECLARE @barcode VARCHAR(10)
+			DECLARE productDiscount CURSOR FOR
+			SELECT productID, maxDiscount
+			FROM Product
+			OPEN productDiscount
 			-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 			-- Firstly 		
 			-- Need to calculate the discount,
 			-- Some how calculate discount
+			SET @totalDiscount = (SELECT SUM(maxDiscount) 
+												  FROM Product pro, ProductItem pItem, @barcodeList bl 
+												  WHERE pro.productID = pItem.productID AND pItem.itemNo = bl.barcodeID)
 
+			-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 			-- Secondly
 			-- determine the amound due of the customer order. 
 			SET @amountDue = (SELECT SUM(sellingPrice)
@@ -31,14 +41,22 @@ AS
 									WHERE p.itemNo =  bl.barcodeID)
 
 			-- Apply the discount given (if any)
-			SET @amountDue = @amountDue - (@amountDue * @discount)
+			SET @amountDue = @amountDue - (@amountDue * @totalDiscount)
+
 			-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 			-- Thirdly we update the product items that are associated with the newly created customer order (status = sold), and sellingPrice. 
-			UPDATE ProductItem
-			SET custOrdID = @salesOrdID, status = 'sold', sellingPrice = (sellingPrice - (sellingPrice * @discount))
-			SELECT custOrdID, status, sellingPrice
-			FROM ProductItem p, @barcodeList bl
-			WHERE p.itemNo = bl.barcodeID
+			FETCH NEXT FROM productDiscount INTO @productID,  @productDiscount
+		
+			WHILE @@FETCH_STATUS = 0			
+			BEGIN
+				UPDATE ProductItem
+				SET custOrdID = @salesOrdID, status = 'sold', sellingPrice = (sellingPrice - (sellingPrice * @productDiscount))
+				SELECT custOrdID, status, sellingPrice
+				FROM ProductItem p, @barcodeList bl
+				WHERE p.itemNo = bl.barcodeID AND p.productID = @productID
+
+				FETCH NEXT FROM productDiscount INTO @productID,  @productDiscount
+			END
 
 			-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 			-- Fourth associate the Products -> CustOrdProduct
@@ -53,19 +71,18 @@ AS
 			FROM ProductItem p, @barcodeList bl
 			WHERE p.itemNo = bl.barcodeID
 
-
+			-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 			-- Fifth calculate the new available quantity Office Wizard has for each Product. 
-			/*
-					IMPORTANT!!!
-			*/
-			-- So maybe add another table into the database (called Inventory) which stores the number of productItems (associated with each Product) Office Wizard has in stock at the time.
-			-- As I'm not sure we should we should be updating Product, as the availQty is associated with the number of items in inventory at the Supplier, not the number of items in Office Wizard. 
 			UPDATE Product
 			SET availQty = (SELECT COUNT(*) FROM product pr, ProductItem pItem WHERE pItem.productID = pr.productID AND pItem.status = 'sold')
 
 			-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 			-- Lastly insert the new created data.
-			INSERT INTO CustomerOrder VALUES(@salesOrdID,  @employeeID, @customerID, GETDATE(), @discount, @amountDue, 0.00, 'Awaiting Payment', 'Phone');
+			INSERT INTO CustomerOrder VALUES(@salesOrdID,  @employeeID, @customerID, GETDATE(), @totalDiscount, @amountDue, 0.00, 'Awaiting Payment', 'Phone');
+
+			-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+			CLOSE productDiscount
+			DEALLOCATE productDiscount
 GO
 
 

@@ -17,4 +17,7 @@ INSERT INTO @customer1Products VALUES('PI10000018');
 
 EXECUTE usp_createStoreCustomerOrder @customer1ID, @customer1Products, @employeeID, @salesOrdID OUT
 
+
 SELECT * FROM CustOrdProduct WHERE custOrdID =  '711235337'
+
+DROP PROCEDURE usp_createStoreCustomerOrder

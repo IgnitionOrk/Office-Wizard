@@ -45,10 +45,9 @@ AS
 	-- Note must determine the unitPurchase Price
 	DECLARE @productID VARCHAR(10)
 	DECLARE @qty INT
-	DECLARE @unitPurchasePrice FLOAT
 	DECLARE custOrdProductCursor CURSOR FOR
 	-- Count quantity, and sum selling price for each product type associated with the customer order.
-	SELECT pro.productID,COUNT(pro.productID) AS qty, SUM(sellingPrice) AS unitPurchasePrice 
+	SELECT pro.productID,COUNT(pro.productID) AS qty 
 	FROM ProductItem p 
 		INNER JOIN Product pro 
 			ON p.productID = pro.productID 
@@ -58,7 +57,7 @@ AS
 	-- End of cursor
 	---------------------------------------------------------------------------------------------------------------------------------------------------------
 	OPEN custOrdProductCursor
-	FETCH NEXT FROM custOrdProductCursor INTO @productID,  @qty, @unitPurchasePrice
+	FETCH NEXT FROM custOrdProductCursor INTO @productID,  @qty
 	WHILE @@FETCH_STATUS = 0
 	BEGIN 
 		INSERT INTO CustOrdProduct (custOrdID, productID, qty, unitPurchasePrice, subtotal)
@@ -66,8 +65,8 @@ AS
 			@salesOrdID, 
 			pro.productID, 
 			@qty,
-			@unitPurchasePrice,
-			@qty * @unitPurchasePrice
+			pItem.sellingPrice AS unitPurchasePrice,
+			(@qty * pItem.sellingPrice) AS subtotal
 		FROM Product pro
 			INNER JOIN ProductItem pItem
 				ON pro.productID = pItem.productID	
@@ -79,7 +78,7 @@ AS
 						WHERE c.custOrdID = @salesOrdID AND c.productID = pro.productID)
 			AND @salesOrdID = pItem.custOrdID
 			AND pro.productID = @productID
-		FETCH NEXT FROM custOrdProductCursor INTO @productID, @qty, @unitPurchasePrice
+		FETCH NEXT FROM custOrdProductCursor INTO @productID, @qty
 	END
 	
 	-- Close, and deallocate the cursor

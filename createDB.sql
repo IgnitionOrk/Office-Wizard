@@ -333,7 +333,7 @@ GO
 
 
 INSERT INTO Supplier VALUES('S111111111', 'World of Pens', '121 Industrial Rd', '123456789012', '1234-1234-12', 'Mary Jane');
-INSERT INTO Supplier VALUES('S222222222', 'Chair R Us', '11 Matthew Avenue',  '210987654321',  '12-4321-4321', 'Bob Walts');
+INSERT INTO Supplier VALUES('S222222222', 'Chairs R Us', '11 Matthew Avenue',  '210987654321',  '12-4321-4321', 'Bob Walts');
 INSERT INTO Supplier VALUES('S333333333', 'Paper Industries', '124/34 Cresent Head', '1234567192', '000-0000-00', 'Gary Mancolo');
 INSERT INTO Supplier VALUES('S444444444', 'Furniture galore', '123/34 Cresent Head',  '1111111111', NULL , 'Ryan Sallvitore');
 INSERT INTO Supplier VALUES('S555555555', 'Your Stock', '11 Matthew Avenue',  '0407022211', NULL , 'Sasha');
@@ -460,7 +460,7 @@ INSERT INTO Product VALUES('P9885', 'Artbook','Art central','PC12345676','Pictur
 INSERT INTO Product VALUES('P0022', 'Mathematics','All things Education','PC12345676','Mathematics textbook','Single textbook',20.00,'Available',25,3, 0.75);
 -- Category: Furniture
 INSERT INTO Product VALUES('P1211', 'Office Desk','Furniture experts','PC12345671','Office Desk','Single desk',175.00,'Available',6,3, 0.50);
-INSERT INTO Product VALUES('P1235', 'Solid chair','Furniture experts','PC12345671','Desk chair','Single chair',57.63,'Available',10, 2, 0.10);
+INSERT INTO Product VALUES('P1235', 'Solid chair','Furniture experts','PC12345671','Desk chair','Single chair',70,'Available',12, 4, 0.10);
 INSERT INTO Product VALUES('P3265', 'Kids chair','Furniture experts','PC12345671','Child office chair','Single chair',12.75,'Out of stock',0,10, 0.23);
 INSERT INTO Product VALUES('P4566', 'Kids desk','Furniture experts','PC12345671','Child office desk','Single desk',25.75,'Available',2,5, 0.10);
 
@@ -490,6 +490,7 @@ INSERT INTO SupplierProduct VALUES('S444444444','P3265');
 INSERT INTO SupplierProduct VALUES('S444444444','P4566');
 INSERT INTO SupplierProduct VALUES('S000000000','P4566');
 INSERT INTO SupplierProduct VALUES('S222222222','P4566');
+INSERT INTO SupplierProduct VALUES('S222222222','P1235');
 
 INSERT INTO Quote VALUES ('QUO1004567', '2017-01-02', '2017-01-03', 'Reasonable quote for a bulk supply of silly pens to suit all your silly stationary needs', 'S111111111', 'E68889');
 INSERT INTO Quote VALUES ('QUO1022222', '2017-01-10', '2017-01-11', 'Supply of arty stuff for creative people', 'S111111111', 'E68889');
@@ -502,7 +503,7 @@ INSERT INTO Quote VALUES ('QUO1231240', '2016-11-12', '2016-11-13', 'An easter s
 
 INSERT INTO SupplierOrder VALUES ('SO00000011', '2017-01-04', 'This supplier order is filled with order for items that include a bulk supply of silly pens. Please refer back to quote for more information.', 'QUO1004567', 500, 'Completed','2017-01-06');
 INSERT INTO SupplierOrder VALUES ('SO00000012', '2017-03-14', 'This supplier order is filled with order for items that include a bulk supply of family fun products. Please refer back to quote for more information.', 'QUO1234438', 5000, 'Completed','2017-03-15');
-INSERT INTO SupplierOrder VALUES ('SO00000013', '2017-02-04', 'This supplier order is filled with order for items that include a bulk supply of silly seats. Please refer back to quote for more information.', 'QUO2244237', 2000, 'Completed','2017-02-05');
+INSERT INTO SupplierOrder VALUES ('SO00000013', '2017-02-04', 'This supplier order is filled with order for items that include a bulk supply of seats. Please refer back to quote for more information.', 'QUO2244237', 711, 'Completed','2017-02-05');
 INSERT INTO SupplierOrder VALUES ('SO00000014', '2017-01-14', 'This supplier order is filled with order for items that include a bulk supply of silly body support stools. Please refer back to quote for more information.', 'QUO1231238', 1000, 'Completed','2017-01-15');
 INSERT INTO SupplierOrder VALUES ('SO00000015', '2017-04-14', 'This supplier order is filled with order for items that include a supply of pretty stationary. Please refer back to quote for more information.', 'QUO1234448', 6000, 'Completed','2017-04-15');
 INSERT INTO SupplierOrder VALUES ('SO00000016', '2016-11-14', 'This supplier order is filled with order for items that include a big amount of normal pens, normal paper, and 100 pack of folders to organise unorganised people. Please refer back to quote for more information.', 'QUO1231240', 2500, 'Completed','2016-11-15');
@@ -512,12 +513,12 @@ INSERT INTO SupplierOrder VALUES ('SO00000018', '2017-01-14', 'This supplier ord
 INSERT INTO SupplierOrderProduct VALUES ('SO00000011', 'P1234', 1.30, 2);
 INSERT INTO SupplierOrderProduct VALUES ('SO00000012', 'P4565', 13, 300);
 INSERT INTO SupplierOrderProduct VALUES ('SO00000013', 'P9084', 6, 6);
+INSERT INTO SupplierOrderProduct VALUES ('SO00000013', 'P1235', 45, 15);
 INSERT INTO SupplierOrderProduct VALUES ('SO00000014', 'P4566', 50.35, 20);
 INSERT INTO SupplierOrderProduct VALUES ('SO00000015', 'P9999', 150.00, 20);
 INSERT INTO SupplierOrderProduct VALUES ('SO00000016', 'P2112', 2, 250);
 INSERT INTO SupplierOrderProduct VALUES ('SO00000017', 'P9885', 25.35, 20);
 
-INSERT INTO SupplierOrderProduct VALUES ('SO00000018', 'P1235', 0.8, 1);
 INSERT INTO SupplierOrderProduct VALUES ('SO00000018', 'P2112', 2, 1);
 INSERT INTO SupplierOrderProduct VALUES ('SO00000018', 'P9999', 100, 11);
 
@@ -564,10 +565,6 @@ INSERT INTO ProductItem VALUES ('PI10000006', 'P2112', 'SO00000016', 1.5, 2.5, '
 INSERT INTO ProductItem VALUES ('PI10000007', 'P1234', 'SO00000017', 0.50, 1.70, 'CO0001007', 'in-stock');
 INSERT INTO ProductItem VALUES ('PI10000008', 'P2112', 'SO00000018', 2, 2.5, 'CO0001008', 'in-stock');
 
-
----------------------
-INSERT INTO ProductItem VALUES();
-INSERT INTO ProductItem VALUES();
 --INSERT INTO SupplierOrderProduct VALUES ('SO00000011', 'P1234', 1.30, 2);
 INSERT INTO ProductItem VALUES ('PI10000009', 'P9999', 'SO00000018', 100, 175.85, NULL, 'sold');
 INSERT INTO ProductItem VALUES ('PI10000016', 'P9999', 'SO00000018', 100, 175.85, NULL, 'sold');
@@ -580,6 +577,27 @@ INSERT INTO ProductItem VALUES ('PI10000022', 'P9999', 'SO00000018', 100, 175.85
 INSERT INTO ProductItem VALUES ('PI10000023', 'P9999', 'SO00000018', 100, 175.85, NULL, 'in-stock');
 INSERT INTO ProductItem VALUES ('PI10000024', 'P9999', 'SO00000018', 100, 175.85, NULL, 'in-stock');
 INSERT INTO ProductItem VALUES ('PI10000025', 'P9999', 'SO00000018', 100, 175.85, NULL, 'in-stock');
+
+
+
+
+INSERT INTO ProductItem VALUES ('PI10000050', 'P1235', 'SO00000013', 45, 70, NULL, 'in-stock');
+INSERT INTO ProductItem VALUES ('PI10000051', 'P1235', 'SO00000013', 45, 70, NULL, 'in-stock');
+INSERT INTO ProductItem VALUES ('PI10000052', 'P1235', 'SO00000013', 45, 70, NULL, 'in-stock');
+INSERT INTO ProductItem VALUES ('PI10000053', 'P1235', 'SO00000013', 45, 70, NULL, 'in-stock');
+INSERT INTO ProductItem VALUES ('PI10000054', 'P1235', 'SO00000013', 45, 70, NULL, 'in-stock');
+INSERT INTO ProductItem VALUES ('PI10000055', 'P1235', 'SO00000013', 45, 70, NULL, 'in-stock');
+INSERT INTO ProductItem VALUES ('PI10000056', 'P1235', 'SO00000013', 45, 70, NULL, 'in-stock');
+INSERT INTO ProductItem VALUES ('PI10000057', 'P1235', 'SO00000013', 45, 70, NULL, 'in-stock');
+INSERT INTO ProductItem VALUES ('PI10000058', 'P1235', 'SO00000013', 45, 70, NULL, 'in-stock');
+INSERT INTO ProductItem VALUES ('PI10000059', 'P1235', 'SO00000013', 45, 70, NULL, 'in-stock');
+INSERT INTO ProductItem VALUES ('PI10000060', 'P1235', 'SO00000013', 45, 70, NULL, 'in-stock');
+INSERT INTO ProductItem VALUES ('PI10000061', 'P1235', 'SO00000013', 45, 70, NULL, 'in-stock');
+INSERT INTO ProductItem VALUES ('PI10000062', 'P1235', 'SO00000013', 45, 70, NULL, 'sold');
+INSERT INTO ProductItem VALUES ('PI10000063', 'P1235', 'SO00000013', 45, 70, NULL, 'sold');
+INSERT INTO ProductItem VALUES ('PI10000064', 'P1235', 'SO00000013', 45, 70, NULL, 'sold');
+
+
 
 INSERT INTO ProductItem VALUES ('PI10000010', 'P9885', 'SO00000011', 20, 30, NULL, 'in-stock');
 INSERT INTO ProductItem VALUES ('PI10000011', 'P3265', 'SO00000011', 20, 25, 'CO0001008', 'in-stock');
@@ -617,7 +635,9 @@ INSERT INTO Assignment VALUES('A1233', 'E98898', 'P33223', '2010-12-12', '2015-1
 
 INSERT INTO QuoteProduct VALUES ('QUO1004567', 'P1234',  200, 1.70);
 INSERT INTO QuoteProduct VALUES ('QUO1022222', 'P2112',  200, 1.70);
-INSERT INTO QuoteProduct VALUES ('QUO2244237', 'P9084',  150, 140);
+INSERT INTO QuoteProduct VALUES ('QUO2244237', 'P9084',  6, 6);
+INSERT INTO QuoteProduct VALUES ('QUO2244237', 'P1225',  15, 70);
+
 INSERT INTO QuoteProduct VALUES ('QUO1231238', 'P4566',  15, 55);
 INSERT INTO QuoteProduct VALUES ('QUO1234438', 'P7895',  35, 25.96);
 INSERT INTO QuoteProduct VALUES ('QUO1231239', 'P9885',  80, 10.00);

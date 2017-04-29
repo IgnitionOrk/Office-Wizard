@@ -2,9 +2,6 @@
 -- Student number: 3179234
 -- Date created: 19-Apr-2017
 -- Date modified: 29-Apr-2017
-
-
-
 ---------------------------------------------------------------------------------------------------------------------------------------------------------
 -- User defined error message
 --
@@ -28,31 +25,15 @@ GO
 --
 CREATE PROCEDURE usp_UpdateProductItems @salesOrdID VARCHAR(10), @barcodeList productBarcodes_TVP READONLY
 AS 
-	DECLARE @productDiscount FLOAT
-	DECLARE @productID VARCHAR(10)
-	DECLARE productDiscount CURSOR FOR
-	SELECT productID, maxDiscount
-	FROM Product
-
-	OPEN productDiscount
-	FETCH NEXT FROM productDiscount INTO @productID,  @productDiscount		
-
-
-	-- Update each ProductItem customer has ordered to show it has been sold, and it is associated with a customer order.
-	WHILE @@FETCH_STATUS = 0			
-	BEGIN
-		UPDATE ProductItem
-		SET custOrdID = @salesOrdID, status = 'sold', sellingPrice = (sellingPrice - (sellingPrice * @productDiscount))
-		FROM ProductItem p, @barcodeList bl
-		WHERE p.itemNo IN(SELECT bl.barcodeID 
-						  FROM @barcodeList bl) 
-			  AND p.productID = @productID
-		FETCH NEXT FROM productDiscount INTO @productID,  @productDiscount
-	END
-
-	-- Close, and deallocate the cursor
-	CLOSE productDiscount
-	DEALLOCATE productDiscount
+	-- Essentially we are going through the ProductItem table, and determine if that ProductItem's itemNo
+	-- is found in the barcodeList, and retrieving max discount for each type of Product. 
+	UPDATE ProductItem
+	SET custOrdID = @salesOrdID, status = 'sold', sellingPrice = (sellingPrice - (sellingPrice * pro.maxDiscount))
+	FROM ProductItem p 
+		INNER JOIN Product pro 
+			ON p.productID = pro.productID
+	WHERE p.itemNo IN(SELECT bl.barcodeID 
+					  FROM @barcodeList bl)
 GO
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -62,29 +43,47 @@ CREATE PROCEDURE usp_AssignCustOrdProducts @salesOrdID VARCHAR(10),@barcodeList 
 AS
 	-- Fourth associate the Products -> CustOrdProduct
 	-- Note must determine the unitPurchase Price
-	INSERT INTO CustOrdProduct (custOrdID, productID, qty, unitPurchasePrice, subtotal)
-	SELECT DISTINCT 
-		@salesOrdID, 
-		pro.productID, 
-		-- Count quantity for each product type associated with the customer order.
-		(SELECT COUNT(*) 
-		FROM ProductItem p 
-		WHERE p.productID = pro.productID AND p.itemNo IN(SELECT bl.barcodeID 
-														  FROM @barcodeList bl)), 
-		0.0, 
-		0.0
-	FROM Product pro
-		INNER JOIN ProductItem pItem
-			ON pro.productID = pItem.productID	
-		INNER JOIN @barcodeList bl
-			ON pItem.itemNo = bl.barcodeID	
-	WHERE 
-		NOT EXISTS (SELECT c.custOrdID,c.productID 
-					FROM CustOrdProduct c 
-					WHERE c.custOrdID = @salesOrdID AND c.productID = pro.productID)
-		AND @salesOrdID = pItem.custOrdID
+	DECLARE @qty INT
+	DECLARE @unitPurchasePrice FLOAT
+	DECLARE custOrdProductCursor CURSOR FOR
+	-- Count quantity for each product type associated with the customer order.
+	SELECT COUNT(*) AS qty, SUM(sellingPrice) AS unitPurchasePrice 
+	FROM ProductItem p 
+		INNER JOIN Product pro 
+			ON p.productID = pro.productID 
+	WHERE p.itemNo IN(SELECT bl.barcodeID 
+					  FROM @barcodeList bl);
 
-	SELECT * FROM CustOrdProduct
+	OPEN custOrdProductCursor
+	FETCH NEXT FROM custOrdProductCursor INTO @qty, @unitPurchasePrice
+	WHILE @@FETCH_STATUS = 0
+	BEGIN 
+		INSERT INTO CustOrdProduct (custOrdID, productID, qty, unitPurchasePrice, subtotal)
+		SELECT DISTINCT 
+			@salesOrdID, 
+			pro.productID, 
+			@qty,
+			@unitPurchasePrice,
+			@qty * @unitPurchasePrice
+		FROM Product pro
+			INNER JOIN ProductItem pItem
+				ON pro.productID = pItem.productID	
+			INNER JOIN @barcodeList bl
+				ON pItem.itemNo = bl.barcodeID	
+		WHERE 
+			NOT EXISTS (SELECT c.custOrdID,c.productID 
+						FROM CustOrdProduct c 
+						WHERE c.custOrdID = @salesOrdID AND c.productID = pro.productID)
+			AND @salesOrdID = pItem.custOrdID
+		PRINT 'here'
+		FETCH NEXT FROM custOrdProductCursor INTO @qty, @unitPurchasePrice
+	END
+
+
+	
+	-- Close, and deallocate the cursor
+	CLOSE custOrdProductCursor
+	DEALLOCATE custOrdProductCursor
 GO
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -150,6 +149,7 @@ AS
 		END
 	-- The @param customerID is not null, and it does reference a customer in the database,
 	-- create a new customer.
+
 	ELSE IF  @customerID IS NOT NULL AND NOT EXISTS (SELECT customerID FROM	 Customer WHERE customerID = @customerID)
 	    BEGIN
 			-- Should have a gender value for as Unspecified but that can be added later O will suffice for now.
@@ -174,9 +174,9 @@ GO
 DECLARE @customer1ID VARCHAR(10)
 DECLARE @employeeID VARCHAR(10)
 DECLARE @salesOrdID VARCHAR(10)
-SET @customer1ID = 'CO0001077'
+SET @customer1ID = NULL
 SET @employeeID = 'E12345'
-SET @salesOrdID = '1w4323323'
+SET @salesOrdID = '1233443323'
 DECLARE @customer1Products AS dbo.productBarcodes_TVP
 
 INSERT INTO @customer1Products VALUES('PI10000019');

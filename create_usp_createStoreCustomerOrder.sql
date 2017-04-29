@@ -1,13 +1,18 @@
 -- Created by: Ryan Cunneen
 -- Student number: 3179234
 -- Date created: 19-Apr-2017
--- Date modified: 27-Apr-2017
-
+-- Date modified: 29-Apr-2017
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-- User defined error message
+--
 EXECUTE sp_dropmessage 50005;
 GO
 EXECUTE sp_addmessage 50005, 11, 'Error: %s';
 GO
 
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Table-valued parameter
+--
 CREATE TYPE productBarcodes_TVP AS TABLE
 (
 	barcodeID VARCHAR(10),
@@ -15,95 +20,120 @@ CREATE TYPE productBarcodes_TVP AS TABLE
 );
 GO
 
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Updates all the Product items so they are associated with a Customer order.
+--
+CREATE PROCEDURE usp_UpdateProductItems @salesOrdID VARCHAR(10), @barcodeList productBarcodes_TVP READONLY
+AS 
+	-- Essentially we are going through the ProductItem table, and determine if that ProductItem's itemNo
+	-- is found in the barcodeList, and retrieving max discount for each type of Product. 
+	UPDATE ProductItem
+	SET custOrdID = @salesOrdID, status = 'sold', sellingPrice = (sellingPrice - (sellingPrice * pro.maxDiscount))
+	FROM ProductItem p 
+		INNER JOIN Product pro 
+			ON p.productID = pro.productID
+	WHERE p.itemNo IN(SELECT bl.barcodeID 
+					  FROM @barcodeList bl)
+GO
 
-CREATE PROCEDURE usp_CreateNewOrder
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Inserting into the table CustOrdProduct each type of product that was purchase.
+--
+CREATE PROCEDURE usp_AssignCustOrdProducts @salesOrdID VARCHAR(10),@barcodeList productBarcodes_TVP READONLY
+AS
+	-- Fourth associate the Products -> CustOrdProduct
+	-- Note must determine the unitPurchase Price
+	DECLARE @qty INT
+	DECLARE @unitPurchasePrice FLOAT
+	DECLARE custOrdProductCursor CURSOR FOR
+	-- Count quantity for each product type associated with the customer order.
+	SELECT COUNT(*) AS qty, SUM(sellingPrice) AS unitPurchasePrice 
+	FROM ProductItem p 
+		INNER JOIN Product pro 
+			ON p.productID = pro.productID 
+	WHERE p.itemNo IN(SELECT bl.barcodeID 
+					  FROM @barcodeList bl);
+
+	OPEN custOrdProductCursor
+	FETCH NEXT FROM custOrdProductCursor INTO @qty, @unitPurchasePrice
+	WHILE @@FETCH_STATUS = 0
+	BEGIN 
+		INSERT INTO CustOrdProduct (custOrdID, productID, qty, unitPurchasePrice, subtotal)
+		SELECT DISTINCT 
+			@salesOrdID, 
+			pro.productID, 
+			@qty,
+			@unitPurchasePrice,
+			@qty * @unitPurchasePrice
+		FROM Product pro
+			INNER JOIN ProductItem pItem
+				ON pro.productID = pItem.productID	
+			INNER JOIN @barcodeList bl
+				ON pItem.itemNo = bl.barcodeID	
+		WHERE 
+			NOT EXISTS (SELECT c.custOrdID,c.productID 
+						FROM CustOrdProduct c 
+						WHERE c.custOrdID = @salesOrdID AND c.productID = pro.productID)
+			AND @salesOrdID = pItem.custOrdID
+		PRINT 'here'
+		FETCH NEXT FROM custOrdProductCursor INTO @qty, @unitPurchasePrice
+	END
+
+
+	
+	-- Close, and deallocate the cursor
+	CLOSE custOrdProductCursor
+	DEALLOCATE custOrdProductCursor
+GO
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Updates all quantites for each product type.
+--
+CREATE PROCEDURE usp_UpdateInventory
+AS
+	UPDATE Product
+	SET availQty = (SELECT COUNT(*) FROM product pr, ProductItem pItem WHERE pItem.productID = pr.productID AND pItem.status = 'sold')
+GO
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Creates a new Customer order 
+--
+CREATE PROCEDURE usp_CreateNewCustomerOrder
 	@customerID VARCHAR(10), 
 	@barcodeList productBarcodes_TVP READONLY, 
 	@employeeID VARCHAR(10),
 	@salesOrdID VARCHAR(10) OUTPUT
 AS
-			DECLARE @amountDue FLOAT
-			DECLARE @productID VARCHAR(10)
-			DECLARE @productDiscount FLOAT
-			DECLARE @totalDiscount FLOAT
-			DECLARE @barcode VARCHAR(10)
-			DECLARE productDiscount CURSOR FOR
-			SELECT productID, maxDiscount
-			FROM Product
-			OPEN productDiscount
-			-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-			-- Firstly 		
-			-- Need to calculate the discount,
-			SET @totalDiscount = (SELECT SUM(maxDiscount) 
-												  FROM Product pro, ProductItem pItem, @barcodeList bl 
-												  WHERE pro.productID = pItem.productID AND pItem.itemNo = bl.barcodeID)
-			PRINT 'a'
-			-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-			-- Secondly
-			-- determine the amound due of the customer order. 
-			SET @amountDue = (SELECT SUM(sellingPrice)
-									FROM ProductItem p , @barcodeList bl
-									WHERE p.itemNo IN (SELECT bl.barcodeID FROM @barcodeList bl))
-			PRINT 'b'
-			-- Apply the discount given (if any)
-			SET @amountDue = @amountDue - (@amountDue * @totalDiscount)
-			PRINT 'c'
+	DECLARE @amountDue FLOAT
+	DECLARE @totalDiscount FLOAT
+	---------------------------------------------------------------------------------------------------------------------------------------------------------
+	-- Firstly 		
+	-- Need to calculate the discount,
+	SET @totalDiscount = (SELECT SUM(maxDiscount) 
+							FROM Product pro, ProductItem pItem, @barcodeList bl 
+							WHERE pro.productID = pItem.productID AND pItem.itemNo = bl.barcodeID)
+	---------------------------------------------------------------------------------------------------------------------------------------------------------
+	-- Secondly
+	-- determine the amound due of the customer order. 
+	SET @amountDue = (SELECT SUM(sellingPrice)
+						FROM ProductItem p , @barcodeList bl
+						WHERE p.itemNo = bl.barcodeID)
+	-- Apply the discount given (if any)
+	SET @amountDue = @amountDue - (@amountDue * @totalDiscount)
 
+	INSERT INTO CustomerOrder VALUES(@salesOrdID,  @employeeID, @customerID, GETDATE(), @totalDiscount, @amountDue, 0.00, 'Awaiting Payment', 'Phone');
 
-				-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-			-- Thirdly we update the product items that are associated with the newly created customer order (status = sold), and sellingPrice. 
-			/*FETCH NEXT FROM productDiscount INTO @productID,  @productDiscount
-		
-			WHILE @@FETCH_STATUS = 0			
-			BEGIN
-				UPDATE ProductItem
-				SET custOrdID = @salesOrdID, status = 'sold', sellingPrice = (sellingPrice - (sellingPrice * @productDiscount))
-				SELECT custOrdID, status, sellingPrice
-				FROM ProductItem p, @barcodeList bl
-				WHERE p.itemNo = bl.barcodeID AND p.productID = @productID
+	EXECUTE usp_UpdateProductItems @salesOrdID, @barcodeList
 
-				FETCH NEXT FROM productDiscount INTO @productID,  @productDiscount
-			END
-			*/
-			PRINT 'l'
-			-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-			-- Fourth associate the Products -> CustOrdProduct
-			-- Note must determine the unitPurchase Price
-			INSERT INTO CustOrdProduct (custOrdID, productID, qty, unitPurchasePrice, subtotal)
-			SELECT 
-				@salesOrdID, 
-				pro.productID,
-				-- Count all the Product Items that are a particular Product, and is found in the @barcodeList.
-				(SELECT COUNT(*) FROM ProductItem WHERE productID = p.productID AND custOrdID = p.custOrdID),
-
-				0.0, -- Need to calculate the unitPurchasePrice 
-
-				-- Calculating the subtotal by adding all the sellingPrices of each Product Item that is a particular Product, and is found in @barcodeList.
-				-- subtotal is the total price for a particular Product.
-				(SELECT SUM(sellingPrice) FROM ProductItem WHERE productID = p.productID AND itemNo IN(SELECT barcodeID FROM @barcodeList)) 
-			FROM Product pro, ProductItem p, @barcodeList bl
-			WHERE NOT EXISTS (SELECT custOrdID,productID FROM CustOrdProduct)
-			PRINT 'e'
-			-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-			-- Fifth calculate the new available quantity Office Wizard has for each Product. 
-			UPDATE Product
-			SET availQty = (SELECT COUNT(*) FROM product pr, ProductItem pItem WHERE pItem.productID = pr.productID AND pItem.status = 'sold')
-			PRINT 'f'
-			-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-			-- Lastly insert the new created data.
-			PRINT 'g'
-			-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-			-- The values will probably needed to be change. 
-			INSERT INTO CustomerOrder VALUES(@salesOrdID,  @employeeID, @customerID, GETDATE(), @totalDiscount, @amountDue, 0.00, 'Awaiting Payment', 'Phone');
-		
-			-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-			CLOSE productDiscount
-			DEALLOCATE productDiscount
+	EXECUTE usp_AssignCustOrdProducts @salesOrdID, @barcodeList		
+			
+	EXECUTE usp_UpdateInventory
 GO
 
 
 
-
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Either creates a new Customer or a new Customer order (regardless if the customerID is null or not).
 CREATE PROCEDURE  usp_createStoreCustomerOrder 
 	@customerID VARCHAR(10), 
 	@barcodeList productBarcodes_TVP READONLY, 
@@ -114,57 +144,59 @@ AS
 	-- The @param @customerID is not null, and it references a customer in the database,
 	-- Simply create a new customer order associated with @param @customerID
 	IF @customerID IS NOT NULL AND EXISTS (SELECT customerID FROM Customer WHERE customerID = @customerID)
-		BEGIN
-			PRINT 'HERE'
-			EXECUTE usp_CreateNewOrder @customerID, @barcodeList, @employeeID, @salesOrdID
+		BEGIN	
+			EXECUTE usp_CreateNewCustomerOrder @customerID, @barcodeList, @employeeID, @salesOrdID
 		END
-
-
 	-- The @param customerID is not null, and it does reference a customer in the database,
 	-- create a new customer.
+
 	ELSE IF  @customerID IS NOT NULL AND NOT EXISTS (SELECT customerID FROM	 Customer WHERE customerID = @customerID)
 	    BEGIN
 			-- Should have a gender value for as Unspecified but that can be added later O will suffice for now.
 			INSERT INTO Customer VALUES(@customerID, DEFAULT,DEFAULT,'', NULL,'', NULL,'O');
-
 			-- Raise error that is associated with a customer that does not exist in the database.
-			RAISERROR(50005, 16, 1, 'Customer does not exist in the database! Customer has been inserted into the database')
+			RAISERROR(50005, 16, 1, 'Customer does not exist in the database! Customer has been inserted into the database')			
 		END
-
-
 	-- The customer does not exist in the database, and we simply create a customer order without a customer associated with it. 
 	ELSE
 		BEGIN
-
-			EXECUTE usp_CreateNewOrder @customerID, @barcodeList, @employeeID, @salesOrdID
-
+			EXECUTE usp_CreateNewCustomerOrder @customerID, @barcodeList, @employeeID, @salesOrdID
 			-- Raise error that is associated with a customer that does not exist in the database.
 			RAISERROR(50005, 16, 1, 'Customer does not exist in the database! New customer order has been created without a Customer ')
 		END
 	END TRY
-
 	BEGIN CATCH
 		PRINT ERROR_MESSAGE()
 	END CATCH
 GO
+<<<<<<< HEAD
 /*
 
 */
 
 
+=======
+>>>>>>> origin/master
 
 
 DECLARE @customer1ID VARCHAR(10)
 DECLARE @employeeID VARCHAR(10)
 DECLARE @salesOrdID VARCHAR(10)
+<<<<<<< HEAD
 SET @customer1ID = 'CO0001077'
 SET @employeeID = 'E12345'
 SET @salesOrdID = '7121235337'
+=======
+SET @customer1ID = NULL
+SET @employeeID = 'E12345'
+SET @salesOrdID = '1233443323'
+>>>>>>> origin/master
 DECLARE @customer1Products AS dbo.productBarcodes_TVP
 
 INSERT INTO @customer1Products VALUES('PI10000019');
 INSERT INTO @customer1Products VALUES('PI10000015');
 INSERT INTO @customer1Products VALUES('PI10000018');
+<<<<<<< HEAD
 --INSERT INTO @customer1Products VALUES('PI10000021');
 
 
@@ -176,3 +208,19 @@ SELECT * FROM CustOrdProduct WHERE custOrdID =  '711235337'
 DROP PROCEDURE usp_CreateNewOrder
 DROP PROCEDURE usp_createStoreCustomerOrder
 DROP TYPE productBarcodes_TVP
+=======
+INSERT INTO @customer1Products VALUES('PI10000021');
+
+
+EXECUTE usp_createStoreCustomerOrder @customer1ID, @customer1Products, @employeeID, @salesOrdID OUT
+GO
+
+
+DROP PROCEDURE usp_UpdateProductItems
+DROP PROCEDURE usp_AssignCustOrdProducts
+DROP PROCEDURE usp_UpdateInventory
+DROP PROCEDURE usp_CreateNewCustomerOrder
+DROP PROCEDURE usp_createStoreCustomerOrder
+DROP TYPE productBarcodes_TVP
+GO
+>>>>>>> origin/master

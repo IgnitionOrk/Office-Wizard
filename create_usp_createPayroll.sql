@@ -2,15 +2,14 @@
 -- Student number: 3207040
 -- Date created: 20-Apr-2017
 
-/*	REQUIREMENTS
+/*REQUIREMENTS
 start date (input) – Start date for start of pay period
 end date (input) – End date for pay period
 employee hours worked information (input) – A table-valued parameter with employee
 id and hours worked for the pay period.
 employee allowance information (input) – A table-valued parameter with employee id,
 allowance type id and allowance amount.
-*/
-/*
+
 In this stored procedure, employee payslips for the given employees will be generated
 and stored in the database. Note that base pay, taxable income, tax and net pay needs
 to be calculated and stored for each payslip.
@@ -18,8 +17,8 @@ Note that all errors must be caught and handled. Appropriate error messages must
 raised. The stored procedure must be extensively tested in the test script.
 */
 
-/*
-	-- auto-generate payslipID
+/* 
+	-- initial script to auto-generate payslip ID for this procedure but has since been changed on the actual payslip entity
 	CREATE PROCEDURE create_payslipID
 	(
 	   @payslipNumberID int,
@@ -45,9 +44,10 @@ raised. The stored procedure must be extensively tested in the test script.
 	    WHERE bb.payslipNumber = @payslipNumber
 	;
 
-	END
+	END */
 
-*/
+
+--ADD ERRORS AND STUFF
 
 CREATE TYPE EmployeeInfo AS TABLE 
 (
@@ -136,7 +136,6 @@ WHERE
 	e.employeeID = emp.employeeID
 	AND emp.employeeID = ea.employeeID
 	AND a.allowanceID = ea.allowanceID
-
 
 -- Payslip (payslipID, employeeID, taxBracketID, startDate, endDate, workedHours, basePay, taxPayable, netPay)
 

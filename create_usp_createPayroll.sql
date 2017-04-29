@@ -100,6 +100,7 @@ BEGIN
 			AND t.taxBracketID = @taxBracketID
 END
 
+
 DECLARE @employeeInfo EmployeeInfo;
 DECLARE @workedHours INT;
 
@@ -111,13 +112,29 @@ INSERT @employeeInfo
 		Employee e
 	WHERE
 		e.employeeID = 1
-		AND @
+		AND @workedHours < 50
 
 
+DECLARE @allowanceInfo AllowanceInfo;
+DECLARE @emp EmployeeInfo;
+
+INSERT @allowanceInfo
+SELECT 
+	e.employeeID, 
+	a.allowanceID,
+	a.amount
+FROM 
+	Employee e,
+	Allowance a,
+	EmployeeAllowanceType ea,
+	@employeeInfo emp
+WHERE
+	e.employeeID = emp.employeeID
+	AND emp.employeeID = ea.employeeID
+	AND a.allowanceID = ea.allowanceID
 
 
--- Payslip (payslipID, employeeID, taxBracketID, startDate, endDate,
---workedHours, basePay, taxPayable, netPay)
+-- Payslip (payslipID, employeeID, taxBracketID, startDate, endDate, workedHours, basePay, taxPayable, netPay)
 
 
 

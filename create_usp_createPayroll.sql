@@ -1,3 +1,7 @@
+-- Created by: Jamie Sy
+-- Student number: 3207040
+-- Date created: 20-Apr-2017
+
 /*	REQUIREMENTS
 start date (input) – Start date for start of pay period
 end date (input) – End date for pay period
@@ -136,7 +140,8 @@ WHERE
 
 -- Payslip (payslipID, employeeID, taxBracketID, startDate, endDate, workedHours, basePay, taxPayable, netPay)
 
-
+EXECUTE usp_createPayroll
+GO
 
 
 

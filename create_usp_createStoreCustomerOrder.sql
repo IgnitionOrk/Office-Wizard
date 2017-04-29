@@ -46,13 +46,14 @@ AS
 	DECLARE @qty INT
 	DECLARE @unitPurchasePrice FLOAT
 	DECLARE custOrdProductCursor CURSOR FOR
-	-- Count quantity for each product type associated with the customer order.
+	-- Count quantity, and sum selling price for each product type associated with the customer order.
 	SELECT COUNT(*) AS qty, SUM(sellingPrice) AS unitPurchasePrice 
 	FROM ProductItem p 
 		INNER JOIN Product pro 
 			ON p.productID = pro.productID 
-	WHERE p.itemNo IN(SELECT bl.barcodeID 
-					  FROM @barcodeList bl);
+		INNER JOIN @barcodeList bl
+			ON p.itemNo = bl.barcodeID
+	GROUP BY pro.productID;
 
 	OPEN custOrdProductCursor
 	FETCH NEXT FROM custOrdProductCursor INTO @qty, @unitPurchasePrice
@@ -75,11 +76,8 @@ AS
 						FROM CustOrdProduct c 
 						WHERE c.custOrdID = @salesOrdID AND c.productID = pro.productID)
 			AND @salesOrdID = pItem.custOrdID
-		PRINT 'here'
 		FETCH NEXT FROM custOrdProductCursor INTO @qty, @unitPurchasePrice
 	END
-
-
 	
 	-- Close, and deallocate the cursor
 	CLOSE custOrdProductCursor
@@ -169,52 +167,27 @@ AS
 		PRINT ERROR_MESSAGE()
 	END CATCH
 GO
-<<<<<<< HEAD
-/*
-
-*/
-
-
-=======
->>>>>>> origin/master
 
 
 DECLARE @customer1ID VARCHAR(10)
 DECLARE @employeeID VARCHAR(10)
 DECLARE @salesOrdID VARCHAR(10)
-<<<<<<< HEAD
+
 SET @customer1ID = 'CO0001077'
 SET @employeeID = 'E12345'
-SET @salesOrdID = '7121235337'
-=======
-SET @customer1ID = NULL
-SET @employeeID = 'E12345'
-SET @salesOrdID = '1233443323'
->>>>>>> origin/master
+SET @salesOrdID = 'dfde'
+
 DECLARE @customer1Products AS dbo.productBarcodes_TVP
 
 INSERT INTO @customer1Products VALUES('PI10000019');
-INSERT INTO @customer1Products VALUES('PI10000015');
 INSERT INTO @customer1Products VALUES('PI10000018');
-<<<<<<< HEAD
---INSERT INTO @customer1Products VALUES('PI10000021');
-
-
-EXECUTE usp_createStoreCustomerOrder @customer1ID, @customer1Products, @employeeID, @salesOrdID OUT
-
-
-SELECT * FROM CustOrdProduct WHERE custOrdID =  '711235337'
-
-DROP PROCEDURE usp_CreateNewOrder
-DROP PROCEDURE usp_createStoreCustomerOrder
-DROP TYPE productBarcodes_TVP
-=======
-INSERT INTO @customer1Products VALUES('PI10000021');
-
+INSERT INTO @customer1Products VALUES('PI10001001');
 
 EXECUTE usp_createStoreCustomerOrder @customer1ID, @customer1Products, @employeeID, @salesOrdID OUT
 GO
 
+
+SELECT * FROM CustOrdProduct
 
 DROP PROCEDURE usp_UpdateProductItems
 DROP PROCEDURE usp_AssignCustOrdProducts
@@ -223,4 +196,3 @@ DROP PROCEDURE usp_CreateNewCustomerOrder
 DROP PROCEDURE usp_createStoreCustomerOrder
 DROP TYPE productBarcodes_TVP
 GO
->>>>>>> origin/master

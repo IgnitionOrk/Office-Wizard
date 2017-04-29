@@ -1,18 +1,28 @@
 -- Created by: Ryan Cunneen
 -- Student number: 3179234
 -- Date created: 19-Apr-2017
--- Date modified: 27-Apr-2017
+-- Date modified: 29-Apr-2017
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-- User defined error message
+--
 EXECUTE sp_dropmessage 50005;
 GO
 EXECUTE sp_addmessage 50005, 11, 'Error: %s';
 GO
+
 ---------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Table-valued parameter
+--
 CREATE TYPE productBarcodes_TVP AS TABLE
 (
 	barcodeID VARCHAR(10),
 	PRIMARY KEY(barcodeID)
 );
 GO
+
 ---------------------------------------------------------------------------------------------------------------------------------------------------------
 -- Updates all the Product items so they are associated with a Customer order.
 --
@@ -23,8 +33,12 @@ AS
 	DECLARE productDiscount CURSOR FOR
 	SELECT productID, maxDiscount
 	FROM Product
+
 	OPEN productDiscount
 	FETCH NEXT FROM productDiscount INTO @productID,  @productDiscount		
+
+
+	-- Update each ProductItem customer has ordered to show it has been sold, and it is associated with a customer order.
 	WHILE @@FETCH_STATUS = 0			
 	BEGIN
 		UPDATE ProductItem
@@ -35,9 +49,12 @@ AS
 			  AND p.productID = @productID
 		FETCH NEXT FROM productDiscount INTO @productID,  @productDiscount
 	END
+
+	-- Close, and deallocate the cursor
 	CLOSE productDiscount
 	DEALLOCATE productDiscount
 GO
+
 ---------------------------------------------------------------------------------------------------------------------------------------------------------
 -- Inserting into the table CustOrdProduct each type of product that was purchase.
 --
@@ -46,7 +63,16 @@ AS
 	-- Fourth associate the Products -> CustOrdProduct
 	-- Note must determine the unitPurchase Price
 	INSERT INTO CustOrdProduct (custOrdID, productID, qty, unitPurchasePrice, subtotal)
-	SELECT DISTINCT @salesOrdID, pro.productID, 1, 0.0, 0.0
+	SELECT DISTINCT 
+		@salesOrdID, 
+		pro.productID, 
+		-- Count quantity for each product type associated with the customer order.
+		(SELECT COUNT(*) 
+		FROM ProductItem p 
+		WHERE p.productID = pro.productID AND p.itemNo IN(SELECT bl.barcodeID 
+														  FROM @barcodeList bl)), 
+		0.0, 
+		0.0
 	FROM Product pro
 		INNER JOIN ProductItem pItem
 			ON pro.productID = pItem.productID	
@@ -57,49 +83,52 @@ AS
 					FROM CustOrdProduct c 
 					WHERE c.custOrdID = @salesOrdID AND c.productID = pro.productID)
 		AND @salesOrdID = pItem.custOrdID
+
+	SELECT * FROM CustOrdProduct
+GO
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Updates all quantites for each product type.
+--
+CREATE PROCEDURE usp_UpdateInventory
+AS
+	UPDATE Product
+	SET availQty = (SELECT COUNT(*) FROM product pr, ProductItem pItem WHERE pItem.productID = pr.productID AND pItem.status = 'sold')
 GO
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------
 -- Creates a new Customer order 
+--
 CREATE PROCEDURE usp_CreateNewCustomerOrder
 	@customerID VARCHAR(10), 
 	@barcodeList productBarcodes_TVP READONLY, 
 	@employeeID VARCHAR(10),
 	@salesOrdID VARCHAR(10) OUTPUT
 AS
-			DECLARE @amountDue FLOAT
-			DECLARE @totalDiscount FLOAT
-			---------------------------------------------------------------------------------------------------------------------------------------------------------
-			-- Firstly 		
-			-- Need to calculate the discount,
-			SET @totalDiscount = (SELECT SUM(maxDiscount) 
-								  FROM Product pro, ProductItem pItem, @barcodeList bl 
-								  WHERE pro.productID = pItem.productID AND pItem.itemNo = bl.barcodeID)
-			---------------------------------------------------------------------------------------------------------------------------------------------------------
-			-- Secondly
-			-- determine the amound due of the customer order. 
-			SET @amountDue = (SELECT SUM(sellingPrice)
-							  FROM ProductItem p , @barcodeList bl
-							  WHERE p.itemNo = bl.barcodeID)
-			-- Apply the discount given (if any)
-			SET @amountDue = @amountDue - (@amountDue * @totalDiscount)
+	DECLARE @amountDue FLOAT
+	DECLARE @totalDiscount FLOAT
+	---------------------------------------------------------------------------------------------------------------------------------------------------------
+	-- Firstly 		
+	-- Need to calculate the discount,
+	SET @totalDiscount = (SELECT SUM(maxDiscount) 
+							FROM Product pro, ProductItem pItem, @barcodeList bl 
+							WHERE pro.productID = pItem.productID AND pItem.itemNo = bl.barcodeID)
+	---------------------------------------------------------------------------------------------------------------------------------------------------------
+	-- Secondly
+	-- determine the amound due of the customer order. 
+	SET @amountDue = (SELECT SUM(sellingPrice)
+						FROM ProductItem p , @barcodeList bl
+						WHERE p.itemNo = bl.barcodeID)
+	-- Apply the discount given (if any)
+	SET @amountDue = @amountDue - (@amountDue * @totalDiscount)
 
-			INSERT INTO CustomerOrder VALUES(@salesOrdID,  @employeeID, @customerID, GETDATE(), @totalDiscount, @amountDue, 0.00, 'Awaiting Payment', 'Phone');
+	INSERT INTO CustomerOrder VALUES(@salesOrdID,  @employeeID, @customerID, GETDATE(), @totalDiscount, @amountDue, 0.00, 'Awaiting Payment', 'Phone');
 
-			EXECUTE usp_UpdateProductItems @salesOrdID, @barcodeList
+	EXECUTE usp_UpdateProductItems @salesOrdID, @barcodeList
 
-			EXECUTE usp_AssignCustOrdProducts @salesOrdID, @barcodeList
+	EXECUTE usp_AssignCustOrdProducts @salesOrdID, @barcodeList		
 			
-			---------------------------------------------------------------------------------------------------------------------------------------------------------
-			-- Fifth calculate the new available quantity Office Wizard has for each Product. 
-			/*UPDATE Product
-			SET availQty = (SELECT COUNT(*) FROM product pr, ProductItem pItem WHERE pItem.productID = pr.productID AND pItem.status = 'sold')
-			---------------------------------------------------------------------------------------------------------------------------------------------------------
-			-- Lastly insert the new created data.
-			---------------------------------------------------------------------------------------------------------------------------------------------------------
-			
-			---------------------------------------------------------------------------------------------------------------------------------------------------------
-			*/
+	EXECUTE usp_UpdateInventory
 GO
 
 
@@ -147,7 +176,7 @@ DECLARE @employeeID VARCHAR(10)
 DECLARE @salesOrdID VARCHAR(10)
 SET @customer1ID = 'CO0001077'
 SET @employeeID = 'E12345'
-SET @salesOrdID = '1w43323'
+SET @salesOrdID = '1w4323323'
 DECLARE @customer1Products AS dbo.productBarcodes_TVP
 
 INSERT INTO @customer1Products VALUES('PI10000019');
@@ -162,6 +191,7 @@ GO
 
 DROP PROCEDURE usp_UpdateProductItems
 DROP PROCEDURE usp_AssignCustOrdProducts
+DROP PROCEDURE usp_UpdateInventory
 DROP PROCEDURE usp_CreateNewCustomerOrder
 DROP PROCEDURE usp_createStoreCustomerOrder
 DROP TYPE productBarcodes_TVP

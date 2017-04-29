@@ -566,9 +566,6 @@ INSERT INTO ProductItem VALUES ('PI10000008', 'P2112', 'SO00000018', 2, 2.5, 'CO
 
 
 ---------------------
-INSERT INTO ProductItem VALUES();
-INSERT INTO ProductItem VALUES();
---INSERT INTO SupplierOrderProduct VALUES ('SO00000011', 'P1234', 1.30, 2);
 INSERT INTO ProductItem VALUES ('PI10000009', 'P9999', 'SO00000018', 100, 175.85, NULL, 'sold');
 INSERT INTO ProductItem VALUES ('PI10000016', 'P9999', 'SO00000018', 100, 175.85, NULL, 'sold');
 INSERT INTO ProductItem VALUES ('PI10000017', 'P9999', 'SO00000018', 100, 175.85, NULL, 'sold');
@@ -670,8 +667,6 @@ CREATE PROCEDURE usp_OrderDelivery5To7Days
  EXECUTE usp_PickupOrderIn3Days
  GO
 
-
-  
  DROP PROCEDURE usp_OrderDelivery5To7Days
  DROP PROCEDURE usp_PickupOrderIn3Days
  GO

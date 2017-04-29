@@ -43,20 +43,22 @@ CREATE PROCEDURE usp_AssignCustOrdProducts @salesOrdID VARCHAR(10),@barcodeList 
 AS
 	-- Fourth associate the Products -> CustOrdProduct
 	-- Note must determine the unitPurchase Price
+	DECLARE @productID VARCHAR(10)
 	DECLARE @qty INT
 	DECLARE @unitPurchasePrice FLOAT
 	DECLARE custOrdProductCursor CURSOR FOR
 	-- Count quantity, and sum selling price for each product type associated with the customer order.
-	SELECT COUNT(*) AS qty, SUM(sellingPrice) AS unitPurchasePrice 
+	SELECT pro.productID,COUNT(pro.productID) AS qty, SUM(sellingPrice) AS unitPurchasePrice 
 	FROM ProductItem p 
 		INNER JOIN Product pro 
 			ON p.productID = pro.productID 
 		INNER JOIN @barcodeList bl
 			ON p.itemNo = bl.barcodeID
 	GROUP BY pro.productID;
-
+	-- End of cursor
+	---------------------------------------------------------------------------------------------------------------------------------------------------------
 	OPEN custOrdProductCursor
-	FETCH NEXT FROM custOrdProductCursor INTO @qty, @unitPurchasePrice
+	FETCH NEXT FROM custOrdProductCursor INTO @productID,  @qty, @unitPurchasePrice
 	WHILE @@FETCH_STATUS = 0
 	BEGIN 
 		INSERT INTO CustOrdProduct (custOrdID, productID, qty, unitPurchasePrice, subtotal)
@@ -76,7 +78,8 @@ AS
 						FROM CustOrdProduct c 
 						WHERE c.custOrdID = @salesOrdID AND c.productID = pro.productID)
 			AND @salesOrdID = pItem.custOrdID
-		FETCH NEXT FROM custOrdProductCursor INTO @qty, @unitPurchasePrice
+			AND pro.productID = @productID
+		FETCH NEXT FROM custOrdProductCursor INTO @productID, @qty, @unitPurchasePrice
 	END
 	
 	-- Close, and deallocate the cursor

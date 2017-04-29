@@ -523,40 +523,46 @@ INSERT INTO SupplierOrderProduct VALUES ('SO00000015', 'P1234', 150.00, 20);
 INSERT INTO SupplierOrderProduct VALUES ('SO00000018', 'P2112', 2, 1);
 INSERT INTO SupplierOrderProduct VALUES ('SO00000018', 'P9999', 100, 11);
 
-INSERT INTO CustomerOrder VALUES ('CO0001001', 'E68889', 'C1234', '2017-03-05 09:45:27', 0.1, 100, 50, 'Awaiting Payment', 'Phone'); --150
-INSERT INTO CustomerOrder VALUES ('CO0001002', 'E68889', 'C1239', '2017-04-05 09:45:27', 0, 0, 50, 'Completed', 'Online'); --50
-INSERT INTO CustomerOrder VALUES ('CO0001003', 'E68889', 'C1000', '2017-04-05 09:45:27', 0, 0, 350, 'Completed', 'In Store'); --350
-INSERT INTO CustomerOrder VALUES ('CO0001004', 'E68889', 'C1239', '2017-04-06 09:45:27', 0, 0, 100, 'Completed', 'Online'); --100
-INSERT INTO CustomerOrder VALUES ('CO0001005', 'E12346', 'C1000', '2017-04-09 09:45:27', 0, 120, 200, 'Awaiting Payment', 'In Store'); --320
-INSERT INTO CustomerOrder VALUES ('CO0001006', 'E12346', 'C1237', '2017-04-10 09:45:27', 0.2, 0, 50, 'Completed', 'Phone'); --50
-INSERT INTO CustomerOrder VALUES ('CO0001007', 'E12346', 'C1234', '2017-04-11 09:45:27', 0.05, 0, 150, 'Delivered', 'Phone'); --150
+
+INSERT INTO CustomerOrder VALUES ('CO0001001', 'E68889', 'C1234', '2017-03-05 09:45:27', 0.1, 3.47, 10.3, 'Awaiting Payment', 'Phone'); --15.3 --13.77 with discount
+INSERT INTO CustomerOrder VALUES ('CO0001002', 'E68889', 'C1239', '2017-04-05 09:45:27', 0, 0, 50, 'Completed', 'Online'); --4.5
+INSERT INTO CustomerOrder VALUES ('CO0001003', 'E68889', 'C1000', '2017-04-05 09:45:27', 0, 0, 3, 'Completed', 'In Store'); --315
+INSERT INTO CustomerOrder VALUES ('CO0001004', 'E68889', 'C1239', '2017-04-06 09:45:27', 0, 0, 100, 'Completed', 'Online'); --18
+INSERT INTO CustomerOrder VALUES ('CO0001005', 'E12346', 'C1000', '2017-04-09 09:45:27', 0, 12, 0, 'Awaiting Payment', 'In Store'); --12
+INSERT INTO CustomerOrder VALUES ('CO0001006', 'E12346', 'C1237', '2017-04-10 09:45:27', 0, 0, 50, 'Completed', 'Phone'); --17
+INSERT INTO CustomerOrder VALUES ('CO0001007', 'E12346', 'C1234', '2017-04-11 09:45:27', 0.05, 0, 150, 'Delivered', 'Phone'); --21.5
 INSERT INTO CustomerOrder VALUES ('CO0001008', 'E12346', 'C1237', '2017-04-11 09:45:27', 0.05, 0, 0, 'Cancelled', 'Phone');
 INSERT INTO CustomerOrder VALUES ('CO0001009', 'E12346', 'C1221', '2017-04-20 11:18:12', 0, 0, 930, 'Completed', 'In store'); --930
 
---CO0001002 50
-INSERT INTO CustOrdProduct VALUES ('CO0001002', 'P4565', 1, 15, 8.5);
+--CustOrdProduct (custOrdID productID, qty, unitPurchasePrice, subtotal)
+--CO0001001 15.30 --13.77 with discount
+INSERT INTO CustOrdProduct VALUES ('CO0001001', 'P1234', 9, 1.70, 15.3);
 
---CO0001003 Seating order 350
+--CO0001002 4.5
+INSERT INTO CustOrdProduct VALUES ('CO0001002', 'P1223', 3, 1.5, 4.5);
+
+--CO0001003 315
 INSERT INTO CustOrdProduct VALUES ('CO0001003', 'P9084', 3, 30, 90);
 INSERT INTO CustOrdProduct VALUES ('CO0001003', 'P1235', 3, 70, 210);
+INSERT INTO CustOrdProduct VALUES ('CO0001003', 'P1223', 10, 1.50, 15)
 
---CO0001004 100
-INSERT INTO CustOrdProduct VALUES ('CO0001004', 'P4566', 4, 55, 8.5);
+--CO0001004 18
+INSERT INTO CustOrdProduct VALUES ('CO0001004', 'P4566', 6, 3, 18);
 
---CO0001005 320
-INSERT INTO CustOrdProduct VALUES ('CO0001005', 'P1234', 2, 1.70, 8.5);
+--CO0001005 12
+INSERT INTO CustOrdProduct VALUES ('CO0001005', 'P1254', 6, 2, 12);
 
---CO0001006 50
-INSERT INTO CustOrdProduct VALUES ('CO0001006', 'P2112', 1, 1.70, 8.5);
+--CO0001006 17
+INSERT INTO CustOrdProduct VALUES ('CO0001006', 'P1223', 1, 2, 2);
+INSERT INTO CustOrdProduct VALUES ('CO0001006', 'P2112', 5, 3, 15);
 
---CO0001007 paid 150 TOTAL
-INSERT INTO CustOrdProduct VALUES ('CO0001007', 'P1254', 16, 2, 32);
-
---CO0001008 cancelled
-INSERT INTO CustOrdProduct VALUES ('CO0001008', 'P2112', 4, 1.70, 8.5);
+--CO0001007 21.5
+INSERT INTO CustOrdProduct VALUES ('CO0001007', 'P1254', 10, 2, 20);
+INSERT INTO CustOrdProduct VALUES ('CO0001007', 'P1223', 1, 1.50, 1.5);
 
 --CO0001009 Storage order 930
 INSERT INTO CustOrdProduct VALUES ('CO0001009', 'P9283', 2, 150, 300);
+INSERT INTO CustOrdProduct VALUES ('CO0001009', 'P1232', 3, 210, 630);
 
 INSERT INTO Payment VALUES ('PAY000101', '2017-04-15 10:50:00', NULL, 'SO00000012');
 INSERT INTO Payment VALUES ('PAY000102', '2017-04-15 15:33:00', NULL, 'SO00000013');

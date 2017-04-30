@@ -100,30 +100,39 @@ CREATE PROCEDURE usp_CreateNewCustomerOrder
 	@employeeID VARCHAR(10),
 	@salesOrdID VARCHAR(10) OUTPUT
 AS
-	DECLARE @amountDue FLOAT
-	DECLARE @totalDiscount FLOAT
-	---------------------------------------------------------------------------------------------------------------------------------------------------------
-	-- Firstly 		
-	-- Need to calculate the discount,
-	SET @totalDiscount = (SELECT SUM(maxDiscount) 
-							FROM Product pro, ProductItem pItem, @barcodeList bl 
-							WHERE pro.productID = pItem.productID AND pItem.itemNo = bl.barcodeID)
-	---------------------------------------------------------------------------------------------------------------------------------------------------------
-	-- Secondly
-	-- determine the amound due of the customer order. 
-	SET @amountDue = (SELECT SUM(sellingPrice)
-						FROM ProductItem p , @barcodeList bl
-						WHERE p.itemNo = bl.barcodeID)
-	-- Apply the discount given (if any)
-	SET @amountDue = @amountDue - (@amountDue * @totalDiscount)
-
-	INSERT INTO CustomerOrder VALUES(@salesOrdID,  @employeeID, @customerID, GETDATE(), @totalDiscount, @amountDue, 0.00, 'Awaiting Payment', 'Phone');
-
-	EXECUTE usp_UpdateProductItems @salesOrdID, @barcodeList
-
-	EXECUTE usp_AssignCustOrdProducts @salesOrdID, @barcodeList		
-			
-	EXECUTE usp_UpdateInventory
+	BEGIN TRY
+	-- Checking if the table-valued parameter is empty.
+	 IF NOT EXISTS (SELECT * FROM @barcodeList)
+		BEGIN
+			RAISERROR(50005, 16, 1, 'Table-valued parameter is empty')
+		END 
+	ELSE
+		BEGIN 
+		DECLARE @amountDue FLOAT
+		DECLARE @totalDiscount FLOAT
+			---------------------------------------------------------------------------------------------------------------------------------------------------------
+			-- Firstly 		
+			-- Need to calculate the discount,
+			SET @totalDiscount = (SELECT SUM(maxDiscount) 
+									FROM Product pro, ProductItem pItem, @barcodeList bl 
+									WHERE pro.productID = pItem.productID AND pItem.itemNo = bl.barcodeID)
+			---------------------------------------------------------------------------------------------------------------------------------------------------------
+			-- Secondly
+			-- determine the amound due of the customer order. 
+			SET @amountDue = (SELECT SUM(sellingPrice)
+								FROM ProductItem p , @barcodeList bl
+								WHERE p.itemNo = bl.barcodeID)
+			-- Apply the discount given (if any)
+			SET @amountDue = @amountDue - (@amountDue * @totalDiscount)
+			INSERT INTO CustomerOrder VALUES(@salesOrdID,  @employeeID, @customerID, GETDATE(), @totalDiscount, @amountDue, 0.00, 'Awaiting Payment', 'Phone');
+			EXECUTE usp_UpdateProductItems @salesOrdID, @barcodeList
+			EXECUTE usp_AssignCustOrdProducts @salesOrdID, @barcodeList				
+			EXECUTE usp_UpdateInventory
+		END
+	END TRY
+	BEGIN CATCH 
+		PRINT ERROR_MESSAGE()
+	END CATCH
 GO
 
 
@@ -177,6 +186,7 @@ SET @salesOrdID = 'CO00002200'
 
 DECLARE @customer1Products AS dbo.productBarcodes_TVP
 
+/*
 INSERT INTO @customer1Products VALUES('PI10000019');
 INSERT INTO @customer1Products VALUES('PI10000018');
 INSERT INTO @customer1Products VALUES('PI10001001');
@@ -185,7 +195,7 @@ INSERT INTO @customer1Products VALUES('PI00001301');
 INSERT INTO @customer1Products VALUES('PI00001302');
 INSERT INTO @customer1Products VALUES('PI10000097');
 INSERT INTO @customer1Products VALUES('PI10000098');
-
+*/
 
 
 EXECUTE usp_createStoreCustomerOrder @customer1ID, @customer1Products, @employeeID, @salesOrdID OUT

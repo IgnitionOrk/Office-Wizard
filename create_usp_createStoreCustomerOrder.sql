@@ -28,11 +28,11 @@ AS
 	-- Essentially we are going through the ProductItem table, and determine if that ProductItem's itemNo
 	-- is found in the barcodeList, and retrieving max discount for each type of Product. 
 	UPDATE ProductItem
-	SET custOrdID = @salesOrdID, status = 'sold', sellingPrice = (sellingPrice - (sellingPrice * pro.maxDiscount))
-	FROM ProductItem p 
-		INNER JOIN Product pro 
-			ON p.productID = pro.productID
-	WHERE p.itemNo IN(SELECT bl.barcodeID 
+	SET custOrdID = @salesOrdID, status = 'sold', sellingPrice = ROUND(sellingPrice - (sellingPrice * p.maxDiscount), 2)
+	FROM ProductItem pro 
+		INNER JOIN Product p 
+			ON pro.productID = p.productID
+	WHERE pro.itemNo IN(SELECT bl.barcodeID 
 					  FROM @barcodeList bl)
 GO
 
@@ -48,11 +48,9 @@ AS
 	DECLARE custOrdProductCursor CURSOR FOR
 	-- Count quantity, and sum selling price for each product type associated with the customer order.
 	SELECT pro.productID,COUNT(pro.productID) AS qty 
-	FROM ProductItem p 
-		INNER JOIN Product pro 
-			ON p.productID = pro.productID 
+	FROM ProductItem pro
 		INNER JOIN @barcodeList bl
-			ON p.itemNo = bl.barcodeID
+			ON pro.itemNo = bl.barcodeID
 	GROUP BY pro.productID;
 	-- End of cursor
 	---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -65,18 +63,16 @@ AS
 			@salesOrdID, 
 			pro.productID, 
 			@qty,
-			pItem.sellingPrice AS unitPurchasePrice,
-			(@qty * pItem.sellingPrice) AS subtotal
-		FROM Product pro
-			INNER JOIN ProductItem pItem
-				ON pro.productID = pItem.productID	
+			pro.sellingPrice AS unitPurchasePrice,
+			(@qty * pro.sellingPrice) AS subtotal
+		FROM ProductItem pro
 			INNER JOIN @barcodeList bl
-				ON pItem.itemNo = bl.barcodeID	
+				ON pro.itemNo = bl.barcodeID	
 		WHERE 
 			NOT EXISTS (SELECT c.custOrdID,c.productID 
 						FROM CustOrdProduct c 
 						WHERE c.custOrdID = @salesOrdID AND c.productID = pro.productID)
-			AND @salesOrdID = pItem.custOrdID
+			AND @salesOrdID = pro.custOrdID
 			AND pro.productID = @productID
 		FETCH NEXT FROM custOrdProductCursor INTO @productID, @qty
 	END
@@ -155,14 +151,14 @@ AS
 			-- Should have a gender value for as Unspecified but that can be added later O will suffice for now.
 			INSERT INTO Customer VALUES(@customerID, DEFAULT,DEFAULT,'', NULL,'', NULL,'O');
 			-- Raise error that is associated with a customer that does not exist in the database.
-			RAISERROR(50005, 16, 1, 'Customer does not exist in the database! Customer has been inserted into the database')			
+			RAISERROR(50005, 16, 1, 'Customer ID does not exist in the database! A new customer has been inserted into the database')			
 		END
 	-- The customer does not exist in the database, and we simply create a customer order without a customer associated with it. 
 	ELSE
 		BEGIN
 			EXECUTE usp_CreateNewCustomerOrder @customerID, @barcodeList, @employeeID, @salesOrdID
 			-- Raise error that is associated with a customer that does not exist in the database.
-			RAISERROR(50005, 16, 1, 'Customer does not exist in the database! New customer order has been created without a Customer ')
+			RAISERROR(50005, 16, 1, 'Customer ID is NULL, therefore, it does not exist in the database! New customer order has been created without a customer ')
 		END
 	END TRY
 	BEGIN CATCH
@@ -175,15 +171,22 @@ DECLARE @customer1ID VARCHAR(10)
 DECLARE @employeeID VARCHAR(10)
 DECLARE @salesOrdID VARCHAR(10)
 
-SET @customer1ID = 'CO0001077'
+SET @customer1ID = NULL
 SET @employeeID = 'E12345'
-SET @salesOrdID = 'dfde'
+SET @salesOrdID = 'CO00002200'
 
 DECLARE @customer1Products AS dbo.productBarcodes_TVP
 
 INSERT INTO @customer1Products VALUES('PI10000019');
 INSERT INTO @customer1Products VALUES('PI10000018');
 INSERT INTO @customer1Products VALUES('PI10001001');
+INSERT INTO @customer1Products VALUES('PI10001222');
+INSERT INTO @customer1Products VALUES('PI00001301');
+INSERT INTO @customer1Products VALUES('PI00001302');
+INSERT INTO @customer1Products VALUES('PI10000097');
+INSERT INTO @customer1Products VALUES('PI10000098');
+
+
 
 EXECUTE usp_createStoreCustomerOrder @customer1ID, @customer1Products, @employeeID, @salesOrdID OUT
 GO

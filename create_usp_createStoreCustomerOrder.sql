@@ -1,7 +1,7 @@
--- Created by: Ryan Cunneen
--- Student number: 3179234
+-- Created by: Ryan Cunneen, Micah Conway
+-- Student number: 3179234, 3232648
 -- Date created: 19-Apr-2017
--- Date modified: 29-Apr-2017
+-- Date modified: 1-May-2017
 ---------------------------------------------------------------------------------------------------------------------------------------------------------
 -- User defined error message
 --
@@ -209,14 +209,15 @@ AS
 		FETCH NEXT FROM itemCheckCursor INTO @tempBarcodeID;
 	END
 	CLOSE itemCheckCursor;
-	DEALLOCATE itemCheckCursor;
-
-	--if none of the scanned items are valid, terminate transaction
-	IF @atLeastOneValidItem = 0
-		return;
+	DEALLOCATE itemCheckCursor;	
 
 	--at least one item is valid, continue on
 	BEGIN TRY 
+	
+	--if none of the scanned items are valid, give control to catch statement, transaction terminated
+	IF @atLeastOneValidItem = 0	
+		RAISERROR('No items were valid, transaction was terminated', 15, -1);
+
 	DECLARE @newCustOrdID VARCHAR(10);
 	--get a unique ID for the Customer Order ID
 	--need to store ID in the non-output variable as errors occur otherwise

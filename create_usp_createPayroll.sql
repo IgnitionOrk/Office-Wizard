@@ -1,15 +1,15 @@
 -- Created by: Jamie Sy
 -- Student number: 3207040
 -- Date created: 20-Apr-2017
--- Date modified: 1-May-2017
 
 --Needed when testing and changing statements
-
 DROP PROCEDURE usp_generatePayslipPK
 DROP PROCEDURE usp_createPayroll
+GO
+
+
 DROP TYPE EmployeeInfo
 DROP TYPE AllowanceInfo
-
 GO
 
 
@@ -39,17 +39,19 @@ BEGIN
 	CLOSE cursorIDs   
 	DEALLOCATE cursorIDs	--close and remove cursor
 
-	--increment highest ID by 1, pad zeroes on the left hand side and add the 'CO' to identify as a customer order ID
+	--increment highest ID by 1, pad zeroes on the left hand side and add the 'PS' to identify as a payslip ID
 	SET @newID = @highestID+1;
 	SET @newID = RIGHT('0000000' +  @newID, 7);
 	SET @newID = LEFT('PS' + @newID, 10);	
 END;
 GO
 
+------------------------------------------------------------------------------------
 -- Table Valued parameters
+-- employee hours worked information
 CREATE TYPE EmployeeInfo AS TABLE 
 (
-    employeeID INT,
+    employeeID VARCHAR(10),
     workedHours INT,
     PRIMARY KEY (
         employeeID,
@@ -58,29 +60,31 @@ CREATE TYPE EmployeeInfo AS TABLE
 );
 GO
 
+-- employee allowance information
 CREATE TYPE AllowanceInfo AS TABLE 
 (
-    employeeID INT,
-    allowanceID INT,
-    allowanceAmount DECIMAL(7, 2),
+    employeeID VARCHAR(10),
+    allowanceTypeID VARCHAR(10),
+    amount FLOAT
     PRIMARY KEY (
         employeeID,
-        allowanceID,
-        allowanceAmount
+        allowanceTypeID,
+        amount
         )
 );
 GO
 -- End of Table valued parameters
 
+
+------------------------------------------------------------------------------------
 -- Payroll procedure
 CREATE PROCEDURE usp_createPayroll
 	@payslipID	VARCHAR(10) OUTPUT,
 	@startDate	DATE,
 	@endDate	DATE,
-	@taxBracketID	INT,
+	@taxBracketID	VARCHAR(10),
 	@noHoursWorked EmployeeInfo READONLY,
 	@allowanceBonus AllowanceInfo READONLY
-    
 AS
 BEGIN
 	DECLARE @newPayslipID VARCHAR(10);
@@ -113,7 +117,7 @@ BEGIN
 			AND t.taxBracketID = @taxBracketID
 END
 
-
+------------------------------------------------------------------------------------
 -- inserts the imput parameters into @employeeInfo
 DECLARE @employeeInfo EmployeeInfo;
 DECLARE @workedHours INT;
@@ -134,7 +138,7 @@ DECLARE @emp EmployeeInfo;
 INSERT @allowanceInfo
 SELECT 
 	e.employeeID, 
-	a.allowanceID,
+	a.allowanceTypeID,
 	a.amount
 FROM 
 	Employee e,
@@ -150,4 +154,3 @@ WHERE
 
 EXECUTE usp_createPayroll
 GO
-

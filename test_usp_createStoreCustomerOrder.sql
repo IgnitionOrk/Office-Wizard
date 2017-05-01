@@ -10,7 +10,7 @@ DECLARE @salesOrdID VARCHAR(10);
 
 
 --test case 0: customer exists
-DECLARE @customerProducts AS dbo.productBarcodes_TVP
+DECLARE @customerProducts AS dbo.productBarcodes_TVP --table valued parameter as defined in usp_createStoreCustomerOrder, stores item IDs (barcodes)
 INSERT INTO @customerProducts VALUES('PI10000050');
 INSERT INTO @customerProducts VALUES('PI10000051');
 INSERT INTO @customerProducts VALUES('PI10000052');

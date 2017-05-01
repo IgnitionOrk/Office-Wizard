@@ -15,7 +15,6 @@ GO
 --Needed when testing and changing statements
 DROP PROCEDURE usp_UpdateProductItems
 DROP PROCEDURE usp_AssignCustOrdProducts
-DROP PROCEDURE usp_UpdateInventory
 DROP PROCEDURE usp_CreateNewCustomerOrder
 DROP PROCEDURE usp_generatePrimaryKey
 DROP PROCEDURE usp_createStoreCustomerOrder
@@ -42,16 +41,23 @@ AS
 	-- Essentially we are going through the ProductItem table, and determine if that ProductItem's itemNo
 	-- is found in the barcodeList, and retrieving max discount for each type of Product. 
 	UPDATE ProductItem
-	SET custOrdID = @salesOrdID, status = 'sold', sellingPrice = ROUND(sellingPrice - (sellingPrice * p.maxDiscount), 2)
+	SET custOrdID = @salesOrdID, ProductItem.status = 'sold', sellingPrice = ROUND(sellingPrice - (sellingPrice * p.maxDiscount), 2)
 	FROM ProductItem pro 
 		INNER JOIN Product p 
 			ON pro.productID = p.productID
 	WHERE pro.itemNo IN(SELECT bl.barcodeID 
 					  FROM @barcodeList bl)
+
+	--update availqty
+	DECLARE productCursor CURSOR FOR
+	SELECT ProductItem.itemNo
+	FROM ProductItem, @barcodeList
+	WHERE ProductItem.itemNo = @barcodeList.barcodeID
+	GROUP BY ProductItem.productID;
 GO
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------
--- Inserting into the table CustOrdProduct each type of product that was purchase.
+-- Inserting into the table CustOrdProduct each type of product that was purchased.
 --
 CREATE PROCEDURE usp_AssignCustOrdProducts @salesOrdID VARCHAR(10),@barcodeList productBarcodes_TVP READONLY
 AS
@@ -61,7 +67,7 @@ AS
 	DECLARE @qty INT
 	DECLARE custOrdProductCursor CURSOR FOR
 	-- Count quantity, and sum selling price for each product type associated with the customer order.
-	SELECT pro.productID,COUNT(pro.productID) AS qty 
+	SELECT pro.productID, COUNT(pro.productID) AS qty 
 	FROM ProductItem pro
 		INNER JOIN @barcodeList bl
 			ON pro.itemNo = bl.barcodeID
@@ -88,21 +94,14 @@ AS
 						WHERE c.custOrdID = @salesOrdID AND c.productID = pro.productID)
 			AND @salesOrdID = pro.custOrdID
 			AND pro.productID = @productID
+
+		--update avail qty in each product, if error is caught, means there are 0 in inventory and set to 0	
 		FETCH NEXT FROM custOrdProductCursor INTO @productID, @qty
 	END
 	
 	-- Close, and deallocate the cursor
 	CLOSE custOrdProductCursor
 	DEALLOCATE custOrdProductCursor
-GO
-
----------------------------------------------------------------------------------------------------------------------------------------------------------
--- Updates all quantites for each product type.
---
-CREATE PROCEDURE usp_UpdateInventory
-AS
-	UPDATE Product
-	SET availQty = (SELECT COUNT(*) FROM product pr, ProductItem pItem WHERE pItem.productID = pr.productID AND pItem.status = 'sold')
 GO
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -141,7 +140,6 @@ AS
 			INSERT INTO CustomerOrder VALUES(@salesOrdID,  @employeeID, @customerID, GETDATE(), @totalDiscount, @amountDue, 0.00, 'Awaiting Payment', 'In Store');
 			EXECUTE usp_UpdateProductItems @salesOrdID, @barcodeList
 			EXECUTE usp_AssignCustOrdProducts @salesOrdID, @barcodeList				
-			EXECUTE usp_UpdateInventory
 		END
 	END TRY
 	BEGIN CATCH 
@@ -236,8 +234,8 @@ AS
 	    BEGIN
 			-- Should have a gender value for as Unspecified but that can be added later O will suffice for now.
 			INSERT INTO Customer VALUES(@customerID, DEFAULT,DEFAULT,'', NULL,'', NULL,'O');
-			EXECUTE usp_CreateNewCustomerOrder @customerID, @barcodeList, @employeeID, @newCustOrdID;
-			PRINT('New customer was created with the provided customer ID');
+			EXECUTE usp_CreateNewCustomerOrder @customerID, @barcodeList, @employeeID, @newCustOrdID;	
+			PRINT('New customer was created with the provided customer ID');		
 		END
 	-- The customer does not exist in the database, and we simply create a customer order without a customer associated with it. 
 	ELSE

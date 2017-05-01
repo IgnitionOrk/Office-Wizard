@@ -17,38 +17,7 @@ Note that all errors must be caught and handled. Appropriate error messages must
 raised. The stored procedure must be extensively tested in the test script.
 */
 
-/* 
-	-- initial script to auto-generate payslip ID for this procedure but has since been changed on the actual payslip entity
-	CREATE PROCEDURE create_payslipID
-	(
-	   @payslipNumberID int,
-	   @payDate datetime  
-	) AS Begin 
-
-	-- calc 5th digit:
-	DECLARE @fifthDigit int;
-	SELECT 
-	    @fifthDigit = count(*) + 1
-	FROM payslipNumber AS bb
-	INNER JOIN ItemMfg ii ON ii.payslipNumberID = bb.payslipNumberID 
-	where bb.payslipNumberID = @payslipNumberID             -- single payslipNumber-row to get ItemType
-	    AND ii.payDate <= @payate                              -- all previous datetimes
-	    AND cast(ii.payDate as date) = cast(@payDate as date)   -- same day
-
-	-- ManufactureID is Identity (i.e. autoincremented)
-	INSERT INTO ItemMfg (payslipNumberID, payDate, SerialNumber)
-	    SELECT @payslipNumberID
-	        , @payDate
-	        , 'PS' + bb.ItemType + cast(@fifthDigit as varchar(5))
-	    FROM payslipNumber bb
-	    WHERE bb.payslipNumber = @payslipNumber
-	;
-
-	END */
-
-
---ADD ERRORS AND STUFF
-
+-- Table Valued parameters
 CREATE TYPE EmployeeInfo AS TABLE 
 (
     employeeID INT,
@@ -89,9 +58,9 @@ BEGIN
 			@startDate,
 			@endDate,
 			n.workedHours,
-			n.workedHours * p.hourlyRate,
-			(n.workedHours * p.hourlyRate) * t.taxRate, -- assumed that tax is not deducted from allowances
-			(n.wokedHours * p.hourlyRate) - ((n.workedHours * p.hourlyRate) * t.taxRate)
+			n.workedHours * p.hourlyRate, -- base pay
+			(n.workedHours * p.hourlyRate) * t.taxRate, -- tax payable: assume that tax is not deducted from allowances
+			(n.wokedHours * p.hourlyRate) - ((n.workedHours * p.hourlyRate) * t.taxRate) -- net pay = base pay - tax payable
 		FROM
 			@noHoursWorked n,
 			@allowanceBonus a,

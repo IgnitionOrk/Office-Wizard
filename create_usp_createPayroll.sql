@@ -1,6 +1,7 @@
 -- Created by: Jamie Sy
 -- Student number: 3207040
 -- Date created: 20-Apr-2017
+-- Date modified: 1-May-2017
 
 --Needed when testing and changing statements
 DROP PROCEDURE usp_generatePayslipPK
@@ -86,71 +87,84 @@ CREATE PROCEDURE usp_createPayroll
 	@allowanceBonus AllowanceInfo READONLY,
 	@payslipID	VARCHAR(10) OUTPUT
 AS
-BEGIN
-	DECLARE @newPayslipID VARCHAR(10);
-	--get a unique ID for the payslipID
-	--need to store the ID in the non-output variable as errors would occur
-	EXECUTE usp_generatePayslipPK @newPayslipID OUTPUT;
-	SET @payslipID = @newPayslipID;
+BEGIN TRY
+
+	IF NOT EXISTS (SELECT * FROM @noHoursWorked, @allowanceBonus)
+		BEGIN
+			RAISERROR(50005, 16,1, 'Table-valued parameter is empty')
+		END
+	ELSE
+		BEGIN
+	
+		DECLARE @newPayslipID VARCHAR(10);
+		--get a unique ID for the payslipID
+		--need to store the ID in the non-output variable as errors would occur
+		EXECUTE usp_generatePayslipPK @newPayslipID OUTPUT;
+		SET @payslipID = @newPayslipID;
+
+	
+
+		INSERT INTO payslip
+			SELECT 
+				@payslipID,
+				n.employeeID,
+				@taxBracketID,
+				@startDate,
+				@endDate,
+				n.workedHours,
+				n.workedHours * p.hourlyRate, -- calculates base pay
+				(n.workedHours * p.hourlyRate) * t.taxRate, -- calculates tax payable: assume that tax is not deducted from allowances
+				(n.workedHours * p.hourlyRate) - ((n.workedHours * p.hourlyRate) * t.taxRate) -- calculates net pay = base pay - tax payable
+			FROM
+				@noHoursWorked n,
+				@allowanceBonus a,
+				Position p,
+				Assignment pa,
+				TaxBracket t
+			WHERE
+				n.employeeID = pa.employeeID
+				AND p.positionID = pa.positionID
+				AND t.taxBracketID = @taxBracketID
 
 
-	INSERT INTO payslip
+		------------------------------------------------------------------------------------
+		-- inserts the imput parameters into @employeeInfo
+		DECLARE @employeeInfo EmployeeInfo;
+		DECLARE @workedHours INT;
+		INSERT @employeeInfo
+			SELECT 
+				e.employeeID,
+				@workedHours
+			FROM 
+				Employee e
+			WHERE
+				e.employeeID = 1
+				AND @workedHours < 50
+
+
+		-- inserts the imput parameters into @allowanceInfo
+		DECLARE @allowanceInfo AllowanceInfo;
+		DECLARE @emp EmployeeInfo;
+		INSERT @allowanceInfo
 		SELECT 
-			@payslipID,
-			n.employeeID,
-			@taxBracketID,
-			@startDate,
-			@endDate,
-			n.workedHours,
-			n.workedHours * p.hourlyRate, -- calculates base pay
-			(n.workedHours * p.hourlyRate) * t.taxRate, -- calculates tax payable: assume that tax is not deducted from allowances
-			(n.workedHours * p.hourlyRate) - ((n.workedHours * p.hourlyRate) * t.taxRate) -- calculates net pay = base pay - tax payable
-		FROM
-			@noHoursWorked n,
-			@allowanceBonus a,
-			Position p,
-			Assignment pa,
-			TaxBracket t
-		WHERE
-			n.employeeID = pa.employeeID
-			AND p.positionID = pa.positionID
-			AND t.taxBracketID = @taxBracketID
-
-
-	------------------------------------------------------------------------------------
-	-- inserts the imput parameters into @employeeInfo
-	DECLARE @employeeInfo EmployeeInfo;
-	DECLARE @workedHours INT;
-	INSERT @employeeInfo
-		SELECT 
-			e.employeeID,
-			@workedHours
+			e.employeeID, 
+			a.allowanceTypeID,
+			a.amount
 		FROM 
-			Employee e
+			Employee e,
+			Allowance a,
+			EmployeeAllowanceType ea,
+			@employeeInfo emp
 		WHERE
-			e.employeeID = 1
-			AND @workedHours < 50
+			e.employeeID = emp.employeeID
+			AND emp.employeeID = ea.employeeID
+			AND a.allowanceTypeID = ea.allowanceTypeID
 
+		-- Payslip (payslipID, employeeID, taxBracketID, startDate, endDate, workedHours, basePay, taxPayable, netPay)
+		END
+END TRY
+BEGIN CATCH
+	PRINT ERROR_MESSAGE()
+END CATCH
 
-	-- inserts the imput parameters into @allowanceInfo
-	DECLARE @allowanceInfo AllowanceInfo;
-	DECLARE @emp EmployeeInfo;
-	INSERT @allowanceInfo
-	SELECT 
-		e.employeeID, 
-		a.allowanceTypeID,
-		a.amount
-	FROM 
-		Employee e,
-		Allowance a,
-		EmployeeAllowanceType ea,
-		@employeeInfo emp
-	WHERE
-		e.employeeID = emp.employeeID
-		AND emp.employeeID = ea.employeeID
-		AND a.allowanceTypeID = ea.allowanceTypeID
-
-	-- Payslip (payslipID, employeeID, taxBracketID, startDate, endDate, workedHours, basePay, taxPayable, netPay)
-
-END
 GO

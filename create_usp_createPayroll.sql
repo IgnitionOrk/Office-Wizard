@@ -1,20 +1,50 @@
 -- Created by: Jamie Sy
 -- Student number: 3207040
 -- Date created: 20-Apr-2017
+-- Date modified: 1-May-2017
+
+--Needed when testing and changing statements
+
+DROP PROCEDURE usp_generatePayslipPK
+DROP PROCEDURE usp_createPayroll
+DROP TYPE EmployeeInfo
+DROP TYPE AllowanceInfo
+
+GO
 
 
--- User defined function to auto-increment payslipID without having to change payslipID to INT
-create function nextPayslipNo ()
-returns char (8)
-as
-begin
-	declare @lastval char(8)
-	set @lastval = (select max(payslipID) from Payslip)
-	if @lastval is null set @lastval = 'PS00000110'
-	declare @i int
-	set @i = right(@lastval,7)+1
-	return 'PS' + right ('00' + convert(varchar(10),@i,7)
-end
+--User defined function to auto-increment payslipID without having to change payslipID to INT
+--finds the highest payslipID in the database, increments it by 1 and uses that for the new order
+CREATE PROCEDURE usp_generatePayslipPK @newID VARCHAR(10) OUTPUT
+AS
+	DECLARE @highestID VARCHAR(10) = '00000000';
+	DECLARE @tempID VARCHAR(10);
+
+	--create cursor with custOrdIDs
+	DECLARE cursorIDs CURSOR FOR
+	SELECT payslipID
+	FROM Payslip;
+BEGIN
+	OPEN cursorIDs
+	FETCH NEXT FROM cursorIDs INTO @tempID
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		--remove front 2 characters so we can do integer comparison and to increment by 1 for newID
+		SET @tempID = SUBSTRING(@tempID, 3, 10);
+		--find highest ID
+		IF @tempID >  @highestID
+			SET @highestID = @tempID;			
+		FETCH NEXT FROM cursorIDs INTO @tempID
+	END
+	CLOSE cursorIDs   
+	DEALLOCATE cursorIDs	--close and remove cursor
+
+	--increment highest ID by 1, pad zeroes on the left hand side and add the 'CO' to identify as a customer order ID
+	SET @newID = @highestID+1;
+	SET @newID = RIGHT('0000000' +  @newID, 7);
+	SET @newID = LEFT('PS' + @newID, 10);	
+END;
+GO
 
 -- Table Valued parameters
 CREATE TYPE EmployeeInfo AS TABLE 
@@ -40,8 +70,11 @@ CREATE TYPE AllowanceInfo AS TABLE
         )
 );
 GO
+-- End of Table valued parameters
 
+-- Payroll procedure
 CREATE PROCEDURE usp_createPayroll
+	@payslipID	VARCHAR(10) OUTPUT,
 	@startDate	DATE,
 	@endDate	DATE,
 	@taxBracketID	INT,
@@ -50,9 +83,16 @@ CREATE PROCEDURE usp_createPayroll
     
 AS
 BEGIN
+	DECLARE @newPayslipID VARCHAR(10);
+	--get a unique ID for the payslipID
+	--need to store the ID in the non-output variable as errors would occur
+	EXECUTE usp_generatePayslipPK @newPayslipID OUTPUT;
+	SET @payslipID = @newPayslipID;
+
+
 	INSERT INTO payslip
 		SELECT 
-			payslipID,
+			@payslipID,
 			n.employeeID,
 			@taxBracketID,
 			@startDate,
@@ -66,7 +106,7 @@ BEGIN
 			@allowanceBonus a,
 			Position p,
 			Assignment pa,
-			TaxBracket t,
+			TaxBracket t
 		WHERE
 			n.employeeID = pa.employeeID
 			AND p.positionID = pa.positionID
@@ -104,9 +144,10 @@ FROM
 WHERE
 	e.employeeID = emp.employeeID
 	AND emp.employeeID = ea.employeeID
-	AND a.allowanceID = ea.allowanceID
+	AND a.allowanceTypeID = ea.allowanceTypeID
 
 -- Payslip (payslipID, employeeID, taxBracketID, startDate, endDate, workedHours, basePay, taxPayable, netPay)
 
 EXECUTE usp_createPayroll
 GO
+

@@ -47,13 +47,6 @@ AS
 			ON pro.productID = p.productID
 	WHERE pro.itemNo IN(SELECT bl.barcodeID 
 					  FROM @barcodeList bl)
-
-	--update availqty
-	DECLARE productCursor CURSOR FOR
-	SELECT ProductItem.itemNo
-	FROM ProductItem, @barcodeList
-	WHERE ProductItem.itemNo = @barcodeList.barcodeID
-	GROUP BY ProductItem.productID;
 GO
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -211,37 +204,39 @@ AS
 
 	--at least one item is valid, continue on
 	BEGIN TRY 
-	
-	--if none of the scanned items are valid, give control to catch statement, transaction terminated
-	IF @atLeastOneValidItem = 0	
-		RAISERROR('No items were valid, transaction was terminated', 15, -1);
+		--if none of the scanned items are valid, give control to catch statement, transaction terminated
+		IF @atLeastOneValidItem = 0	
+			RAISERROR('No items were valid, transaction was terminated', 15, -1);
+		DECLARE @newCustOrdID VARCHAR(10);
+		--get a unique ID for the Customer Order ID
+		--need to store ID in the non-output variable as errors occur otherwise
+		EXECUTE usp_generatePrimaryKey @newCustOrdID OUTPUT;
 
-	DECLARE @newCustOrdID VARCHAR(10);
-	--get a unique ID for the Customer Order ID
-	--need to store ID in the non-output variable as errors occur otherwise
-	EXECUTE usp_generatePrimaryKey @newCustOrdID OUTPUT;
-	SET @salesOrdID = @newCustOrdID;	
-	-- The @param @customerID is not null, and it references a customer in the database,
-	-- Simply create a new customer order associated with @param @customerID
-	IF @customerID IS NOT NULL AND EXISTS (SELECT customerID FROM Customer WHERE customerID = @customerID)
-		BEGIN	
-			EXECUTE usp_CreateNewCustomerOrder @customerID, @barcodeList, @employeeID, @newCustOrdID;
-		END
-	-- The @param customerID is not null, and it does reference a customer in the database,
-	-- create a new customer.
+		-- salesOrdID is the output parameter for this procedure.
+		SET @salesOrdID = @newCustOrdID;	
 
-	ELSE IF  @customerID IS NOT NULL AND NOT EXISTS (SELECT customerID FROM	 Customer WHERE customerID = @customerID)
-	    BEGIN
-			-- Should have a gender value for as Unspecified but that can be added later O will suffice for now.
-			INSERT INTO Customer VALUES(@customerID, DEFAULT,DEFAULT,'', NULL,'', NULL,'O');
-			EXECUTE usp_CreateNewCustomerOrder @customerID, @barcodeList, @employeeID, @newCustOrdID;	
-			PRINT('New customer was created with the provided customer ID');		
-		END
-	-- The customer does not exist in the database, and we simply create a customer order without a customer associated with it. 
-	ELSE
-		BEGIN
-			EXECUTE usp_CreateNewCustomerOrder @customerID, @barcodeList, @employeeID, @newCustOrdID;
-		END
+		-- The @param @customerID is not null, and it references a customer in the database,
+		-- Simply create a new customer order associated with @param @customerID
+		IF @customerID IS NOT NULL AND EXISTS (SELECT customerID FROM Customer WHERE customerID = @customerID)
+			BEGIN	
+				EXECUTE usp_CreateNewCustomerOrder @customerID, @barcodeList, @employeeID, @newCustOrdID;
+			END
+
+		-- The @param customerID is not null, and it does reference a customer in the database,
+		-- create a new customer.
+		ELSE IF  @customerID IS NOT NULL AND NOT EXISTS (SELECT customerID FROM	 Customer WHERE customerID = @customerID)
+			BEGIN
+				-- Should have a gender value for as Unspecified but that can be added later O will suffice for now.
+				INSERT INTO Customer VALUES(@customerID, DEFAULT,DEFAULT,'', NULL,'', NULL,'O');
+				EXECUTE usp_CreateNewCustomerOrder @customerID, @barcodeList, @employeeID, @newCustOrdID;	
+				PRINT('New customer was created with the provided customer ID');		
+			END
+
+		-- The customer does not exist in the database, and we simply create a customer order without a customer associated with it. 
+		ELSE
+			BEGIN
+				EXECUTE usp_CreateNewCustomerOrder @customerID, @barcodeList, @employeeID, @newCustOrdID;
+			END
 	END TRY
 	BEGIN CATCH
 		PRINT ERROR_MESSAGE()

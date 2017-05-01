@@ -99,4 +99,4 @@ INSERT INTO @customerProducts9 VALUES('PI10000084');
 INSERT INTO @customerProducts9 VALUES('PI10000085');
 INSERT INTO @customerProducts9 VALUES('PI10000086');
 EXECUTE usp_createStoreCustomerOrder 'C2010', @customerProducts9, 'E12345', @salesOrdID OUTPUT;
-PRINT ('New Customer Order ID is ' + @salesOrdID);*/
+PRINT ('New Customer Order ID is ' + @salesOrdID);

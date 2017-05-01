@@ -10,6 +10,20 @@ GO
 EXECUTE sp_addmessage 50005, 11, 'Error: %s';
 GO
 
+
+
+--Needed when testing and changing statements
+/*DROP PROCEDURE usp_UpdateProductItems
+DROP PROCEDURE usp_AssignCustOrdProducts
+DROP PROCEDURE usp_UpdateInventory
+DROP PROCEDURE usp_CreateNewCustomerOrder
+DROP PROCEDURE usp_generatePrimaryKey
+DROP PROCEDURE usp_createStoreCustomerOrder
+DROP TYPE productBarcodes_TVP
+GO*/
+
+
+
 ---------------------------------------------------------------------------------------------------------------------------------------------------------
 -- Table-valued parameter
 --
@@ -98,8 +112,8 @@ CREATE PROCEDURE usp_CreateNewCustomerOrder
 	@customerID VARCHAR(10), 
 	@barcodeList productBarcodes_TVP READONLY, 
 	@employeeID VARCHAR(10),
-	@salesOrdID VARCHAR(10) OUTPUT
-AS
+	@salesOrdID VARCHAR(10)
+AS	
 	BEGIN TRY
 	-- Checking if the table-valued parameter is empty.
 	 IF NOT EXISTS (SELECT * FROM @barcodeList)
@@ -124,7 +138,7 @@ AS
 								WHERE p.itemNo = bl.barcodeID)
 			-- Apply the discount given (if any)
 			SET @amountDue = @amountDue - (@amountDue * @totalDiscount)
-			INSERT INTO CustomerOrder VALUES(@salesOrdID,  @employeeID, @customerID, GETDATE(), @totalDiscount, @amountDue, 0.00, 'Awaiting Payment', 'Phone');
+			INSERT INTO CustomerOrder VALUES(@salesOrdID,  @employeeID, @customerID, GETDATE(), @totalDiscount, @amountDue, 0.00, 'Awaiting Payment', 'In Store');
 			EXECUTE usp_UpdateProductItems @salesOrdID, @barcodeList
 			EXECUTE usp_AssignCustOrdProducts @salesOrdID, @barcodeList				
 			EXECUTE usp_UpdateInventory
@@ -135,10 +149,43 @@ AS
 	END CATCH
 GO
 
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+--finds the highest customer order ID in the database, increments it by 1 and uses that for the new order
+CREATE PROCEDURE usp_generatePrimaryKey @newID VARCHAR(10) OUTPUT
+AS
+	DECLARE @highestID VARCHAR(10) = '00000000';
+	DECLARE @tempID VARCHAR(10);
+
+	--create cursor with custOrdIDs
+	DECLARE cursorIDs CURSOR FOR
+	SELECT custOrdID
+	FROM CustomerOrder;
+BEGIN
+	OPEN cursorIDs
+	FETCH NEXT FROM cursorIDs INTO @tempID
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		--remove front 2 characters so we can do integer comparison and to increment by 1 for newID
+		SET @tempID = SUBSTRING(@tempID, 3, 10);
+		--find highest ID
+		IF @tempID >  @highestID
+			SET @highestID = @tempID;			
+		FETCH NEXT FROM cursorIDs INTO @tempID
+	END
+	CLOSE cursorIDs   
+	DEALLOCATE cursorIDs	--close and remove cursor
+
+	--increment highest ID by 1, pad zeroes on the left hand side and add the 'CO' to identify as a customer order ID
+	SET @newID = @highestID+1;
+	SET @newID = RIGHT('0000000' +  @newID, 7);
+	SET @newID = LEFT('CO' + @newID, 10);	
+END;
+GO
 
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------
--- Either creates a new Customer or a new Customer order (regardless if the customerID is null or not).
+-- Either creates a new Customer and Customer order or a new Customer order (regardless if the customerID is null or not).
 CREATE PROCEDURE  usp_createStoreCustomerOrder 
 	@customerID VARCHAR(10), 
 	@barcodeList productBarcodes_TVP READONLY, 
@@ -146,11 +193,18 @@ CREATE PROCEDURE  usp_createStoreCustomerOrder
 	@salesOrdID VARCHAR(10) OUTPUT
 AS
 	BEGIN TRY 
+	DECLARE @newCustOrdID VARCHAR(10);
+	--get a unique ID for the Customer Order ID
+	--need to store ID in the non-output variable as errors occur otherwise
+	EXECUTE usp_generatePrimaryKey @newCustOrdID OUTPUT;
+	SET @salesOrdID = @newCustOrdID;
+	PRINT ('New Customer Order ID is ' + @newCustOrdID);
+	
 	-- The @param @customerID is not null, and it references a customer in the database,
 	-- Simply create a new customer order associated with @param @customerID
 	IF @customerID IS NOT NULL AND EXISTS (SELECT customerID FROM Customer WHERE customerID = @customerID)
 		BEGIN	
-			EXECUTE usp_CreateNewCustomerOrder @customerID, @barcodeList, @employeeID, @salesOrdID
+			EXECUTE usp_CreateNewCustomerOrder @customerID, @barcodeList, @employeeID, @newCustOrdID;
 		END
 	-- The @param customerID is not null, and it does reference a customer in the database,
 	-- create a new customer.
@@ -159,13 +213,12 @@ AS
 	    BEGIN
 			-- Should have a gender value for as Unspecified but that can be added later O will suffice for now.
 			INSERT INTO Customer VALUES(@customerID, DEFAULT,DEFAULT,'', NULL,'', NULL,'O');
-			-- Raise error that is associated with a customer that does not exist in the database.
-			RAISERROR(50005, 16, 1, 'Customer ID does not exist in the database! A new customer has been inserted into the database')			
+			EXECUTE usp_CreateNewCustomerOrder @customerID, @barcodeList, @employeeID, @newCustOrdID;			
 		END
 	-- The customer does not exist in the database, and we simply create a customer order without a customer associated with it. 
 	ELSE
 		BEGIN
-			EXECUTE usp_CreateNewCustomerOrder @customerID, @barcodeList, @employeeID, @salesOrdID
+			EXECUTE usp_CreateNewCustomerOrder @customerID, @barcodeList, @employeeID, @newCustOrdID;
 			-- Raise error that is associated with a customer that does not exist in the database.
 			RAISERROR(50005, 16, 1, 'Customer ID is NULL, therefore, it does not exist in the database! New customer order has been created without a customer ')
 		END

@@ -198,7 +198,6 @@ AS
 	--need to store ID in the non-output variable as errors occur otherwise
 	EXECUTE usp_generatePrimaryKey @newCustOrdID OUTPUT;
 	SET @salesOrdID = @newCustOrdID;
-	PRINT ('New Customer Order ID is ' + @newCustOrdID);
 	
 	-- The @param @customerID is not null, and it references a customer in the database,
 	-- Simply create a new customer order associated with @param @customerID

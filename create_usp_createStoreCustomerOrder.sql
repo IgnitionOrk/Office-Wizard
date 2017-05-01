@@ -13,14 +13,14 @@ GO
 
 
 --Needed when testing and changing statements
-/*DROP PROCEDURE usp_UpdateProductItems
+DROP PROCEDURE usp_UpdateProductItems
 DROP PROCEDURE usp_AssignCustOrdProducts
 DROP PROCEDURE usp_UpdateInventory
 DROP PROCEDURE usp_CreateNewCustomerOrder
 DROP PROCEDURE usp_generatePrimaryKey
 DROP PROCEDURE usp_createStoreCustomerOrder
 DROP TYPE productBarcodes_TVP
-GO*/
+GO
 
 
 
@@ -192,13 +192,36 @@ CREATE PROCEDURE  usp_createStoreCustomerOrder
 	@employeeID VARCHAR(10),
 	@salesOrdID VARCHAR(10) OUTPUT
 AS
+	--if a barcode isnt in the system, return a message saying so
+	DECLARE @tempBarcodeID VARCHAR(10);
+	DECLARE @atLeastOneValidItem BIT = 0;
+	DECLARE itemCheckCursor CURSOR FOR
+	SELECT *
+	FROM @barcodeList;
+	OPEN itemCheckCursor
+	FETCH NEXT FROM itemCheckCursor INTO @tempBarcodeID;
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		IF NOT EXISTS (SELECT itemNo FROM ProductItem WHERE itemNo = @tempBarcodeID)
+			PRINT('Item number: ' + @tempBarcodeID + ' does not exist');
+		ELSE
+			SET @atLeastOneValidItem = 1;
+		FETCH NEXT FROM itemCheckCursor INTO @tempBarcodeID;
+	END
+	CLOSE itemCheckCursor;
+	DEALLOCATE itemCheckCursor;
+
+	--if none of the scanned items are valid, terminate transaction
+	IF @atLeastOneValidItem = 0
+		return;
+
+	--at least one item is valid, continue on
 	BEGIN TRY 
 	DECLARE @newCustOrdID VARCHAR(10);
 	--get a unique ID for the Customer Order ID
 	--need to store ID in the non-output variable as errors occur otherwise
 	EXECUTE usp_generatePrimaryKey @newCustOrdID OUTPUT;
-	SET @salesOrdID = @newCustOrdID;
-	
+	SET @salesOrdID = @newCustOrdID;	
 	-- The @param @customerID is not null, and it references a customer in the database,
 	-- Simply create a new customer order associated with @param @customerID
 	IF @customerID IS NOT NULL AND EXISTS (SELECT customerID FROM Customer WHERE customerID = @customerID)

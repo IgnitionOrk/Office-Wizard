@@ -41,7 +41,7 @@ BEGIN
 
 	--increment highest ID by 1, pad zeroes on the left hand side and add the 'PS' to identify as a payslip ID
 	SET @newID = @highestID+1;
-	SET @newID = RIGHT('0000000' +  @newID, 7);
+	SET @newID = RIGHT('00000000' +  @newID, 8);
 	SET @newID = LEFT('PS' + @newID, 10);	
 END;
 GO
@@ -79,12 +79,12 @@ GO
 ------------------------------------------------------------------------------------
 -- Payroll procedure
 CREATE PROCEDURE usp_createPayroll
-	@payslipID	VARCHAR(10) OUTPUT,
 	@startDate	DATE,
 	@endDate	DATE,
 	@taxBracketID	VARCHAR(10),
 	@noHoursWorked EmployeeInfo READONLY,
-	@allowanceBonus AllowanceInfo READONLY
+	@allowanceBonus AllowanceInfo READONLY,
+	@payslipID	VARCHAR(10) OUTPUT
 AS
 BEGIN
 	DECLARE @newPayslipID VARCHAR(10);
@@ -115,42 +115,42 @@ BEGIN
 			n.employeeID = pa.employeeID
 			AND p.positionID = pa.positionID
 			AND t.taxBracketID = @taxBracketID
-END
 
-------------------------------------------------------------------------------------
--- inserts the imput parameters into @employeeInfo
-DECLARE @employeeInfo EmployeeInfo;
-DECLARE @workedHours INT;
-INSERT @employeeInfo
+
+	------------------------------------------------------------------------------------
+	-- inserts the imput parameters into @employeeInfo
+	DECLARE @employeeInfo EmployeeInfo;
+	DECLARE @workedHours INT;
+	INSERT @employeeInfo
+		SELECT 
+			e.employeeID,
+			@workedHours
+		FROM 
+			Employee e
+		WHERE
+			e.employeeID = 1
+			AND @workedHours < 50
+
+
+	-- inserts the imput parameters into @allowanceInfo
+	DECLARE @allowanceInfo AllowanceInfo;
+	DECLARE @emp EmployeeInfo;
+	INSERT @allowanceInfo
 	SELECT 
-		e.employeeID,
-		@workedHours
+		e.employeeID, 
+		a.allowanceTypeID,
+		a.amount
 	FROM 
-		Employee e
+		Employee e,
+		Allowance a,
+		EmployeeAllowanceType ea,
+		@employeeInfo emp
 	WHERE
-		e.employeeID = 1
-		AND @workedHours < 50
+		e.employeeID = emp.employeeID
+		AND emp.employeeID = ea.employeeID
+		AND a.allowanceTypeID = ea.allowanceTypeID
 
+	-- Payslip (payslipID, employeeID, taxBracketID, startDate, endDate, workedHours, basePay, taxPayable, netPay)
 
--- inserts the imput parameters into @allowanceInfo
-DECLARE @allowanceInfo AllowanceInfo;
-DECLARE @emp EmployeeInfo;
-INSERT @allowanceInfo
-SELECT 
-	e.employeeID, 
-	a.allowanceTypeID,
-	a.amount
-FROM 
-	Employee e,
-	Allowance a,
-	EmployeeAllowanceType ea,
-	@employeeInfo emp
-WHERE
-	e.employeeID = emp.employeeID
-	AND emp.employeeID = ea.employeeID
-	AND a.allowanceTypeID = ea.allowanceTypeID
-
--- Payslip (payslipID, employeeID, taxBracketID, startDate, endDate, workedHours, basePay, taxPayable, netPay)
-
-EXECUTE usp_createPayroll
+END
 GO

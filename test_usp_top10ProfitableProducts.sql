@@ -6,5 +6,3 @@
 
 EXECUTE dbo.usp_Top10ProfitableProducts
 GO
-DROP PROCEDURE dbo.usp_top10ProfitableProducts
-GO

@@ -236,7 +236,8 @@ AS
 	    BEGIN
 			-- Should have a gender value for as Unspecified but that can be added later O will suffice for now.
 			INSERT INTO Customer VALUES(@customerID, DEFAULT,DEFAULT,'', NULL,'', NULL,'O');
-			EXECUTE usp_CreateNewCustomerOrder @customerID, @barcodeList, @employeeID, @newCustOrdID;			
+			EXECUTE usp_CreateNewCustomerOrder @customerID, @barcodeList, @employeeID, @newCustOrdID;
+			PRINT('New customer was created with the provided customer ID');
 		END
 	-- The customer does not exist in the database, and we simply create a customer order without a customer associated with it. 
 	ELSE

@@ -58,9 +58,9 @@ BEGIN
 			@startDate,
 			@endDate,
 			n.workedHours,
-			n.workedHours * p.hourlyRate, -- base pay
-			(n.workedHours * p.hourlyRate) * t.taxRate, -- tax payable: assume that tax is not deducted from allowances
-			(n.wokedHours * p.hourlyRate) - ((n.workedHours * p.hourlyRate) * t.taxRate) -- net pay = base pay - tax payable
+			n.workedHours * p.hourlyRate, -- calculates base pay
+			(n.workedHours * p.hourlyRate) * t.taxRate, -- calculates tax payable: assume that tax is not deducted from allowances
+			(n.wokedHours * p.hourlyRate) - ((n.workedHours * p.hourlyRate) * t.taxRate) -- calculates net pay = base pay - tax payable
 		FROM
 			@noHoursWorked n,
 			@allowanceBonus a,

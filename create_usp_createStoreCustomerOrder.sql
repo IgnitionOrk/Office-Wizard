@@ -218,8 +218,6 @@ AS
 	ELSE
 		BEGIN
 			EXECUTE usp_CreateNewCustomerOrder @customerID, @barcodeList, @employeeID, @newCustOrdID;
-			-- Raise error that is associated with a customer that does not exist in the database.
-			RAISERROR(50005, 16, 1, 'Customer ID is NULL, therefore, it does not exist in the database! New customer order has been created without a customer ')
 		END
 	END TRY
 	BEGIN CATCH

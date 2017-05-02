@@ -6,6 +6,9 @@
 --Output parameters
 DECLARE @payslipID VARCHAR(10);
 
+--comment out following line to remove testing - used to compare before and after state of Payslip table
+SELECT * FROM Payslip
+
 --test case 0
 DECLARE @employeeHours AS dbo.EmployeeInfo
 DECLARE @employeeAllowance AS dbo.AllowanceInfo
@@ -36,3 +39,6 @@ DECLARE @employeeAllowance4 AS dbo.AllowanceInfo
 INSERT INTO @employeeHours4 VALUES ('E98898',15);
 INSERT INTO @employeeAllowance4 VALUES ('E98898', 'AT0970970',20);
 EXECUTE usp_createPayroll '2017-04-20', '2017-04-25', 'T111111',@employeeHours, @employeeAllowance, @payslipID;
+
+--comment out following line to remove testing
+SELECT * FROM Payslip

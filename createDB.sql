@@ -1,9 +1,10 @@
--- DATA
+--Database for INFT3007 Assignment 2 - Office Wizard Database
 --Created by: 
 	--  Ryan Cunneen  :(c3179234)
 	--  Jamie Sy	  :(c3207040)
+	--  Micah Conway  :(c3232648)
 --Date Created  4-Apr-2017
---Date Modified 18-Apr-2017
+--Date Modified 2-May-2017
 
 DROP TABLE EmployeeAllowanceType
 DROP TABLE Allowance
@@ -59,7 +60,7 @@ CREATE TABLE Product
 	categoryID VARCHAR(10) NOT NULL,
 	pDescription VARCHAR(255),
 	qtyDescription VARCHAR(100), 
-	unitPrice FLOAT NOT NULL CHECK(unitPrice >= 0.00), -- To ensure Office Wizard can't give them away for free.,
+	unitPrice FLOAT NOT NULL CHECK(unitPrice >= 0.00),	 -- To ensure Office Wizard can't give them away for free.,
 	pStatus VARCHAR(20)	NOT NULL CHECK(pStatus IN('Available', 'Out of stock')),
 	availQty INT NOT NULL CHECK(availQty >= 0) DEFAULT 0,
 	reorderLevel INT NOT NULL CHECK(reorderLevel > 0),
@@ -166,7 +167,7 @@ CREATE TABLE CustomerOrder
 	employeeID	 VARCHAR(10) DEFAULT NULL,			--Null because order may have been online. 
 	customerID VARCHAR(10),
 	orderDateTime DATETIME	NOT NULL,					
-	discountGiven FLOAT DEFAULT NULL, 
+	discountGiven FLOAT DEFAULT NULL, --total dollar amount of discount
 	amountDue	 FLOAT,
 	amountPaid FLOAT, 
 	custOrdStatus VARCHAR(50) CHECK(custOrdStatus IN ('Processing','Delivered','Cancelled','Awaiting Payment','Completed')),
@@ -322,14 +323,9 @@ CREATE TABLE EmployeeAllowanceType
 );
 GO
 
-
--- DATA
---Created by: 
-	--  Ryan Cunneen  :(c3179234)
-	--  Micay Conway  :(c3232648)
-	--  Jamie Sy	  :(c3207040)
---Date Created  4-Apr-2017
---Date Modified 27-Apr-2017
+--DATABASE DEFINITION COMPLETE
+--------------------------------------------------------------------------------------------------------------------------------------------------- 
+--DATA
 
 
 INSERT INTO Supplier VALUES('S111111111', 'World of Pens', '121 Industrial Rd', '123456789012', '1234-1234-12', 'Mary Jane');
@@ -452,11 +448,11 @@ INSERT INTO Product VALUES('P1232', 'File Cabinet', 'Storage mania','PC12345673'
 INSERT INTO Product VALUES('P0000', 'Stereo Magic','Electronic Experts','PC12345675','Sound system','Single sound system',200.00,'Available',10, 5, 0.20);
 INSERT INTO Product VALUES('P5645', 'Gaming Monitor','Electronic Experts','PC12345675','Computer monitor','Single monitor',150.00,'Out of stock',0,5, 0.15);
 INSERT INTO Product VALUES('P8988', 'Power board','Electronic Experts','PC12345675',NULL,'Single power board',25.75,'Available',6,5, 0.10);
-INSERT INTO Product VALUES('P9999', 'Amazing Sound','Electronic Experts','PC12345675','Sound system','Single sound system',175.85,'Available',7,3, 0.27);
+INSERT INTO Product VALUES('P9999', 'Amazing Sound','Electronic Experts','PC12345675','Sound system','Single sound system',175.85,'Available',7,5, 0.27);
 -- Category: Book
 INSERT INTO Product VALUES('P4565', 'Kids programming','All things Education','PC12345676','Programming textbook','Single textbook',12.75 ,'Available',23,5, 0.50);
 INSERT INTO Product VALUES('P7895', 'Programming for dummies','All things Education','PC12345676','Programming textbook','Single textbook',25.96,'Available',10,8, 0.50);
-INSERT INTO Product VALUES('P9885', 'Artbook','Art central','PC12345676','Picture book of art','Single book',10.00,'Out of stock',20,10, 0.05);
+INSERT INTO Product VALUES('P9885', 'Artbook','Art central','PC12345676','Picture book of art','Single book',10.00,'Available',20,10, 0.05);
 INSERT INTO Product VALUES('P0022', 'Mathematics','All things Education','PC12345676','Mathematics textbook','Single textbook',20.00,'Available',25,3, 0.75);
 -- Category: Furniture
 INSERT INTO Product VALUES('P1211', 'Office Desk','Furniture experts','PC12345671','Office Desk','Single desk',175.00,'Available',6,3, 0.50);
